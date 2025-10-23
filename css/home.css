@@ -180,7 +180,6 @@ body {
 	background: black;
 	border-radius: 20px;
 	overflow: hidden;
-	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 	transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 	cursor: pointer;
 }
@@ -207,18 +206,11 @@ body {
 	opacity: 0.7;
 }
 
-.card.left-2 img {
-	filter: grayscale(100%);
-}
 
 .card.left-1 {
 	z-index: 5;
 	transform: translateX(-200px) scale(0.9) translateZ(-100px);
 	opacity: 0.9;
-}
-
-.card.left-1 img {
-	filter: grayscale(100%);
 }
 
 .card.right-1 {
@@ -227,18 +219,10 @@ body {
 	opacity: 0.9;
 }
 
-.card.right-1 img {
-	filter: grayscale(100%);
-}
-
 .card.right-2 {
 	z-index: 1;
 	transform: translateX(400px) scale(0.8) translateZ(-300px);
 	opacity: 0.7;
-}
-
-.card.right-2 img {
-	filter: grayscale(100%);
 }
 
 .card.hidden {
