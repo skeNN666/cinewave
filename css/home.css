@@ -1,6 +1,7 @@
+/* Global Styles */
 body {
   margin: 0;
-  font-family: "BBH Sans Bogle", sans-serif;
+  font-family: "Nunito", "BBH Sans Bogle", sans-serif;
   background-color: #fff;
 }
 
@@ -12,63 +13,69 @@ body {
   background-color: #000;
   color: white;
   padding: 10px 25px;
+  font-family: "Nunito", sans-serif;
 }
 
-/* Left section (logo + links + search) */
-.left-section {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
+/* Logo */
 .logo {
   font-size: 30px;
-  font-weight: bold;
+  font-weight: 800;
   letter-spacing: 1px;
   text-decoration: none;
-  font-family: "BBH Sans Bogle", sans-serif;
+  margin-right: 30px; /* small spacing from links */
 }
 
 .logo .cine {
-  color: #007bff; /* Blue */
+  color: #007bff;
 }
 
 .logo .wave {
-  color: #00ffff; /* cyan */
+  color: #00ffff;
 }
 
-.logo:hover {
-  text-decoration: none;
-}
-
+/* Navigation Links */
 .nav-links {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex: 1;              /* allows stretching */
+  margin-right: 20px;   /* small space before sign-in/menu */
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
-  text-decoration: none;
+  color: #00ffff;
 }
-
-/*Search*/
+/* Search group unified look */
 .search-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  flex: 1;
+  max-width: 1000px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden; /* keeps the corners clean */
+  border: 1px solid #555;
 }
 
+/* Dropdown (All ▼) */
 .all-dropdown {
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  background-color: #222;
+  color: white;
+  padding: 8px 12px;
+  border-right: 1px solid #555; /* divider between dropdown and input */
+  font-weight: 600;
+  font-family: "Nunito", sans-serif;
 }
 
 .arrow {
@@ -77,31 +84,38 @@ body {
   display: inline-block;
   padding: 3px;
   transform: rotate(45deg);
-  margin-top: -5px;
+  margin-top: -2px;
 }
 
+/* Search box inside group */
 .search-box {
-  background-color: #333;
-  border-radius: 4px;
-  padding: 5px 8px;
+  flex: 1;
 }
 
 .search-box input {
-  background: none;
+  width: 100%;
   border: none;
   outline: none;
+  background: none;
   color: white;
-  padding: 5px;
-  width: 150px;
+  padding: 10px 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
 }
 
-/* Right section (sign-in + menu) */
-.right-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+/* Focus effect for cinematic style */
+.search-box input:focus {
+  background-color: #444;
 }
 
+/* Optional: subtle hover on dropdown */
+.all-dropdown:hover {
+  background-color: #2a2a2a;
+}
+
+
+
+/* Sign-In Button */
 .sign-in {
   background-color: #00ffff;
   border: none;
@@ -109,17 +123,33 @@ body {
   padding: 8px 14px;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .sign-in:hover {
   background-color: #007bff;
+  color: white;
 }
 
+/* Menu Icon */
 .menu-icon {
   font-size: 22px;
   cursor: pointer;
+  margin-right: 10px;
 }
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .menu-icon {
+    display: block;
+  }
+}
+
 .movie-slider {
   position: relative;
   width: 100%;
