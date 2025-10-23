@@ -1,43 +1,120 @@
-const slider = document.querySelector('.movie-slider');
-const track = slider.querySelector('.slider-track');
-const movies = Array.from(slider.querySelectorAll('.movie'));
-const leftBtn = slider.querySelector('.arrow-btn.left');
-const rightBtn = slider.querySelector('.arrow-btn.right');
-const movieName = slider.querySelector('.movie-name');
+const movielists = [
+	{ name: "Green Book"},
+	{ name: "Pulp Fiction"},
+	{ name: "One Fine Spring Day"},
+	{ name: "F1"},
+	{ name: "The Promised Land"},
+	{ name: "Flow"}
+];
 
-let currentIndex = 3; // middle movie for 7 items
+const cards = document.querySelectorAll(".card");
+const dots = document.querySelectorAll(".dot");
+const movieName = document.querySelector(".movie-name");
+const leftArrow = document.querySelector(".nav-arrow.left");
+const rightArrow = document.querySelector(".nav-arrow.right");
+let currentIndex = 0;
+let isAnimating = false;
 
-function updateSlider() {
-  const movieWidth = 150 + 40; // width + 2*margin
-  const viewportWidth = slider.querySelector('.slider-viewport').offsetWidth;
-  const offset = currentIndex * movieWidth - viewportWidth / 2 + movieWidth / 2;
+function updateCarousel(newIndex) {
+	if (isAnimating) return;
+	isAnimating = true;
 
-  track.style.transform = `translateX(${-offset}px)`;
+	currentIndex = (newIndex + cards.length) % cards.length;
 
-  movies.forEach((movie, index) => {
-    movie.classList.remove('small', 'medium', 'large');
+	cards.forEach((card, i) => {
+		const offset = (i - currentIndex + cards.length) % cards.length;
 
-    if (index === currentIndex) movie.classList.add('large');
-    else if (index === currentIndex - 1 || index === currentIndex + 1) movie.classList.add('medium');
-    else movie.classList.add('small');
-  });
+		card.classList.remove(
+			"center",
+			"left-1",
+			"left-2",
+			"right-1",
+			"right-2",
+			"hidden"
+		);
 
-  // Movie name stays fixed and always shows current movie
-  movieName.textContent = movies[currentIndex].querySelector('img').alt;
+		if (offset === 0) {
+			card.classList.add("center");
+		} else if (offset === 1) {
+			card.classList.add("right-1");
+		} else if (offset === 2) {
+			card.classList.add("right-2");
+		} else if (offset === cards.length - 1) {
+			card.classList.add("left-1");
+		} else if (offset === cards.length - 2) {
+			card.classList.add("left-2");
+		} else {
+			card.classList.add("hidden");
+		}
+	});
+
+	dots.forEach((dot, i) => {
+		dot.classList.toggle("active", i === currentIndex);
+	});
+
+	movieName.style.opacity = "0";
+
+	setTimeout(() => {
+		movieName.textContent = movielists[currentIndex].name;
+		movieName.style.opacity = "1";
+	}, 300);
+
+	setTimeout(() => {
+		isAnimating = false;
+	}, 800);
 }
 
-leftBtn.addEventListener('click', () => {
-  if (currentIndex > 0) {
-    currentIndex--;
-    updateSlider();
-  }
+leftArrow.addEventListener("click", () => {
+	updateCarousel(currentIndex - 1);
 });
 
-rightBtn.addEventListener('click', () => {
-  if (currentIndex < movies.length - 1) {
-    currentIndex++;
-    updateSlider();
-  }
+rightArrow.addEventListener("click", () => {
+	updateCarousel(currentIndex + 1);
 });
 
-updateSlider();
+dots.forEach((dot, i) => {
+	dot.addEventListener("click", () => {
+		updateCarousel(i);
+	});
+});
+
+cards.forEach((card, i) => {
+	card.addEventListener("click", () => {
+		updateCarousel(i);
+	});
+});
+
+document.addEventListener("keydown", (e) => {
+	if (e.key === "ArrowLeft") {
+		updateCarousel(currentIndex - 1);
+	} else if (e.key === "ArrowRight") {
+		updateCarousel(currentIndex + 1);
+	}
+});
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", (e) => {
+	touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", (e) => {
+	touchEndX = e.changedTouches[0].screenX;
+	handleSwipe();
+});
+
+function handleSwipe() {
+	const swipeThreshold = 50;
+	const diff = touchStartX - touchEndX;
+
+	if (Math.abs(diff) > swipeThreshold) {
+		if (diff > 0) {
+			updateCarousel(currentIndex + 1);
+		} else {
+			updateCarousel(currentIndex - 1);
+		}
+	}
+}
+
+updateCarousel(0);

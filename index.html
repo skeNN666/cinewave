@@ -35,30 +35,54 @@
       </div>
     </div>
 
-    <div class="menu-icon">☰</div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
     <button class="sign-in">Sign In</button>
   </nav>
 </header>
+<section class="movie-slider">
+  <div class="carousel-container">
+	<button class="nav-arrow left">‹</button>
+	<div class="carousel-track">
+		<div class="card" data-index="0">
+			<img src="images/movie1.jpg" alt="movie 1">
+		</div>
+		<div class="card" data-index="1">
+			<img src="images/movie2.jpg" alt="movie 2">
+		</div>
+		<div class="card" data-index="2">
+			<img src="images/movie3.jpg" alt="movie 3">
+		</div>
+		<div class="card" data-index="3">
+			<img src="images/movie4.jpg" alt="movie 4">
+		</div>
+		<div class="card" data-index="4">
+			<img src="images/movie5.jpg" alt="movie 5">
+		</div>
+		<div class="card" data-index="5">
+			<img src="images/movie6.jpg" alt="movie 6">
+		</div>
+	</div>
+	<button class="nav-arrow right">›</button>
+</div>
 
-  <!-- Movie Slider -->
-  <section class="movie-slider">
-  <button class="arrow-btn left" aria-label="Previous">‹</button>
+<div class="movie-info">
+	<h2 class="movie-name">Green Book</h2>
+</div>
 
-  <div class="slider-viewport">
-    <div class="slider-track">
-      <div class="movie"><img src="./images/movie1.jpg" alt="Movie 1"></div>
-      <div class="movie"><img src="./images/movie2.jpg" alt="Movie 2"></div>
-      <div class="movie"><img src="./images/movie3.jpg" alt="Movie 3"></div>
-      <div class="movie"><img src="./images/movie4.jpg" alt="Movie 4"></div>
-      <div class="movie"><img src="./images/movie5.jpg" alt="Movie 5"></div>
-      <div class="movie"><img src="./images/movie6.jpg" alt="Movie 6"></div>
-      <div class="movie"><img src="./images/movie7.jpg" alt="Movie 7"></div>
-    </div>
-  </div>
-
-  <button class="arrow-btn right" aria-label="Next">›</button>
-
-  <div class="movie-name">Movie 3</div>
+<div class="dots">
+	<div class="dot active" data-index="0"></div>
+	<div class="dot" data-index="1"></div>
+	<div class="dot" data-index="2"></div>
+	<div class="dot" data-index="3"></div>
+	<div class="dot" data-index="4"></div>
+	<div class="dot" data-index="5"></div>
+</div>
 </section>
 <article class="promo-section">
   <div class="slogan top-left">Дуртай киногоо үз</div>
