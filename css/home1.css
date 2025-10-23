@@ -1,9 +1,0 @@
-body {
-  margin: 0;
-  font-family: "Nunito", sans-serif;
-  background-color: #fff;
-}
-nav {
-  display: flex;
-  justify-content: space-evenly;
-}
