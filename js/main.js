@@ -1,10 +1,10 @@
 const movielists = [
-	{ name: "Green Book"},
-	{ name: "Pulp Fiction"},
-	{ name: "One Fine Spring Day"},
-	{ name: "F1"},
-	{ name: "The Promised Land"},
-	{ name: "Flow"}
+	{ name: "The Conjuring: Last Rites"},
+	{ name: "Tron: Ares"},
+	{ name: "The Fantastic Four: First Steps"},
+	{ name: "Mission Impossible: The Last Reckoning"},
+	{ name: "Superman"},
+	{ name: "Weapons"}
 ];
 
 const cards = document.querySelectorAll(".card");
