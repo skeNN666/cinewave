@@ -554,16 +554,6 @@ body {
   background-color: #2b85e0;
 }
 
-.privacy-note {
-  font-size: 0.8rem;
-  color: #aaa;
-}
-
-.privacy-note a {
-  color: #4da3ff;
-  text-decoration: none;
-}
-
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;
@@ -576,21 +566,6 @@ body {
 
 .footer-bottom p {
   margin: 0;
-}
-
-.footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.footer-links a {
-  color: #bbb;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.footer-links a:hover {
-  color: #4da3ff;
 }
 
 .footer-socials {
