@@ -3,9 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CSS Position жишээ</title>
+    <style>
+        .container {
+            width: 500px;
+            height: 500px;
+            border: 2px solid #333;
+            margin: 20px auto;
+            position: relative; /* Эцэг элемент relative байршилтай */
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            text-align: center;
+            line-height: 100px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .static {
+            position: static;
+            background-color: #3498db;
+        }
+        
+        .relative {
+            position: relative;
+            background-color: #2ecc71;
+            top: 20px;
+            left: 30px;
+        }
+        
+        .absolute {
+            position: absolute;
+            background-color: #e74c3c;
+            top: 50px;
+            right: 50px;
+        }
+        
+        .fixed {
+            position: fixed;
+            background-color: #f39c12;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .sticky {
+            position: sticky;
+            background-color: #9b59b6;
+            top: 0;
+            padding: 10px;
+        }
+        
+        .content {
+            height: 1000px;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
+    <div class="sticky">Sticky элемент (дээд талд наалдсан)</div>
     
+    <div class="content">
+        <h1>CSS Position жишээнүүд</h1>
+        
+        <div class="container">
+            <div class="box static">Static</div>
+            <div class="box relative">Relative</div>
+            <div class="box absolute">Absolute</div>
+        </div>
+        
+        <div class="box fixed">Fixed</div>
+        
+        <p>Энэхүү жишээ нь CSS position-ийн төрөл бүрийн ялгааг харуулж байна.</p>
+    </div>
 </body>
 </html>
