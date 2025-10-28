@@ -24,22 +24,17 @@
         <a href="customlist.html">Жагсаалт</a>
         <a href="help.html">Тусламж</a>
 
-        <div class="search-group">
-          <!-- Dropdown -->
-          <div class="all-dropdown" id="dropdown">
-            <button class="selected" id="selected">All</button>
-            <ul class="dropdown-menu" id="menu">
-              <li data-category="all">Бүгд</li>
-              <li data-category="movies">Кино</li>
-              <li data-category="tv">TV цуврал</li>
-              <li data-category="celebs">Алдартнууд</li>
-            </ul>
-          </div>
-
-          <!-- Search box -->
-          <div class="search-box">
-            <input type="text" placeholder="Хайх..." />
-          </div>
+      <div class="search-group">
+        <div class="all-dropdown">
+          <select id="category-select" class="category-select">
+            <option value="all">Бүгд</option>
+            <option value="movies">Кино</option>
+            <option value="tv">TV цуврал</option>
+            <option value="celebs">Алдартнууд</option>
+          </select>
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="Хайх..." id="search-input">
         </div>
       </div>
 

@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
- <header>
+<header>
   <nav class="navbar">
     <a href="../index.html" class="logo">
       <span class="cine">CINE</span><span class="wave">WAVE</span>
@@ -24,20 +24,18 @@
       <a href="help.html">Тусламж</a>
 
       <div class="search-group">
-        <div class="all-dropdown" id="dropdown">
-          <button id="selected">All <i class="arrow">▼</i></button>
-          <ul class="dropdown-menu" id="menu">
-            <li data-category="all">Бүгд</li>
-            <li data-category="movies">Кино</li>
-            <li data-category="tv">TV цуврал</li>
-            <li data-category="celebs">Алдартнууд</li>
-          </ul>
+        <div class="all-dropdown">
+          <select id="category-select" class="category-select">
+            <option value="all">Бүгд</option>
+            <option value="movies">Кино</option>
+            <option value="tv">TV цуврал</option>
+            <option value="celebs">Алдартнууд</option>
+          </select>
         </div>
         <div class="search-box">
-          <input type="text" placeholder="Хайх...">
+          <input type="text" placeholder="Хайх..." id="search-input">
         </div>
       </div>
-    </div>
 
     <button class="hamburger" id="hamburger" aria-label="Menu">
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +44,7 @@
     <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
 
-    <button class="sign-in">Нэвтрэх</button>
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
   </nav>
 </header>
   <div class="container">
