@@ -152,7 +152,7 @@ body {
 /* Гол хэсгийн доод хэсэг хаха */
 
 .customlist-container {
-  display: flex;
+  display: relative;
   flex-direction: column;
   width: 70%;
   margin: 0 auto;
@@ -174,8 +174,9 @@ body {
 }
 
 .list-item-2 {
+
+  flex: 0 0 84%;
   padding-left: 1%;
-  flex: 0 0 85%;
   background-color: rgb(235, 66, 0);
 }
 
@@ -200,8 +201,15 @@ body {
   
 }
 
+.list-item-3 button {
+  
+}
+
 .list-item-3 {
+
+  display: flex;
   flex: 0 0 5%;
+  justify-content: flex-end ;
   background-color: #007bff;
 }
 
