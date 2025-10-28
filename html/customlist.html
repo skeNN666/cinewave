@@ -50,36 +50,16 @@
   </header>
 
   <main class="main">
-
+    <section class="custom-list-section">
+      <h1 class="section-title">Миний жагсаалт</h1>
+      <div class="custom-list-container" id="custom-list-container">
+        
+        <!-- Custom list items will be dynamically added here -->
+      </div>
+    </section>
   </main>
   <footer></footer>
 
-  <!-- JS тусад нь -->
-   <script>
-    // 1. Элементийг JavaScript-ээр олж авч байна
-    const button = document.getElementById('selected');
-    const menu = document.getElementById('menu');
-
-    // 2. Товч дарахад "show" классыг солих (toggle)
-    button.addEventListener('click', () => {
-      menu.classList.toggle('show');
-    });
-
-    // 3. Хэрэглэгч жагсаалтаас нэгийг сонгоход нэрийг товч дээр тавина
-    const items = menu.querySelectorAll('li');
-    items.forEach(item => {
-      item.addEventListener('click', () => {
-        button.textContent = item.textContent; // Товчны үг өөрчлөгдөнө
-        menu.classList.remove('show'); // Жагсаалт хаагдана
-      });
-    });
-
-    // 4. Гадна хэсэг дээр дарвал жагсаалт хаагдана
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.all-dropdown')) {
-        menu.classList.remove('show');
-      }
-    });
-  </script>
+  <script src="../js/customlist.js"></script>
 </body>
 </html>
