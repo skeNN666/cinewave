@@ -1,57 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/customlist.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/customlist.css" />
   <title>CINEWAVE</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
 </head>
+
 <body>
-<header>
-  <nav class="navbar">
-    <a href="../index.html" class="logo">
-      <span class="cine">CINE</span><span class="wave">WAVE</span>
-    </a>
+  <header>
+    <nav class="navbar">
+      <a href="../index.html" class="logo">
+        <span class="cine">CINE</span><span class="wave">WAVE</span>
+      </a>
 
-    <div class="nav-links">
-      <a href="movies.html">Кино</a>
-      <a href="html/customlist.html">Жагсаалт</a>
-      <a href="help.html">Тусламж</a>
+      <div class="nav-links">
+        <a href="movies.html">Кино</a>
+        <a href="customlist.html">Жагсаалт</a>
+        <a href="help.html">Тусламж</a>
 
-      <div class="search-group">
-        <div class="all-dropdown" id="dropdown">
-          <button id="selected">All <i class="arrow">▼</i></button>
-          <ul class="dropdown-menu" id="menu">
-            <li data-category="all">Бүгд</li>
-            <li data-category="movies">Кино</li>
-            <li data-category="tv">TV цуврал</li>
-            <li data-category="celebs">Алдартнууд</li>
-          </ul>
-        </div>
-        <div class="search-box">
-          <input type="text" placeholder="Хайх...">
+        <div class="search-group">
+          <!-- Dropdown -->
+          <div class="all-dropdown" id="dropdown">
+            <button class="selected" id="selected">All</button>
+            <ul class="dropdown-menu" id="menu">
+              <li data-category="all">Бүгд</li>
+              <li data-category="movies">Кино</li>
+              <li data-category="tv">TV цуврал</li>
+              <li data-category="celebs">Алдартнууд</li>
+            </ul>
+          </div>
+
+          <!-- Search box -->
+          <div class="search-box">
+            <input type="text" placeholder="Хайх..." />
+          </div>
         </div>
       </div>
-    </div>
 
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </button>
 
-    <button class="sign-in" onclick="window.location.href='login.html'">Нэвтрэх</button>
-  </nav>
-</header>
-  <main class="main">
-    
-  </main>
+      <button class="sign-in" onclick="window.location.href='login.html'">Нэвтрэх</button>
+    </nav>
+  </header>
+
+  <main class="main"></main>
   <footer></footer>
+
+  <!-- JS тусад нь -->
+  <script src="../js/dropdown.js"></script>
 </body>
 </html>
