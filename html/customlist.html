@@ -1,64 +1,356 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/customlist.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CINEWAVE</title>
 
   <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <link rel="stylesheet" href="./css/home.css">
 </head>
-
 <body>
-  <header>
-    <nav class="navbar">
-      <a href="../index.html" class="logo">
-        <span class="cine">CINE</span><span class="wave">WAVE</span>
-      </a>
+<header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </a>
 
-      <div class="nav-links">
-        <a href="movies.html">Кино</a>
-        <a href="customlist.html">Жагсаалт</a>
-        <a href="help.html">Тусламж</a>
+    <div class="nav-links">
+      <a href="movies.html">Кино</a>
+      <a href="html/customlist.html">Жагсаалт</a>
+      <a href="help.html">Тусламж</a>
 
-        <div class="search-group">
-          <!-- Dropdown -->
-          <div class="all-dropdown" id="dropdown">
-            <button class="selected" id="selected">All</button>
-            <ul class="dropdown-menu" id="menu">
-              <li data-category="all">Бүгд</li>
-              <li data-category="movies">Кино</li>
-              <li data-category="tv">TV цуврал</li>
-              <li data-category="celebs">Алдартнууд</li>
-            </ul>
-          </div>
-
-          <!-- Search box -->
-          <div class="search-box">
-            <input type="text" placeholder="Хайх..." />
-          </div>
+      <div class="search-group">
+        <div class="all-dropdown" id="dropdown">
+          <button id="selected">All <i class="arrow">▼</i></button>
+          <ul class="dropdown-menu" id="menu">
+            <li data-category="all">Бүгд</li>
+            <li data-category="movies">Кино</li>
+            <li data-category="tv">TV цуврал</li>
+            <li data-category="celebs">Алдартнууд</li>
+          </ul>
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="Хайх...">
         </div>
       </div>
+    </div>
 
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-          <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-          <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-          <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-      </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
 
-      <button class="sign-in" onclick="window.location.href='login.html'">Нэвтрэх</button>
-    </nav>
-  </header>
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+  </nav>
+</header>
+<section class="movie-slider">
+  <div class="carousel-container">
+	<button class="nav-arrow left">‹</button>
+	<div class="carousel-track">
+		<div class="card" data-index="0">
+			<img src="images/movie1.jpg" alt="movie 1">
+		</div>
+		<div class="card" data-index="1">
+			<img src="images/movie2.jpg" alt="movie 2">
+		</div>
+		<div class="card" data-index="2">
+			<img src="images/movie3.jpg" alt="movie 3">
+		</div>
+		<div class="card" data-index="3">
+			<img src="images/movie4.jpg" alt="movie 4">
+		</div>
+		<div class="card" data-index="4">
+			<img src="images/movie5.jpg" alt="movie 5">
+		</div>
+		<div class="card" data-index="5">
+			<img src="images/movie6.jpg" alt="movie 6">
+		</div>
+	</div>
+	<button class="nav-arrow right">›</button>
+</div>
 
-  <main class="main"></main>
-  <footer></footer>
+<div class="movie-info">
+	<h2 class="movie-name">The Conjuring: Last Rites</h2>
+</div>
 
-  <!-- JS тусад нь -->
-  <script src="../js/customlist.js"></script>
+<div class="dots">
+	<div class="dot active" data-index="0"></div>
+	<div class="dot" data-index="1"></div>
+	<div class="dot" data-index="2"></div>
+	<div class="dot" data-index="3"></div>
+	<div class="dot" data-index="4"></div>
+	<div class="dot" data-index="5"></div>
+</div>
+</section>
+<article class="promo-section">
+  <img src="images/promo-bg.jpg" alt="Promo" class="promo-bg">
+  <div class="slogan top-left">Дуртай киногоо үз</div>
+  <div class="slogan center">Бодол санаагаа бич</div>
+  <div class="slogan bottom-right">Бусдад түгээ</div>
+  <button class="join-btn">Бидэнтэй нэгд</button>
+</article>
+
+<section class="movies">
+  <div class="section-header">
+    <h2>Сүүлд нэмэгдсэн кино</h2>
+    <button id="show-more">Илүү ихийг</button>
+  </div>
+  <hr class="line">
+  <section class="movies-section">
+
+  <article class="movie-card">
+    <img src="images/movie1.jpg" alt="Movie 1">
+    <h3>The Conjuring: Last Rites</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 135 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/movie2.jpg" alt="Movie 2">
+    <h3>Tron: Ares</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 119 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/movie3.jpg" alt="Movie 3">
+    <h3>The Fantastic Four: First Steps </h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 115 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/movie4.jpg" alt="Movie 4">
+    <h3>Mission Impossible: The Final Reckoning</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 169 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/movie5.jpg" alt="Movie 5">
+    <h3>Superman</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 129 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/movie6.jpg" alt="Movie 6">
+    <h3>Weapons</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 128 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+</section>
+</section>
+
+<section class="movies">
+  <div class="section-header">
+    <h2>Сүүлд нэмэгдсэн цуврал</h2>
+    <button id="show-more">Илүү ихийг</button>
+  </div>
+  <hr class="line">
+  <section class="movies-section">
+
+  <article class="movie-card">
+    <img src="images/monster.jpg" alt="monster">
+    <h3>Monster</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 3 • Анги: 8</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/thechaircompany.jpg" alt="The Chair Company">
+    <h3>The Chair Company</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 1 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/iverson.jpg" alt="Iverson">
+    <h3>Allen Iv3rson</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 1 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/nobodywantsthis.jpg" alt="Nobody Wants This">
+    <h3>Nobody Wants This</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 2 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/thediplomat.jpg" alt="The Diplomat">
+    <h3>The Diplomat</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 3 • Анги: 8</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/wednesday.jpg" alt="Wednesday">
+    <h3>Wednesday</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 2 • Анги: 8</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+</section>
+</section>
+
+
+<section class="movies">
+  <div class="section-header">
+    <h2>Тун удахгүй</h2>
+    <button id="show-more">Илүү ихийг</button>
+  </div>
+  <hr class="line">
+  <section class="movies-section">
+
+  <article class="movie-card">
+    <img src="images/springsteen.jpg" alt="Springsteen: Deliver Me from Nowhere">
+    <h3>Springsteen: Deliver Me from Nowhere</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 120 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/regrettingyou.jpg" alt="Regretting You">
+    <h3>Regretting You</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 116 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/physical100.jpg" alt="Physical: 100">
+    <h3>Physical: 100</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 3 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/welcometoderry.jpg" alt="Welcome to Derry">
+    <h3>It: Welcome to Derry</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 1 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/bluemoon.jpg" alt="Blue Moon">
+    <h3>Blue Moon</h3>
+    <div class="neg-yum">
+      <span class="genre-year">2025 • 100 мин</span>
+      <span class="type">Кино</span>
+    </div>
+  </article>
+
+  <article class="movie-card">
+    <img src="images/talamasca.jpg" alt="talamasca">
+    <h3>Talamasca: The Secret Order</h3>
+    <div class="neg-yum">
+      <span class="genre-year">Улирал: 1 • Анги: 1</span>
+      <span class="type">Цуврал</span>
+    </div>
+  </article>
+</section>
+</section>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column brand">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </div>
+
+    <div class="footer-column">
+      <h3>Кино</h3>
+      <ul>
+        <li><a href="#">Хайх</a></li>
+        <li><a href="#">Эрэлтэд</a></li>
+        <li><a href="#">Өндөр үнэлгээтэй</a></li>
+        <li><a href="#">Шинэ гаралтууд</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Community</h3>
+      <ul>
+        <li><a href="#">Найзууд</a></li>
+        <li><a href="#">Жагсаалт</a></li>
+        <li><a href="#">Хэлэлцүүлэг</a></li>
+        <li><a href="#">Шүүмж</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Компани</h3>
+      <ul>
+        <li><a href="#">Бидний тухай</a></li>
+        <li><a href="#">Ажлын байр</a></li>
+        <li><a href="#">Холбоо барих</a></li>
+        <li><a href="#">Биднийг дэмжих</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column newsletter">
+      <h3>Сонин</h3>
+      <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <hr class="line">
+  <div class="footer-bottom">
+    <p>© 2025 CineWave. All rights reserved.</p>
+
+    <div class="footer-socials">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-x-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/customlist.js"></script>
 </body>
 </html>
