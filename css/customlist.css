@@ -149,15 +149,63 @@ body {
   color: white;
 }
 
+/* Гол хэсгийн доод хэсэг хаха */
 
-.customlist_container {
+.customlist-container {
   display: flex;
   flex-direction: column;
-  align-content: flex-start;
+  width: 70%;
+  margin: 0 auto;
+  border: 5px solid black;
+  padding: 10px;
 }
 
 .customlist-item {
+  display: flex;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
 
+.list-item-1 {
+  flex: 0 0 10%;
+  background-color: lightgreen;
+}
 
+.list-item-2 {
+  padding-left: 1%;
+  flex: 0 0 85%;
+  background-color: rgb(235, 66, 0);
+}
 
+.list-item-2 h2 {
+  background-color: yellow;
+}
+
+.list-item-2 p:nth-child(-n+3) {
+
+  display: inline-block;
+  font-size: 10px;
+  margin: 0 0;
+  background-color: turquoise;
+  
+}
+
+.list-item-2 p:nth-child(n+4) {
+
+  display: inline-block;
+  font-size: 10px;
+  background-color: turquoise;
+  
+}
+
+.list-item-3 {
+  flex: 0 0 5%;
+  background-color: #007bff;
+}
+
+.list-item-3 button {
+  background: none;
+  border: none;
 }
