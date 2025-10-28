@@ -1,9 +1,8 @@
 body {
   margin: 0;
   padding: 0;
-  color: white;
   font-family: "Nunito", "BBH Sans Bogle", sans-serif;
-  background-color: black;
+  background-color: white;
 }
 
 .navbar {
@@ -159,6 +158,6 @@ body {
 
 .customlist-item {
 
-  
+
 
 }
