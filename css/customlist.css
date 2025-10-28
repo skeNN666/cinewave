@@ -5,6 +5,8 @@ body {
   background-color: white;
 }
 
+/* MenuBar хэсэг */
+
 .navbar {
   display: flex;
   align-items: center;
@@ -151,6 +153,93 @@ body {
 
 /* Гол хэсгийн доод хэсэг хаха */
 
+.movie-info {
+  margin: 20px;
+  padding: 10px;
+  border: 2px solid black;
+  background-color: lightblue;
+  width: 40%
+}
+
+.movie-info h2 {
+  margin: 0;
+  font-size: 24px;
+  background-color: orange;
+}
+.movie-info div p {
+
+  display: inline-block;
+
+}
+
+.watch-now-button {
+  margin-top: 10px;
+  margin-right: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.watch-next-button {
+  margin: 10px 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+
+
+.create-list-button {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-header-button {
+  background-color: lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.custom-header-button div {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.custom-header-button p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-header-button button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  
+}
+
 .customlist-container {
   display: relative;
   flex-direction: column;
@@ -170,7 +259,18 @@ body {
 
 .list-item-1 {
   flex: 0 0 10%;
+  display: relative;
   background-color: lightgreen;
+}
+
+.list-item-1 button {
+  background: none;
+  display: absolute;
+  top: 0%;
+  left: 0%;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
 }
 
 .list-item-2 {
@@ -198,11 +298,32 @@ body {
   display: inline-block;
   font-size: 10px;
   background-color: turquoise;
+  margin: 0;
   
 }
 
-.list-item-3 button {
+.list-item-2 button {
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
   
+  align-items: center;
+  gap: 5px;
+
+}
+
+.list-item-2 button p {
+
+  display: inline-block;
+  margin: 0;
+
+
+}
+
+.list-item-3 button {
+
 }
 
 .list-item-3 {
