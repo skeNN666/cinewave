@@ -1,111 +1,173 @@
 const database = [
-  { name: "The Conjuring: Last Rites", category: "movies" },
-  { name: "Tron: Ares", category: "movies" },
-  { name: "The Fantastic Four: First Steps", category: "movies" },
-  { name: "Mission Impossible: The Last Reckoning", category: "movies" },
-  { name: "Superman", category: "movies" },
-  { name: "Weapons", category: "movies" },
-  { name: "Monster", category: "tv" },
-  { name: "The Chair Company", category: "tv" },
-  { name: "Nobody Wants This", category: "tv" },
-  { name: "The Diplomat", category: "tv" },
-  { name: "Wednesday", category: "tv" },
-  { name: "Springsteen: Deliver Me from Nowhere", category: "movies" },
-  { name: "Regretting You", category: "movies" },
-  { name: "Physical: 100", category: "tv" },
-  { name: "It: Welcome to Derry", category: "tv" },
-  { name: "Blue Moon", category: "movies" },
-  { name: "Talamasca: The Secret Order", category: "tv" },	
+  // Сүүлд нэмэгдсэн кино
+  { name: "The Conjuring: Last Rites", category: "movies", image: "movie1.jpg", yearOrSeason: "2025 • 135 мин" },
+  { name: "Tron: Ares", category: "movies", image: "movie2.jpg", yearOrSeason: "2025 • 119 мин" },
+  { name: "The Fantastic Four: First Steps", category: "movies", image: "movie3.jpg", yearOrSeason: "2025 • 115 мин" },
+  { name: "Mission Impossible: The Final Reckoning", category: "movies", image: "movie4.jpg", yearOrSeason: "2025 • 169 мин" },
+  { name: "Superman", category: "movies", image: "movie5.jpg", yearOrSeason: "2025 • 129 мин" },
+  { name: "Weapons", category: "movies", image: "movie6.jpg", yearOrSeason: "2025 • 128 мин" },
+  { name: "The Woman in Cabin 10", category: "movies", image: "thewomanincabin.jpg", yearOrSeason: "2025 • 95 мин" },
+
+  // Сүүлд нэмэгдсэн TV цуврал
+  { name: "Monster", category: "tv", image: "monster.jpg", yearOrSeason: "Улирал: 3 • Анги: 8" },
+  { name: "The Chair Company", category: "tv", image: "thechaircompany.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
+  { name: "Allen Iv3rson", category: "tv", image: "iverson.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
+  { name: "Nobody Wants This", category: "tv", image: "nobodywantsthis.jpg", yearOrSeason: "Улирал: 2 • Анги: 1" },
+  { name: "The Diplomat", category: "tv", image: "thediplomat.jpg", yearOrSeason: "Улирал: 3 • Анги: 8" },
+  { name: "Wednesday", category: "tv", image: "wednesday.jpg", yearOrSeason: "Улирал: 2 • Анги: 8" },
+
+  // Тун удахгүй гарах кино, TV цуврал
+  { name: "Springsteen: Deliver Me from Nowhere", category: "movies", image: "springsteen.jpg", yearOrSeason: "2025 • 120 мин" },
+  { name: "Regretting You", category: "movies", image: "regrettingyou.jpg", yearOrSeason: "2025 • 116 мин" },
+  { name: "Physical: 100", category: "tv", image: "physical100.jpg", yearOrSeason: "Улирал: 3 • Анги: 1" },
+  { name: "It: Welcome to Derry", category: "tv", image: "welcometoderry.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
+  { name: "Blue Moon", category: "movies", image: "bluemoon.jpg", yearOrSeason: "2025 • 100 мин" },
+  { name: "Talamasca: The Secret Order", category: "tv", image: "talamasca.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
 ];
 
-// Global variables
 let selectedCategory = "all";
 let filteredData = [...database];
 let currentIndex = 0;
 let isAnimating = false;
 
-// Wait for DOM to load
+const ITEMS_PER_PAGE = 6;
+let sectionState = {
+    "latest-movies": 1,
+    "latest-tv": 1,
+    "upcoming-movies": 1
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
 function initializeApp() {
-    console.log("Initializing app...");
-    
-    // Initialize carousel
     initializeCarousel();
-    
-    // Initialize filters (select + search)
     initializeFilters();
-    
-    // Apply initial filters
     applyFilters();
+    setupSections();
+}
+
+function setupSections() {
+    const latestMovies = database.filter(m => m.category === "movies" && !["Springsteen: Deliver Me from Nowhere", "Regretting You", "Blue Moon"].includes(m.name));
+    const latestTV = database.filter(m => m.category === "tv" && !["Physical: 100", "It: Welcome to Derry", "Talamasca: The Secret Order"].includes(m.name));
+    const upcoming = database.filter(m => ["Springsteen: Deliver Me from Nowhere","Regretting You","Blue Moon","Physical: 100","It: Welcome to Derry","Talamasca: The Secret Order"].includes(m.name));
+
+    renderPaginatedSection("latest-movies", latestMovies, 1);
+    renderPaginatedSection("latest-tv", latestTV, 1);
+    renderPaginatedSection("upcoming-movies", upcoming, 1);
+
+    document.querySelectorAll(".movies .section-header button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const sectionId = btn.closest(".movies").querySelector(".movies-section").id;
+            sectionState[sectionId]++;
+            const movies = getMoviesBySection(sectionId);
+            renderPaginatedSection(sectionId, movies, sectionState[sectionId]);
+        });
+    });
+}
+
+function getMoviesBySection(sectionId) {
+    switch(sectionId) {
+        case "latest-movies":
+            return database.filter(m => m.category === "movies" && !["Springsteen: Deliver Me from Nowhere", "Regretting You", "Blue Moon"].includes(m.name));
+        case "latest-tv":
+            return database.filter(m => m.category === "tv" && !["Physical: 100", "It: Welcome to Derry", "Talamasca: The Secret Order"].includes(m.name));
+        case "upcoming-movies":
+            return database.filter(m => ["Springsteen: Deliver Me from Nowhere","Regretting You","Blue Moon","Physical: 100","It: Welcome to Derry","Talamasca: The Secret Order"].includes(m.name));
+        default:
+            return [];
+    }
+}
+
+function renderPaginatedSection(containerId, movies, page) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const startIndex = 0;
+    const endIndex = page * ITEMS_PER_PAGE;
+    const visibleMovies = movies.slice(startIndex, endIndex);
+
+    container.innerHTML = visibleMovies.map(movie => `
+        <article class="movie-card">
+            <img src="images/${movie.image}" alt="${movie.name}">
+            <h3>${movie.name}</h3>
+            <div class="neg-yum">
+                <span class="genre-year">${movie.yearOrSeason}</span>
+                <span class="type">${movie.category === 'movies' ? 'Кино' : 'Цуврал'}</span>
+            </div>
+        </article>
+    `).join('');
+
+    const button = container.closest(".movies").querySelector(".section-header button");
+    button.style.display = "inline-block";
 }
 
 function initializeCarousel() {
     console.log("Initializing carousel...");
-    
-    const cards = document.querySelectorAll(".card");
-    const dots = document.querySelectorAll(".dot");
+
+    const track = document.querySelector(".carousel-track");
+    const dotsContainer = document.querySelector(".dots");
     const movieName = document.querySelector(".movie-name");
     const leftArrow = document.querySelector(".nav-arrow.left");
     const rightArrow = document.querySelector(".nav-arrow.right");
 
-    console.log("Found elements:", {
-        cards: cards.length,
-        dots: dots.length,
-        movieName: !!movieName,
-        leftArrow: !!leftArrow,
-        rightArrow: !!rightArrow
-    });
-
-    if (cards.length === 0) {
-        console.error("No cards found!");
+    if (!track || !dotsContainer) {
+        console.error("Carousel track or dots container not found!");
         return;
     }
 
-    // Carousel functions
-    window.updateCarousel = function(newIndex) {
+    // Clear existing cards and dots
+    track.innerHTML = "";
+    dotsContainer.innerHTML = "";
+
+    // Take only first 6 items
+    const carouselItems = filteredData.slice(0, 6);
+
+    // Create cards and dots dynamically
+    carouselItems.forEach((movie, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.index = i;
+        card.innerHTML = `<img src="images/${movie.image}" alt="${movie.name}">`;
+        track.appendChild(card);
+
+        const dot = document.createElement("div");
+        dot.className = "dot" + (i === 0 ? " active" : "");
+        dot.dataset.index = i;
+        dotsContainer.appendChild(dot);
+    });
+
+    let currentIndex = 0;
+    let isAnimating = false;
+
+    function updateCarousel(newIndex) {
         if (isAnimating) return;
         isAnimating = true;
 
-        currentIndex = (newIndex + cards.length) % cards.length;
+        currentIndex = (newIndex + carouselItems.length) % carouselItems.length;
+
+        const cards = document.querySelectorAll(".card");
+        const dots = document.querySelectorAll(".dot");
 
         cards.forEach((card, i) => {
             const offset = (i - currentIndex + cards.length) % cards.length;
 
-            card.classList.remove(
-                "center",
-                "left-1",
-                "left-2",
-                "right-1",
-                "right-2",
-                "hidden"
-            );
+            card.classList.remove("center", "left-1", "left-2", "right-1", "right-2", "hidden");
 
-            if (offset === 0) {
-                card.classList.add("center");
-            } else if (offset === 1) {
-                card.classList.add("right-1");
-            } else if (offset === 2) {
-                card.classList.add("right-2");
-            } else if (offset === cards.length - 1) {
-                card.classList.add("left-1");
-            } else if (offset === cards.length - 2) {
-                card.classList.add("left-2");
-            } else {
-                card.classList.add("hidden");
-            }
+            if (offset === 0) card.classList.add("center");
+            else if (offset === 1) card.classList.add("right-1");
+            else if (offset === 2) card.classList.add("right-2");
+            else if (offset === cards.length - 1) card.classList.add("left-1");
+            else if (offset === cards.length - 2) card.classList.add("left-2");
+            else card.classList.add("hidden");
         });
 
-        dots.forEach((dot, i) => {
-            dot.classList.toggle("active", i === currentIndex);
-        });
+        dots.forEach((dot, i) => dot.classList.toggle("active", i === currentIndex));
 
         if (movieName) {
             movieName.style.opacity = "0";
             setTimeout(() => {
-                movieName.textContent = filteredData[currentIndex]?.name || "No Results Found";
+                movieName.textContent = carouselItems[currentIndex]?.name || "No Results Found";
                 movieName.style.opacity = "1";
             }, 300);
         }
@@ -113,69 +175,36 @@ function initializeCarousel() {
         setTimeout(() => {
             isAnimating = false;
         }, 800);
-    };
-
-    // Event listeners for carousel
-    if (leftArrow) {
-        leftArrow.addEventListener("click", () => {
-            updateCarousel(currentIndex - 1);
-        });
     }
 
-    if (rightArrow) {
-        rightArrow.addEventListener("click", () => {
-            updateCarousel(currentIndex + 1);
-        });
-    }
+    if (leftArrow) leftArrow.addEventListener("click", () => updateCarousel(currentIndex - 1));
+    if (rightArrow) rightArrow.addEventListener("click", () => updateCarousel(currentIndex + 1));
 
-    dots.forEach((dot, i) => {
-        dot.addEventListener("click", () => {
-            updateCarousel(i);
-        });
+    const dots = document.querySelectorAll(".dot");
+    dots.forEach(dot => {
+        dot.addEventListener("click", () => updateCarousel(Number(dot.dataset.index)));
     });
 
-    cards.forEach((card, i) => {
-        card.addEventListener("click", () => {
-            updateCarousel(i);
-        });
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+        card.addEventListener("click", () => updateCarousel(Number(card.dataset.index)));
     });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") {
-            updateCarousel(currentIndex - 1);
-        } else if (e.key === "ArrowRight") {
-            updateCarousel(currentIndex + 1);
-        }
+    document.addEventListener("keydown", e => {
+        if (e.key === "ArrowLeft") updateCarousel(currentIndex - 1);
+        else if (e.key === "ArrowRight") updateCarousel(currentIndex + 1);
     });
-
     let touchStartX = 0;
     let touchEndX = 0;
 
-    document.addEventListener("touchstart", (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener("touchend", (e) => {
+    document.addEventListener("touchstart", e => touchStartX = e.changedTouches[0].screenX);
+    document.addEventListener("touchend", e => {
         touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
         const diff = touchStartX - touchEndX;
-
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                updateCarousel(currentIndex + 1);
-            } else {
-                updateCarousel(currentIndex - 1);
-            }
-        }
-    }
-
-    // Initial carousel update
+        if (Math.abs(diff) > 50) updateCarousel(diff > 0 ? currentIndex + 1 : currentIndex - 1);
+    });
     updateCarousel(0);
 }
+
 
 function initializeFilters() {
     console.log("Initializing filters...");
@@ -188,7 +217,6 @@ function initializeFilters() {
         searchInput: !!searchInput
     });
 
-    // Event listeners for filters
     if (categorySelect) {
         categorySelect.addEventListener("change", function() {
             selectedCategory = this.value;
@@ -217,10 +245,8 @@ function applyFilters() {
     console.log("Selected category:", selectedCategory);
     console.log("Search query:", query);
 
-    // Reset to first item when filtering
     currentIndex = 0;
     
-    // Update carousel with filtered data
     if (typeof updateCarousel === 'function' && filteredData.length > 0) {
         updateCarousel(0);
     } else if (filteredData.length === 0) {
@@ -230,3 +256,19 @@ function applyFilters() {
         }
     }
 }
+
+function renderMovieSection(containerId, movies) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = movies.map(movie => `
+        <article class="movie-card">
+            <img src="images/${movie.image}" alt="${movie.name}">
+            <h3>${movie.name}</h3>
+            <div class="neg-yum">
+                <span class="genre-year">${movie.yearOrSeason}</span>
+                <span class="type">${movie.category === 'movies' ? 'Кино' : 'Цуврал'}</span>
+            </div>
+        </article>
+    `).join('');
+}
+
