@@ -2,8 +2,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Nunito", "BBH Sans Bogle", sans-serif;
-  background-color: black;
 }
+
+/* Navbar */
 
 .navbar {
   display: flex;
@@ -153,3 +154,6 @@ body {
   background-color: #007bff;
   color: white;
 }
+
+/* Main */
+
