@@ -6,13 +6,14 @@ body {
 
 /* Navbar */
 
+
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #1e1e1e;
   color: white;
-  padding: 10px 25px;
+  padding: 10px 11%;
   font-family: "Nunito", sans-serif;
 }
 
@@ -172,7 +173,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(21, 253, 222);
+    background-image: url(../images/monster.jpg);
+    background-size: contain;
+    background-image: rgb(21, 253, 222);
     width: 350px; height: 510px;
     border-radius: 10px;
 }
@@ -189,11 +192,12 @@ body {
     gap: 10px;
 }
 
-.famouse-movie {
+.famous-movie {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #007bff;
+    background-size: contain;
     border-radius: 10px;
     height: 250px; width: 180px;
 }
