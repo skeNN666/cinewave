@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carousel + Info Panel with Background</title>
+<title>Carousel + Info Panel + Bottom Actions</title>
 <style>
 body {
   margin:0;
@@ -14,39 +14,41 @@ body {
 }
 
 /* Container */
-.container {
+.carousel-container {
   display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  padding: 0 40px;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 90vh;
+  padding: 20px 60px;
   background-size: cover;
   background-position: center;
   transition: background 0.8s ease;
 }
 
-/* Panel Info & Carousel - 50/50 */
-.info-panel, .carousel { flex:1; max-width:50%; }
+/* Top actions: info panel + carousel */
+.top-actions {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  align-items: center;
+}
 
-/* Info Panel */
+/* Info panel */
 .info-panel {
-  text-align:left;
-  padding:30px;
+  flex:1;
+  padding:20px;
 }
 .info-panel .title { font-size:2.8rem; font-weight:700; margin-bottom:12px; }
 .info-panel .year-duration { font-size:1rem; margin-bottom:16px; }
-.info-panel .description { font-size:1.3rem; line-height:1.6; margin-bottom:24px; }
+.info-panel .description { font-size:1.2rem; line-height:1.6; margin-bottom:24px; }
 
-/* Buttons: Watch + nav inline */
 .buttons {
   display:flex;
-  align-items:center;
   gap:12px;
 }
 .watch {
-  background:#ff3d3d; color:white; padding:16px 40px; border:none;
-  border-radius:8px; cursor:pointer; font-size:1.2rem; transition:0.2s;
+  background:#ff3d3d; color:white; padding:12px 36px; border:none;
+  border-radius:8px; cursor:pointer; font-size:1.1rem; transition:0.2s;
 }
 .watch:hover { transform:scale(1.05); }
 
@@ -58,7 +60,7 @@ body {
 .nav-buttons button:hover{ background: rgba(255,255,255,0.25); }
 
 /* Carousel */
-.carousel { height:400px; perspective:1200px; position:relative; margin-right: 10%; }
+.carousel { flex:1; height:400px; perspective:1200px; position:relative; }
 .track { width:100%; height:100%; position:relative; transform-style: preserve-3d; }
 .slide {
   position:absolute; top:50%; left:50%;
@@ -77,30 +79,36 @@ body {
 .left-2{ transform:translate(calc(-50% - 380px),-50%) scale(.6) rotateY(26deg); opacity:.6; z-index:3;}
 .right-2{ transform:translate(calc(-50% + 380px),-50%) scale(.6) rotateY(-26deg); opacity:.6; z-index:3;}
 
-/* Watchlist Section */
-.bottom-bar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 60px;
-  background: rgba(0,0,0,0.6);
+/* Bottom actions */
+.bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  background: rgba(0,0,0,0.4);
+  margin-top: auto;
+  gap:20px;
 }
-.left-panel {
+.bottom-left, .bottom-mid, .bottom-right {
+  display: flex;
+  align-items: center;
+  gap:12px;
+}
+.bottom-mid { flex:1; justify-content:center; }
+.bottom-right { justify-content:flex-end; }
+
+.watchlist {
   display:flex;
   align-items:center;
-  gap:10px;
-  font-size:1.2rem;
+  gap:8px;
   cursor:pointer;
 }
-.left-panel svg {
-  width:22px; height:22px; fill:white;
+.watchlist .name {
+  font-size:1.2rem;
+  color:white;
+  font-weight:600;
 }
-.right-panel {
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-.right-panel button {
+.action-btn {
   display:flex;
   align-items:center;
   gap:6px;
@@ -110,68 +118,68 @@ body {
   font-size:1rem;
   cursor:pointer;
 }
-.right-panel button svg {
-  width:18px; height:18px; fill:white;
-}
-.divider {
-  width:1px;
-  height:20px;
-  background:white;
-  opacity:0.3;
-}
 </style>
 </head>
 <body>
 
-<div class="container" id="container">
-  <!-- Info Panel -->
-  <div class="info-panel">
-    <h2 class="title">Movie 1</h2>
-    <p class="year-duration">2023 • 2h 10m</p>
-    <p class="description">Movie 1-ийн товч тайлбар</p>
-    <div class="buttons">
-      <button class="watch">Watch Now</button>
-      <div class="nav-buttons">
-        <button class="left">‹</button>
-        <button class="right">›</button>
+<div class="carousel-container" id="carousel-container">
+  <!-- Top actions -->
+  <div class="top-actions">
+    <!-- Info panel -->
+    <div class="info-panel">
+      <h2 class="title">Movie 1</h2>
+      <p class="year-duration">2023 • 2h 10m</p>
+      <p class="description">Movie 1-ийн товч тайлбар</p>
+      <div class="buttons">
+        <button class="watch">Watch Now</button>
+        <div class="nav-buttons">
+          <button class="left">‹</button>
+          <button class="right">›</button>
+        </div>
+      </div>
+    </div>
+    <!-- Carousel -->
+    <div class="carousel">
+      <div class="track" id="track">
+        <div class="slide" data-index="0" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
+        <div class="slide" data-index="1" data-bg="../photos/wallpapers/supermanwallpaper.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
+        <div class="slide" data-index="2" data-bg="../photos/wallpapers/weaponswallpaper.webp" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
+        <div class="slide" data-index="3" data-bg="../photos/wallpapers/conjuringwallpaper.jpg" style="background-image:url('../photos/posters/conjuringposter.jpg');"></div>
+        <div class="slide" data-index="4" data-bg="../photos/wallpapers/fantasticwallpaper.jpg" style="background-image:url('../photos/posters/fantasticposter.jpg');"></div>
       </div>
     </div>
   </div>
 
-  <!-- Carousel -->
-  <div class="carousel">
-    <div class="track" id="track">
-      <div class="slide" data-index="0" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
-      <div class="slide" data-index="1" data-bg="../photos/wallpapers/supermanwallpaper.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
-      <div class="slide" data-index="2" data-bg="../photos/wallpapers/weaponswallpaper.webp" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
-      <div class="slide" data-index="3" data-bg="../photos/wallpapers/conjuringwallpaper.jpg" style="background-image:url('../photos/posters/conjuringposter.jpg');"></div>
-      <div class="slide" data-index="4" data-bg="../photos/wallpapers/fantasticwallpaper.jpg" style="background-image:url('../photos/posters/fantasticposter.jpg');"></div>
+  <!-- Bottom actions -->
+  <div class="bottom-actions">
+    <div class="bottom-left">
+      <div class="watchlist">
+        <div class="edit-icon" id="editWatchlist">✎</div>
+        <div class="name" id="watchlistName">Custom Watch List Name</div>
+      </div>
+    </div>
+    <div class="bottom-mid">
+      <button class="action-btn" id="btnEdit">Edit</button>
+      <button class="action-btn" id="btnPublic">Public</button>
+      <button class="action-btn" id="btnExport">Export</button>
+      <button class="action-btn" id="btnShare">Share</button>
+    </div>
+    <div class="bottom-right">
+      <button class="action-btn" id="btnhaha">Create new watchlist</button>
     </div>
   </div>
 </div>
 
-<!-- Bottom bar -->
-<div class="bottom-bar">
-  <div class="left-panel" id="watchlist-panel">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92.92l9.19-9.19 1.83 1.83-9.19 9.19H5.92v-1.83z"/>
-    </svg>
-    <span id="watchlist-name">Custom Watchlist Name</span>
-  </div>
-
-  <div class="right-panel">
-    <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17h18v2H3zm0-7h18v2H3zm0-7h18v2H3z"/></svg>Edit</button>
-    <div class="divider"></div>
-    <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.5C9 4.5 7 6.5 7 9.5v5c0 3 2 5 5 5s5-2 5-5v-5c0-3-2-5-5-5z"/></svg>Public</button>
-    <div class="divider"></div>
-    <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.34v4h6.66V9h3.34L12 2z"/></svg>Export</button>
-    <div class="divider"></div>
-    <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11A2.5 2.5 0 1 0 18 7.92c0 .24-.04.47-.09.7L10.86 12.7c.05.23.09.46.09.7s-.04.47-.09.7l7.05 4.11c.52-.47 1.2-.77 1.96-.77a2.5 2.5 0 1 0 0-5z"/></svg>Share</button>
-  </div>
-</div>
-
 <script>
-// Info data
+const slides = Array.from(document.querySelectorAll(".slide"));
+const N = slides.length;
+let center = 0;
+
+const titleEl = document.querySelector(".title");
+const yearEl = document.querySelector(".year-duration");
+const descEl = document.querySelector(".description");
+const container = document.getElementById("carousel-container");
+
 const titles = ["Tron: Ares","Superman","Weapons","Conjuring 4","Fantastic 4"];
 const years = ["2023","2022","2025","2024","2021"];
 const durations = ["2h 10m","1h 55m","2h 13m","2h 5m","1h 48m"];
@@ -183,24 +191,12 @@ const descriptions = [
   "Movie 5-ийн тайлбар"
 ];
 
-const slides = Array.from(document.querySelectorAll(".slide"));
-const N = slides.length;
-let center = 0;
-
-// Info panel elements
-const titleEl = document.querySelector(".title");
-const yearEl = document.querySelector(".year-duration");
-const descEl = document.querySelector(".description");
-const container = document.getElementById("container");
-
-// Update info
 function updateInfo(idx){
   titleEl.textContent = titles[idx];
   yearEl.textContent = `${years[idx]} • ${durations[idx]}`;
   descEl.textContent = descriptions[idx];
 }
 
-// Update carousel + info + background
 function setClasses(){
   const c = center;
   const mod = i => (i+N)%N;
@@ -213,54 +209,9 @@ function setClasses(){
 
   updateInfo(c);
 
-  // Background update
   const bgUrl = slides[c].dataset.bg;
-  if(bgUrl){
-    container.style.backgroundImage = `url('${bgUrl}')`;
-  }
+  if(bgUrl){ container.style.backgroundImage = `url('${bgUrl}')`; }
 }
 
-// Navigation
 document.querySelector(".left").addEventListener("click", ()=>{ center = (center-1+N)%N; setClasses(); });
-document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses(); });
-
-// Keyboard arrows
-window.addEventListener("keydown", e=>{
-  if(e.key==='ArrowLeft'){ center = (center-1+N)%N; setClasses(); }
-  if(e.key==='ArrowRight'){ center = (center+1)%N; setClasses(); }
-});
-
-setClasses();
-
-/* ---- Editable Watchlist Name ---- */
-const nameSpan = document.getElementById("watchlist-name");
-nameSpan.addEventListener("click", () => {
-  const currentText = nameSpan.textContent;
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = currentText;
-  input.style.fontSize = "1.2rem";
-  input.style.background = "transparent";
-  input.style.color = "white";
-  input.style.border = "none";
-  input.style.borderBottom = "1px solid white";
-  input.style.outline = "none";
-  input.style.width = "250px";
-
-  nameSpan.replaceWith(input);
-  input.focus();
-
-  input.addEventListener("blur", () => {
-    const newText = input.value.trim() || currentText;
-    nameSpan.textContent = newText;
-    input.replaceWith(nameSpan);
-  });
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") input.blur();
-  });
-});
-</script>
-
-</body>
-</html>
+document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses
