@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CINEWAVE</title>
+
+  <!-- Google Font -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <link rel="stylesheet" href="../css/movie-detail.css">
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <a href="../index.html" class="logo">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="movies.html">Кино</a>
+      <a href="customlist.html">Жагсаалт</a>
+      <a href="help.html">Тусламж</a>
+
+      <div class="search-group">
+        <div class="all-dropdown">
+          <select id="category-select" class="category-select">
+            <option value="all">Бүгд</option>
+            <option value="movies">Кино</option>
+            <option value="tv">TV цуврал</option>
+            <option value="celebs">Алдартнууд</option>
+          </select>
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="Хайх..." id="search-input">
+        </div>
+      </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+  </nav>
+</header>
+
+<main class="movie-details-page">
+  <div class="movie-details-container">
+    <div class="left-column">
+      <img src="../images/movie1.jpg" alt="Movie Poster" class="movie-poster">
+      <button class="trailer-btn">Трейлэр үзэх</button>
+    </div>
+
+    <div class="middle-column">
+      <div class="info-rating-row">
+        <div class="title-info">
+          <h1 class="movie-title">The Conjuring: Last Rites</h1>
+          <p class="movie-info">2025 • 135 мин</p>
+        </div>
+        <div class="ratings">
+          <div class="wave-rating">
+            <span>Wave: </span>
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="user-rating">
+            <span>Your: </span>
+            <i class="far fa-star"></i>
+          </div>
+        </div>
+      </div>
+
+      <p class="movie-description">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iure, dolor. Quod molestiae minus at amet iste reprehenderit earum voluptatem quia repudiandae quidem, nam, fugit dolorem odit in iure doloremque? Sequi molestias ducimus rem ad dignissimos quasi placeat soluta doloremque nihil, animi eum, neque mollitia maiores nam optio atque! Minus repudiandae ipsa, eligendi itaque explicabo aliquid autem officia facere quaerat nesciunt perspiciatis eius beatae magni quam provident odit dolorum eum qui accusamus sint dolorem commodi possimus? Praesentium totam, eos magnam, accusamus commodi beatae ducimus illo impedit cumque est aut, ut hic! Consectetur mollitia non perferendis. Quia maxime tenetur qui obcaecati id quidem. Consectetur quod repudiandae quia illum quaerat sapiente obcaecati, facilis quasi maxime magni. Consectetur, maxime? Suscipit, libero sapiente, harum magni a praesentium voluptas obcaecati eaque quaerat assumenda alias! Aperiam autem voluptates natus placeat impedit molestias alias, consectetur nulla vel recusandae odio aspernatur officiis, distinctio eos, debitis deserunt magni repellendus. At!
+      </p>
+
+      <div class="extra-section">
+          <div class="extra-tabs">
+            <button class="tab-btn active" data-tab="cast">Жүжигчид</button>
+            <button class="tab-btn" data-tab="crew">Арын албаны ажилчид</button>
+            <button class="tab-btn" data-tab="genres">Төрөл</button>
+            <button class="tab-btn" data-tab="details">Нэмэлт мэдээлэл</button>
+          </div>
+
+          <div class="tab-content active" id="cast">
+            <div class="people-grid">
+              <div class="person">
+                <img src="../images/actor1.jpg" alt="Actor 1">
+                <p>Actor 1</p>
+              </div>
+              <div class="person">
+                <img src="../images/actor2.jpg" alt="Actor 2">
+                <p>Actor 2</p>
+              </div>
+              <div class="person">
+                <img src="../images/actor3.jpg" alt="Actor 3">
+                <p>Actor 3</p>
+              </div>
+              <div class="person">
+                <img src="../images/actor4.jpg" alt="Actor 4">
+                <p>Actor 4</p>
+              </div>
+              <div class="person">
+                <img src="../images/actor5.jpg" alt="Actor 5">
+                <p>Actor 5</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="crew">
+            <div class="people-grid">
+              <div class="person">
+                <img src="../images/crew1.jpg" alt="Crew 1">
+                <p>Crew 1</p>
+              </div>
+              <div class="person">
+                <img src="../images/crew2.jpg" alt="Crew 2">
+                <p>Crew 2</p>
+              </div>
+              <div class="person">
+                <img src="../images/crew3.jpg" alt="Crew 3">
+                <p>Crew 3</p>
+              </div>
+              <div class="person">
+                <img src="../images/crew4.jpg" alt="Crew 4">
+                <p>Crew 4</p>
+              </div>
+              <div class="person">
+                <img src="../images/crew5.jpg" alt="Crew 5">
+                <p>Crew 5</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="genres">
+            <p>Action, Horror, Thriller</p>
+          </div>
+
+          <div class="tab-content" id="details">
+            <p>Directed by James Wan. Produced by Peter Safran. Language: English. Country: USA. Release Date: 2025.</p>
+          </div>
+        </div>
+        <!-- Related photos section -->
+        <div class="related-photos">
+          <h3>Photos</h3>
+          <hr class="line">
+          <div class="photos-grid">
+            <img src="../images/photo1.jpg" alt="Movie Photo 1">
+            <img src="../images/photo2.jpg" alt="Movie Photo 2">
+            <img src="../images/photo3.jpg" alt="Movie Photo 3">
+            <img src="../images/photo4.jpg" alt="Movie Photo 4">
+          </div>
+        </div>
+
+    </div>
+
+    <div class="right-column">
+      <button class="watch-now-btn">
+        <i class="fas fa-play"></i> Үзэх
+      </button>
+      <button class="add-watchlist-btn">
+        <i class="fas fa-plus"></i> Жагсаалтад нэмэх
+      </button>
+      <button class="mark-watched-btn">
+        <i class="fas fa-eye"></i> Үзсэн
+      </button>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column brand">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </div>
+
+    <div class="footer-column">
+      <h3>Кино</h3>
+      <ul>
+        <li><a href="#">Хайх</a></li>
+        <li><a href="#">Эрэлтэд</a></li>
+        <li><a href="#">Өндөр үнэлгээтэй</a></li>
+        <li><a href="#">Шинэ гаралтууд</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Community</h3>
+      <ul>
+        <li><a href="#">Найзууд</a></li>
+        <li><a href="#">Жагсаалт</a></li>
+        <li><a href="#">Хэлэлцүүлэг</a></li>
+        <li><a href="#">Шүүмж</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Компани</h3>
+      <ul>
+        <li><a href="#">Бидний тухай</a></li>
+        <li><a href="#">Ажлын байр</a></li>
+        <li><a href="#">Холбоо барих</a></li>
+        <li><a href="#">Биднийг дэмжих</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column newsletter">
+      <h3>Сонин</h3>
+      <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+
+  <hr class="line">
+  <div class="footer-bottom">
+    <p>© 2025 CineWave. All rights reserved.</p>
+
+    <div class="footer-socials">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-x-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const tabButtons = document.querySelectorAll(".tab-btn");
+const tabContents = document.querySelectorAll(".tab-content");
+
+tabButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.tab;
+
+    tabButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    tabContents.forEach(content => {
+      content.classList.remove("active");
+      if (content.id === target) {
+        content.classList.add("active");
+      }
+    });
+  });
+});
+
+</script>
+</body>
+</html>
