@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel + Info Panel + Actions</title>
+<style>
+body {
+  margin:0;
+  font-family: "Inter", sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x:hidden;
+}
+
+/* Main container (background changes) */
+.container {
+  width: 100%;
+  min-height: 80vh;
+  background: url('images/bg1.jpg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column; /* column болгосон */
+  justify-content: space-between; /* гол + bottom хооронд зай */
+  padding: 0 60px;
+  box-sizing: border-box;
+}
+
+/* Гол content wrapper */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+/* Left info panel */
+.info-panel {
+  width: 50%;
+  max-width: 700px;
+  color: white;
+}
+.info-panel .title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.info-panel .year-duration {
+  font-size: 1.1rem;
+  color: #bbb;
+  margin-bottom: 18px;
+}
+.info-panel .description {
+  font-size: 1.1rem;
+  color: #ddd;
+  margin-bottom: 26px;
+  line-height: 1.6;
+}
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.watch {
+  background: #ff3d3d;
+  color: white;
+  padding: 14px 40px;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.watch:hover { transform: scale(1.05); }
+
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+}
+.nav-buttons button {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-buttons button:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Right carousel */
+.carousel {
+  width: 50%;
+  height: 100%;
+  position: relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  perspective:1000px;
+}
+
+.slide {
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:250px;
+  height:400px;
+  transform-origin:center;
+  transform: translate(-50%,-50%) scale(.6);
+  transition: transform 0.6s cubic-bezier(.22,.9,.3,1), opacity 0.6s;
+  border-radius:12px;
+  overflow:hidden;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  opacity:0.5;
+}
+.center { transform: translate(-50%,-50%) scale(1); opacity:1; z-index:5; }
+.left { transform: translate(calc(-50% - 220px), -50%) scale(.8); z-index:4; opacity:.8; }
+.right { transform: translate(calc(-50% + 220px), -50%) scale(.8); z-index:4; opacity:.8; }
+.left-2 { transform: translate(calc(-50% - 440px), -50%) scale(.6); z-index:3; opacity:.4; }
+.right-2 { transform: translate(calc(-50% + 440px), -50%) scale(.6); z-index:3; opacity:.4; }
+
+/* Bottom section */
+.bottom-actions {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px 0;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex: space-between;
+  gap: 20px;
+}
+.bottom-left, .bottom-mid, .bottom-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.watchlist {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.watchlist .name {
+  font-size: 1.15rem;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.watchlist .edit-icon {
+  display: inline-grid;
+  place-items: center;
+  width:36px; height:36px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background .15s, transform .12s;
+}
+.watchlist .edit-icon:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.98rem;
+  min-height: 44px;
+  transition: background .12s, transform .08s;
+  position: relative;
+  margin-left: 8px;
+}
+.action-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+.action-btn svg { width:18px; height:18px; }
+.action-btn:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: rgba(255,255,255,0.2);
+}
+
+@media (max-width: 900px) {
+  .main-content { flex-direction: column; }
+  .info-panel, .carousel { width: 100%; }
+  .bottom-actions { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+  <div class="main-content">
+    <div class="info-panel">
+      <h2 class="title">Movie 1</h2>
+      <p class="year-duration">2023 • 2h 10m</p>
+      <p class="description">Movie 1-ийн товч тайлбар энд бичигдэнэ. Товч бөгөөд сонирхолтой текст.</p>
+      <div class="buttons">
+        <button class="watch">Watch Now</button>
+        <div class="nav-buttons">
+          <button class="left" id="prevBtn">‹</button>
+          <button class="right" id="nextBtn">›</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel" id="carousel">
+      <div class="slide" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
+      <div class="slide" data-bg="images/bg2.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
+      <div class="slide" data-bg="images/bg3.jpg" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
+      <div class="slide" data-bg="images/bg4.jpg" style="background-image:url('images/slide4.jpg');"></div>
+      <div class="slide" data-bg="images/bg5.jpg" style="background-image:url('images/slide5.jpg');"></div>
+    </div>
+  </div>
+
+  <!-- Bottom actions дотор container -->
+  <div class="bottom-actions">
+    <div class="bottom-left">
+      <div class="watchlist">
+        <div class="edit-icon" id="editWatchlist" title="Rename watch list">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+        </div>
+        <div class="name" id="watchlistName">Custom Watch List Name</div>
+        
+      </div>
+    </div>
+    <div class="bottom-mid">
+      <div class="actions-row">
+        <button class="action-btn" id="btnEdit">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/></svg>
+          Edit
+        </button>
+        <button class="action-btn" id="btnPublic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" fill="currentColor"/></svg>
+          Public
+        </button>
+        <button class="action-btn" id="btnExport">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 20h14v-2H5v2zM12 3v12l4-4h-3V3h-2z" fill="currentColor"/></svg>
+          Export
+        </button>
+        <button class="action-btn" id="btnShare">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M18 16.08a2.99 2.99 0 01-1.96.77L8.91 12.7a3.3 3.3 0 000-1.39l7.02-4.11A3 3 0 1015 5.91c0 .21.03.41.08.6L8.06 10.6A3 3 0 006 9c0-.21.03-.41.08-.6L1.6 6.45A3 3 0 104.6 9.45l6.47 3.79a3 3 0 000 1.52L4.6 18.8a3 3 0 10-3-2.35l4.48-1.9c-.05-.19-.08-.39-.08-.6a3 3 0 102.96-3.94l7.02-4.11c.05.19.08.39.08.6A3 3 0 1018 16.08z" fill="currentColor"/></svg>
+          Share
+        </button>
+      </div>
+    </div>
+    <div class="bottom-right">
+      <button class="action-btn" id="btnhaha">
+          Create new watchlist
+        </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll(".slide");
+const container = document.getElementById("container");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+
+let center = 0;
+const N = slides.length;
+
+function setClasses(){
+  slides.forEach(s=>s.className='slide');
+  const mod = i => (i+N)%N;
+  slides[center].classList.add('center');
+  slides[mod(center-1)].classList.add('left');
+  slides[mod(center+1)].classList.add('right');
+  slides[mod(center-2)].classList.add('left-2');
+  slides[mod(center+2)].classList.add('right-2');
+
+  updateInfo(center);
+
+  const bgUrl = slides[center].dataset.bg;
+  if(bgUrl) container.style.backgroundImage = `url('${bgUrl}')`;
+}
+
+function updateInfo(i){
+  const titles = ["Movie 1","Movie 2","Movie 3","Movie 4","Movie 5"];
+  const years = ["2023","2022","2025","2024","2021"];
+  const durations = ["2h 10m","1h 55m","2h 13m","2h 5m","1h 48m"];
+  const desc = [
+    "Movie 1-ийн товч тайлбар энд бичигдэнэ.",
+    "Movie 2-ийн товч тайлбар энд бичигдэнэ.",
+    "Movie 3-ийн товч тайлбар энд бичигдэнэ.",
+    "Movie 4-ийн товч тайлбар энд бичигдэнэ.",
+    "Movie 5-ийн товч тайлбар энд бичигдэнэ."
+  ];
+
+  document.querySelector(".title").textContent = titles[i];
+  document.querySelector(".year-duration").textContent = `${years[i]} • ${durations[i]}`;
+  document.querySelector(".description").textContent = desc[i];
+}
+
+nextBtn.onclick = ()=>{ center = (center+1)%N; setClasses(); };
+prevBtn.onclick = ()=>{ center = (center-1+N)%N; setClasses(); };
+setClasses();
+
+/* Bottom actions logic */
+document.getElementById('editWatchlist').onclick = ()=> {
+  const el = document.getElementById('watchlistName');
+  const val = prompt("Enter new watch list name:", el.textContent);
+  if(val) el.textContent = val;
+};
+document.getElementById('btnEdit').onclick = ()=>console.log("Edit clicked");
+document.getElementById('btnPublic').onclick = ()=>console.log("Public clicked");
+document.getElementById('btnExport').onclick = ()=>console.log("Export clicked");
+document.getElementById('btnShare').onclick = ()=>console.log("Share clicked");
+</script>
+</body>
+</html>

@@ -4,26 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CINEWAVE</title>
-
-  <!-- Google Font -->
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-  <link rel="stylesheet" href="./css/home.css">
+  <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
 <header>
   <nav class="navbar">
-    <a href="index.html" class="logo">
+    <a href="../index.html" class="logo">
       <span class="cine">CINE</span><span class="wave">WAVE</span>
     </a>
 
     <div class="nav-links">
       <a href="movies.html">Кино</a>
-      <a href="html/customlist.html">Жагсаалт</a>
+      <a href="customlist.html">Жагсаалт</a>
       <a href="help.html">Тусламж</a>
 
       <div class="search-group">
@@ -50,57 +47,45 @@
     <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
   </nav>
 </header>
-<section class="movie-slider">
-  <div class="carousel-container">
-    <button class="nav-arrow left">‹</button>
-    <div class="carousel-track">
+  <div class="container">
+    <div class="login-section" id="loginSection">
+      <h1>Нэвтрэх</h1>
+      <button class="login-button cinewave" onclick="signInCinewave()">Cinewave-ээр нэвтрэх</button>
+      <button class="login-button google" onclick="signInGoogle()">Google-ээр нэвтрэх</button>
+      <button class="login-button facebook" onclick="signInFacebook()">Facebook-ээр нэвтрэх</button>
+
+      <div class="or-separator"><span>OR</span></div>
+
+      <button class="login-button create-account" id="showCreateAccount">Бүртгүүлэх</button>
     </div>
-    <button class="nav-arrow right">›</button>
-  </div>
 
-  <div class="movie-info">
-    <h2 class="movie-name"></h2>
-  </div>
-
-  <div class="dots">
-  </div>
-</section>
-
-<article class="promo-section">
-  <img src="images/promo-bg.jpg" alt="Promo" class="promo-bg">
-  <div class="slogan top-left">Дуртай киногоо үз</div>
-  <div class="slogan center">Бодол санаагаа бич</div>
-  <div class="slogan bottom-right">Бусдад түгээ</div>
-  <button class="join-btn">Бидэнтэй нэгд</button>
-</article>
-
-<section class="movies">
-  <div class="section-header">
-    <h2>Сүүлд нэмэгдсэн кино</h2>
-    <button id="show-more">Илүү ихийг</button>
-  </div>
-  <hr class="line">
-  <section class="movies-section" id="latest-movies"></section>
-</section>
-
-<section class="movies">
-    <div class="section-header">
-      <h2>Сүүлд нэмэгдсэн цуврал</h2>
-      <button id="show-more">Илүү ихийг</button>
+    <div class="login-section hidden" id="createAccountSection">
+      <h1>Бүртгүүлэх</h1>
+      <form class="create-account-form">
+        <input type="text" placeholder="Нэр" required>
+        <input type="email" placeholder="e-мейл хаяг" required>
+        <input type="tel" placeholder="Утасны дугаар" required>
+        <input type="password" placeholder="Нууц үг" required>
+        <input type="password" placeholder="Нууц үгээ дахин оруул" required>
+        <button type="submit" class="login-button cinewave">Cinewave-д бүртгүүлэх</button>
+      </form>
+      <div class="or-separator"></div>
+      <div class="signin-link" id="backToLogin">
+        Бүртгэлтэй хэрэглэгч? <span>Нэвтрэх →</span>
+      </div>
     </div>
-    <hr class="line">
-  <section class="movies-section" id="latest-tv"></section>
-</section>
 
-
-<section class="movies">
-  <div class="section-header">
-    <h2>Тун удахгүй</h2>
-    <button id="show-more">Илүү ихийг</button>
+    <div class="info-section">
+      <h2>It's so much better when you sign in</h2>
+      <ul>
+        <li>Personalized recommendations — Titles tailored to your taste.</li>
+        <li>Your Watchlist — Track your future views and get reminders.</li>
+        <li>Your ratings — Rate and remember what you watch.</li>
+        <li>Contribute to IMDb — Add data that helps millions of fans.</li>
+        <li>Preferred services — Edit your preferred streaming services.</li>
+      </ul>
+    </div>
   </div>
-  <hr class="line">
-  <section class="movies-section" id="upcoming-movies"></section>
-</section>
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-column brand">
@@ -160,7 +145,32 @@
     </div>
   </div>
 </footer>
+  <script>
+    const showCreate = document.getElementById("showCreateAccount");
+    const backToLogin = document.getElementById("backToLogin");
+    const loginSection = document.getElementById("loginSection");
+    const createSection = document.getElementById("createAccountSection");
 
-<script src="js/main.js"></script>
+    showCreate.addEventListener("click", () => {
+      loginSection.classList.add("hidden");
+      createSection.classList.remove("hidden");
+    });
+
+    backToLogin.addEventListener("click", () => {
+      createSection.classList.add("hidden");
+      loginSection.classList.remove("hidden");
+    });
+    function signInCinewave() {
+    window.location.href = './cinewave-dashboard.html';
+  }
+
+    function signInGoogle() {
+      window.location.href = 'https://accounts.google.com/signin';
+    }
+
+    function signInFacebook() {
+      window.location.href = 'https://www.facebook.com/login';
+    }
+  </script>
 </body>
 </html>

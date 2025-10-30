@@ -1,0 +1,159 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", "BBH Sans Bogle", sans-serif;
+}
+
+/* Navbar */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 10px 25px;
+  font-family: "Nunito", sans-serif;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+  margin-right: 30px;
+}
+
+.logo .cine {
+  color: #007bff;
+}
+
+.logo .wave {
+  color: #00ffff;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;              
+  margin-right: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #00ffff;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  max-width: 1000px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.all-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.category-select {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 8px 32px 8px 12px; /* More padding on right for arrow */
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 120px;
+  height: 2.75rem;
+  font-size: var(--font-size-base);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Arrow styling - positioned closer to text */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Reduced from 12px to 10px */
+  background-size: 14px; /* Slightly smaller arrow */
+}
+
+.category-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 .15rem rgba(201, 13, 48, .18);
+  outline: none;
+}
+
+/* Remove default arrow in IE */
+.category-select::-ms-expand {
+  display: none;
+}
+
+.search-box {
+  position: relative;
+  z-index: 1000; /* Lower than dropdown */
+  flex: 1;
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: none;
+  color: white;
+  padding: 10px 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
+}
+
+.search-box input:focus {
+  background-color: #444;
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger svg {
+  transition: transform 0.2s ease;
+}
+
+.hamburger:hover svg {
+  transform: scale(1.1);
+}
+
+.sign-in {
+  background-color: #00ffff;
+  border: none;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sign-in:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Main */
+
