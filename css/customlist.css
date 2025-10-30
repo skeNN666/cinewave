@@ -380,9 +380,6 @@ body {
 }
 
 .carousel-button {
-  /* position: absolute; */
-  bottom: 5%;
-  transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid #ccc;
   width: 50px;
@@ -430,3 +427,12 @@ body {
     right: -50px;
   }
 }
+
+
+
+
+.carousel-section {
+  display: flex;
+  align-items: center;
+}
+
