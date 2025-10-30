@@ -1,165 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Movie Detail — Demo</title>
-  <style>
-    :root{
-      --bg:#0b0b0b; --card:#0f0f10; --muted:#9aa3ad; --accent:#00aaff;
-      --glass: rgba(255,255,255,0.03);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue';background:var(--bg);color:#fff}
-    .container{max-width:980px;margin:28px auto;padding:20px}
-
-    /* Header */
-    header.site{display:flex;align-items:center;gap:16px}
-    .logo{font-weight:700;font-size:20px;color:var(--accent)}
-    .search{flex:1}
-    .search input{width:100%;padding:10px;border-radius:6px;border:0;background:#111;color:#ddd}
-
-    /* Hero carousel */
-    .hero{background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent);padding:14px;border-radius:8px;overflow:hidden}
-    .hero-inner{display:flex;gap:18px}
-    .hero-left{flex:1}
-    .hero-right{width:220px}
-    .big-visual{height:260px;border-radius:6px;background-size:cover;background-position:center;position:relative}
-    .carousel-controls{position:absolute;left:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
-    .btn{background:var(--glass);border-radius:6px;padding:8px 10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
-
-    /* Card row */
-    .card-row{display:flex;margin-top:16px;gap:18px}
-    .poster{width:170px;min-width:170px;border-radius:8px;background:#222;height:240px;background-size:cover;background-position:center}
-    .meta{flex:1;background:transparent}
-    .title{font-size:20px;font-weight:700;margin-bottom:6px}
-    .submeta{color:var(--muted);margin-bottom:8px}
-    .badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#0f1720;margin-right:8px;font-size:13px}
-    .actions{margin-top:10px}
-    .cta{display:inline-block;background:var(--accent);color:#001;padding:10px 14px;border-radius:8px;font-weight:600;margin-right:8px}
-    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:9px 12px;border-radius:8px}
-
-    /* filters */
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    .chip{padding:6px 10px;border-radius:999px;background:#111;font-size:13px;border:1px solid rgba(255,255,255,0.03)}
-
-    /* gallery */
-    .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
-    .thumb{height:90px;background:#202022;border-radius:6px;background-size:cover;background-position:center}
-
-    /* reviews */
-    .reviews{margin-top:26px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:14px;border-radius:8px}
-    .rating{display:flex;align-items:center;gap:12px}
-    .rating .score{font-size:22px;font-weight:700}
-    .progress{height:8px;background:#111;border-radius:6px;overflow:hidden;flex:1}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,#00aaff,#6a00ff)}
-    .review-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-    .review-item{background:#0d0d0d;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.02)}
-
-    /* footer */
-    footer.site{margin-top:32px;color:var(--muted);font-size:13px}
-
-    /* responsive */
-    @media (max-width:900px){.container{padding:12px}.hero-inner{flex-direction:column}.hero-right{width:100%}.card-row{flex-direction:column}.gallery{grid-template-columns:repeat(3,1fr)}.review-list{grid-template-columns:repeat(1,1fr)}}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/movie.css">
+  <title>Document</title>
 </head>
 <body>
-  <div class="container">
-    <header class="site">
-      <div class="logo">CINEMAVE</div>
-      <div class="search"><input placeholder="Search movies, actors, genres..." /></div>
-      <div><button class="btn">Log in</button></div>
-    </header>
+  <header>
+    <nav class="navbar">
+    <a href="index.html" class="logo">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </a>
 
-    <section class="hero" aria-label="movie hero">
-      <div class="hero-inner">
-        <div class="hero-left">
-          <div class="big-visual" style="background-image:url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=1200&auto=format&fit=crop&q=60')">
-            <div class="carousel-controls">
-              <button class="btn">◀</button>
-              <button class="btn">▶</button>
-            </div>
-          </div>
+    <div class="nav-links">
+      <a href="movies.html">Кино</a>
+      <a href="html/customlist.html">Жагсаалт</a>
+      <a href="help.html">Тусламж</a>
 
-          <div class="card-row">
-            <div class="poster" style="background-image:url('https://images.unsplash.com/photo-1542204625-6e6a1b0c2d6a?w=800&auto=format&fit=crop&q=60')"></div>
-            <div class="meta">
-              <div class="title">SUPERMAN</div>
-              <div class="submeta">Action • Adventure • 2025 • 2h 15m</div>
-              <div class="chips">
-                <span class="chip">Drama</span>
-                <span class="chip">Sci-Fi</span>
-                <span class="chip">IMAX</span>
-                <span class="chip">Family</span>
-              </div>
-
-              <div class="actions">
-                <a class="cta" href="#">Watch Trailer</a>
-                <button class="ghost">Add to watchlist</button>
-              </div>
-
-              <p style="color:var(--muted);margin-top:10px;line-height:1.4">Clark Kent befriends an alien visitor and must confront threats from Earth and beyond. The world watches as a new protector rises.</p>
-            </div>
-          </div>
-
-          <div class="gallery" aria-hidden="false">
-            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1542204625-6e6a1b0c2d6a?w=400&auto=format&fit=crop&q=60')"></div>
-            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1517604931442-7f9b7f9b3d4f?w=400&auto=format&fit=crop&q=60')"></div>
-            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1505685296765-3a2736de412f?w=400&auto=format&fit=crop&q=60')"></div>
-            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&auto=format&fit=crop&q=60')"></div>
-          </div>
-
+      <div class="search-group">
+        <div class="all-dropdown">
+          <select id="category-select" class="category-select">
+            <option value="all">Бүгд</option>
+            <option value="movies">Кино</option>
+            <option value="tv">TV цуврал</option>
+            <option value="celebs">Алдартнууд</option>
+          </select>
         </div>
-
-        <aside class="hero-right">
-          <div style="background:#081018;padding:12px;border-radius:8px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <strong>Score</strong>
-              <div style="font-weight:700">8.5</div>
-            </div>
-            <div style="color:var(--muted);font-size:13px;margin-bottom:8px">356.4k votes</div>
-            <button class="cta" style="width:100%">Buy Tickets</button>
-            <div style="margin-top:10px">
-              <button class="ghost" style="width:100%;margin-bottom:6px">Watch options</button>
-              <button class="ghost" style="width:100%">Share</button>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="reviews">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">User Reviews</h3>
-        <div class="rating">
-          <div class="score">8.5</div>
-          <div style="color:var(--muted)">/10</div>
+        <div class="search-box">
+          <input type="text" placeholder="Хайх..." id="search-input">
         </div>
       </div>
 
-      <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-        <div style="width:120px;color:var(--muted);font-size:13px">Positive</div>
-        <div class="progress"><i style="width:78%"></i></div>
-      </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
 
-      <div class="review-list">
-        <div class="review-item"><strong>2:10 — John Doe</strong><div style="color:var(--muted);margin-top:6px;font-size:13px">Great action and emotion.</div></div>
-        <div class="review-item"><strong>3:45 — Jane Roe</strong><div style="color:var(--muted);margin-top:6px;font-size:13px">A modern classic.</div></div>
-        <div class="review-item"><strong>1:20 — Akira</strong><div style="color:var(--muted);margin-top:6px;font-size:13px">Loved the cinematography.</div></div>
-      </div>
-    </section>
-
-    <footer class="site">
-      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div>© 2025 Cinemave</div>
-        <div>Privacy • Terms • Contact</div>
-      </div>
-    </footer>
-  </div>
-
-  <script>
-    // small interactive touches (carousel stub)
-    // This demo uses background-image CSS. For real projects swap to <img> tags and lazy loading.
-  </script>
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+  </nav>
+  </header>
+  <main></main>
+  <footer></footer>
 </body>
 </html>
