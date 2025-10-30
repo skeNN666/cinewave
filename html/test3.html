@@ -174,6 +174,7 @@ body {
 .carousel-container {
   display: flex;
   gap: 20px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 80vh;
@@ -182,6 +183,18 @@ body {
   background-position: center;
   transition: background 0.8s ease;
 }
+
+.top-actions {
+  display:flex;
+  width:100%;
+  max-width:2000px;
+  gap:20px;
+  align-items:center;
+  border: 1px solid rgba(255,255,255,0.1);
+  justify-content:center;
+}
+
+
 
 /* Panel Info & Carousel - 50/50 */
 .info-panel, .carousel { flex:1; max-width:50%; }
@@ -234,48 +247,187 @@ body {
 .left-2{ transform:translate(calc(-50% - 380px),-50%) scale(.6) rotateY(26deg); opacity:.6; z-index:3;}
 .right-2{ transform:translate(calc(-50% + 380px),-50%) scale(.6) rotateY(-26deg); opacity:.6; z-index:3;}
 
-/* Watchlist Section */
-.bottom-bar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 60px;
-  background: rgba(0,0,0,0.6);
+/* Bottom section */
+.bottom-actions {
+  
+  display: flex;
+  flex: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 2000px;
+  margin: 20px 0;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.1);
+  gap: 20px;
 }
-.left-panel {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:1.2rem;
-  cursor:pointer;
+
+.watchlist {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
 }
-.left-panel svg {
-  width:22px; height:22px; fill:white;
+.watchlist .name {
+  font-size: 1.15rem;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.right-panel {
-  display:flex;
-  align-items:center;
-  gap:14px;
+.watchlist .edit-icon {
+  display: inline-grid;
+  place-items: center;
+  width:36px; height:36px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background .15s, transform .12s;
 }
-.right-panel button {
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:none;
-  border:none;
-  color:white;
-  font-size:1rem;
-  cursor:pointer;
+.watchlist .edit-icon:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
 }
-.right-panel button svg {
-  width:18px; height:18px; fill:white;
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.98rem;
+  min-height: 44px;
+  transition: background .12s, transform .08s;
+  position: relative;
+  margin-left: 8px;
 }
-.divider {
-  width:1px;
-  height:20px;
-  background:white;
-  opacity:0.3;
+.action-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+.action-btn svg { width:18px; height:18px; }
+.action-btn:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: rgba(255,255,255,0.2);
 }
+
+.customlist-container {
+  display: relative;
+  flex-direction: column;
+  width: 70%;
+  margin: 0 auto;
+  background-color: white;
+  border: 5px solid black;
+  padding: 10px;
+}
+
+.customlist-item {
+  display: flex;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
+
+.list-item-1 {
+  flex: 0 0 10%;
+  display: relative;
+  background-color: lightgreen;
+}
+
+.list-item-1 button {
+  background: none;
+  display: absolute;
+  top: 0%;
+  left: 0%;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.list-item-2 {
+
+  flex: 0 0 84%;
+  padding-left: 1%;
+  background-color: rgb(235, 66, 0);
+}
+
+.list-item-2 h2 {
+  background-color: yellow;
+}
+
+.list-item-2 p:nth-child(-n+3) {
+
+  display: inline-block;
+  font-size: 10px;
+  margin: 0 0;
+  background-color: turquoise;
+  
+}
+
+.list-item-2 p:nth-child(n+4) {
+
+  display: inline-block;
+  font-size: 10px;
+  background-color: turquoise;
+  margin: 0;
+  
+}
+
+.list-item-2 button {
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  
+  align-items: center;
+  gap: 5px;
+
+}
+
+.list-item-2 button p {
+
+  display: inline-block;
+  margin: 0;
+
+
+}
+
+.list-item-3 {
+
+  display: flex;
+  flex: 0 0 5%;
+  justify-content: flex-end ;
+  background-color: #007bff;
+}
+
+.list-item-3 button {
+  background: none;
+  border: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 </style>
 </head>
 <body>
@@ -383,8 +535,275 @@ body {
         </button>
     </div>
   </div>
-
 </div>
+
+<section class="customlist-container">
+      <article class="customlist-item">
+
+        <div class="list-item-1">
+          <img src="" alt=""><button><svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 4C4 2.34315 5.34315 1 7 1H17C18.6569 1 20 2.34315 20 4V20.9425C20 22.6114 18.0766 23.5462 16.7644 22.5152L12 18.7717L7.23564 22.5152C5.92338 23.5462 4 22.6114 4 20.9425V4ZM7 3C6.44772 3 6 3.44772 6 4V20.9425L12 16.2283L18 20.9425V4C18 3.44772 17.5523 3 17 3H7Z" fill="#0F0F0F"/>
+</svg></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 width="20px" height="20px" viewBox="0 0 940.688 940.688"
+	 xml:space="preserve">
+<g>
+	<path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8
+		c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601
+		c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z"/>
+</g>
+</svg>7.4</p>
+            <p>(313K)</p>
+            <button><svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41394 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg><p>Rate</p></button>
+            <button><svg fill="#000000" width="25px" height="25px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.108 10.044c-3.313 0-6 2.687-6 6s2.687 6 6 6 6-2.686 6-6-2.686-6-6-6zM16.108 20.044c-2.206 0-4.046-1.838-4.046-4.044s1.794-4 4-4c2.206 0 4 1.794 4 4s-1.748 4.044-3.954 4.044zM31.99 15.768c-0.012-0.050-0.006-0.104-0.021-0.153-0.006-0.021-0.020-0.033-0.027-0.051-0.011-0.028-0.008-0.062-0.023-0.089-2.909-6.66-9.177-10.492-15.857-10.492s-13.074 3.826-15.984 10.486c-0.012 0.028-0.010 0.057-0.021 0.089-0.007 0.020-0.021 0.030-0.028 0.049-0.015 0.050-0.009 0.103-0.019 0.154-0.018 0.090-0.035 0.178-0.035 0.269s0.017 0.177 0.035 0.268c0.010 0.050 0.003 0.105 0.019 0.152 0.006 0.023 0.021 0.032 0.028 0.052 0.010 0.027 0.008 0.061 0.021 0.089 2.91 6.658 9.242 10.428 15.922 10.428s13.011-3.762 15.92-10.422c0.015-0.029 0.012-0.058 0.023-0.090 0.007-0.017 0.020-0.030 0.026-0.050 0.015-0.049 0.011-0.102 0.021-0.154 0.018-0.090 0.034-0.177 0.034-0.27 0-0.088-0.017-0.175-0.035-0.266zM16 25.019c-5.665 0-11.242-2.986-13.982-8.99 2.714-5.983 8.365-9.047 14.044-9.047 5.678 0 11.203 3.067 13.918 9.053-2.713 5.982-8.301 8.984-13.981 8.984z"></path>
+</svg><p>Watched</p></button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+          
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+       <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+      <article class="customlist-item">
+        <div class="list-item-1">
+          <img src="" alt=""><button></button>
+        </div>
+        <div class="list-item-2">
+          <h2>Tron: Ares</h2>
+          <div>
+            <p>2025</p>
+            <p>2h9m</p>
+            <p>PG-13</p><br>
+            <p>Й</p>
+            <p>Й</p>
+            <button>A</button>
+            <button>A</button>
+            <button>A</button>
+          </div>
+        </div>
+        <div class="list-item-3">
+          <button>
+            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="#1C274C"/>
+            </svg>
+          </button>
+        </div>
+      </article>
+    </section>
 
 <script>
 // Info data

@@ -1,29 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/customlist.css" />
-  <title>CINEWAVE</title>
-
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel + Info Panel with Background</title>
+<link rel="stylesheet" href="../css/customlist.css">
 </head>
-
 <body>
-  <header>
-    <nav class="navbar">
-      <a href="../index.html" class="logo">
-        <span class="cine">CINE</span><span class="wave">WAVE</span>
-      </a>
 
-      <div class="nav-links">
-        <a href="movies.html">Кино</a>
-        <a href="customlist.html">Жагсаалт</a>
-        <a href="help.html">Тусламж</a>
+  <header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="movies.html">Кино</a>
+      <a href="html/customlist.html">Жагсаалт</a>
+      <a href="help.html">Тусламж</a>
 
       <div class="search-group">
         <div class="all-dropdown">
@@ -39,100 +33,87 @@
         </div>
       </div>
 
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-          <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-          <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-          <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-      </button>
-      <button class="sign-in" onclick="window.location.href='login.html'">Нэвтрэх</button>
-    </nav>
-  </header>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
 
-<!-- Гол хэсэг -->
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+  </nav>
+</header>
 
-  <main class="main">
-    <section>
+<div class="carousel-container" id="carousel-container">
 
-      <div class="carousel-section">
-        <article class="movie-info">
-        <h2>TRON : Ares</h2>
-        <div>
-          <p>2013</p>
-          <p>1h52m</p>
-        </div>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-          when an unknown printer took a galley of type and scrambled it to make a type specimen book</p>
-        <button class="watch-now-button">WATCH NOW</button>
-        <button class="carousel-button prev">‹</button>
-        <button class="carousel-button next">›</button>
-      </article>
-
-        <div class="carousel-wrapper">
-        <div class="carousel">
-            <div class="carousel-container">
-                <div class="card">1</div>
-                <div class="card">2</div>
-                <div class="card">3</div>
-                <div class="card">4</div>
-                <div class="card">5</div>
-                <div class="card">6</div>
-                <div class="card">7</div>
-                <div class="card">8</div>
-                <div class="card">9</div>
-                <div class="card">10</div>
-            </div>
-            
-        </div>
+  <div class="top-actions">
+    <div class="info-panel">
+    <h2 class="title">Movie 1</h2>
+    <p class="year-duration">2023 • 2h 10m</p>
+    <p class="description">Movie 1-ийн товч тайлбар</p>
+    <div class="buttons">
+      <button class="watch">Watch Now</button>
+      <div class="nav-buttons">
+        <button class="left">‹</button>
+        <button class="right">›</button>
+      </div>
     </div>
+  </div>
 
-      </div>
+  <!-- Carousel -->
+  <div class="carousel">
+    <div class="track" id="track">
+      <div class="slide" data-index="0" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
+      <div class="slide" data-index="1" data-bg="../photos/wallpapers/supermanwallpaper.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
+      <div class="slide" data-index="2" data-bg="../photos/wallpapers/weaponswallpaper.webp" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
+      <div class="slide" data-index="3" data-bg="../photos/wallpapers/conjuringwallpaper.jpg" style="background-image:url('../photos/posters/conjuringposter.jpg');"></div>
+      <div class="slide" data-index="4" data-bg="../photos/wallpapers/fantasticwallpaper.jpg" style="background-image:url('../photos/posters/fantasticposter.jpg');"></div>
+    </div>
+  </div>
+  </div>
+  <!-- Info Panel -->
+  
 
-      
-    <div>
-        <button></button>
-        <div class="customlist_name"></div>
-      </div>
-
-        <button class="create-list-button" id="creat-list-button">Create new list</button>
-
-        <div class="custom-header-button">
-          <div>
-            <button><svg width="20px" height="20px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 6C12.6569 6 14 4.65685 14 3C14 1.34315 12.6569 0 11 0C9.34315 0 8 1.34315 8 3C8 3.22371 8.02449 3.44169 8.07092 3.65143L4.86861 5.65287C4.35599 5.24423 3.70652 5 3 5C1.34315 5 0 6.34315 0 8C0 9.65685 1.34315 11 3 11C3.70652 11 4.35599 10.7558 4.86861 10.3471L8.07092 12.3486C8.02449 12.5583 8 12.7763 8 13C8 14.6569 9.34315 16 11 16C12.6569 16 14 14.6569 14 13C14 11.3431 12.6569 10 11 10C10.2935 10 9.644 10.2442 9.13139 10.6529L5.92908 8.65143C5.97551 8.44169 6 8.22371 6 8C6 7.77629 5.97551 7.55831 5.92908 7.34857L9.13139 5.34713C9.644 5.75577 10.2935 6 11 6Z" fill="#000000"/>
-</svg></button>
-            <p>Edit</p>
-          </div>
-          <div>
-            <button><svg width="20px" height="20px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 6C12.6569 6 14 4.65685 14 3C14 1.34315 12.6569 0 11 0C9.34315 0 8 1.34315 8 3C8 3.22371 8.02449 3.44169 8.07092 3.65143L4.86861 5.65287C4.35599 5.24423 3.70652 5 3 5C1.34315 5 0 6.34315 0 8C0 9.65685 1.34315 11 3 11C3.70652 11 4.35599 10.7558 4.86861 10.3471L8.07092 12.3486C8.02449 12.5583 8 12.7763 8 13C8 14.6569 9.34315 16 11 16C12.6569 16 14 14.6569 14 13C14 11.3431 12.6569 10 11 10C10.2935 10 9.644 10.2442 9.13139 10.6529L5.92908 8.65143C5.97551 8.44169 6 8.22371 6 8C6 7.77629 5.97551 7.55831 5.92908 7.34857L9.13139 5.34713C9.644 5.75577 10.2935 6 11 6Z" fill="#000000"/>
-</svg></button>
-            <p>Public</p>
-          </div>
-          <div>
-            <button><svg width="25px" height="25px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>export</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Combined-Shape" fill="#000000" transform="translate(64.000000, 48.915055)">
-            <path d="M170.666667,36.418278 L170.666667,79.0849447 L42.6666667,79.0849447 L42.6666667,356.418278 L341.333333,356.418278 L341.333333,228.418278 L384,228.418278 L384,399.084945 L0,399.084945 L0,36.418278 L170.666667,36.418278 Z M313.751611,0 L414.169889,100.418278 L313.751611,200.836556 L283.581722,170.666667 L332.485,121.751 L277.333333,121.751611 C243.249474,121.751611 215.388568,148.395237 213.441977,181.991125 L213.333333,185.751611 L213.333333,292.418278 L170.666667,292.418278 L170.666667,185.751611 C170.666667,128.391511 215.942543,81.6061582 272.706355,79.1834943 L277.333333,79.0849447 L332.484,79.084 L283.581722,30.1698893 L313.751611,0 Z">
-
-</path>
-        </g>
-    </g>
-</svg></button>
-            <p>Export</p>
-          </div>
-          <div>
-            <button><svg width="20px" height="20px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 6C12.6569 6 14 4.65685 14 3C14 1.34315 12.6569 0 11 0C9.34315 0 8 1.34315 8 3C8 3.22371 8.02449 3.44169 8.07092 3.65143L4.86861 5.65287C4.35599 5.24423 3.70652 5 3 5C1.34315 5 0 6.34315 0 8C0 9.65685 1.34315 11 3 11C3.70652 11 4.35599 10.7558 4.86861 10.3471L8.07092 12.3486C8.02449 12.5583 8 12.7763 8 13C8 14.6569 9.34315 16 11 16C12.6569 16 14 14.6569 14 13C14 11.3431 12.6569 10 11 10C10.2935 10 9.644 10.2442 9.13139 10.6529L5.92908 8.65143C5.97551 8.44169 6 8.22371 6 8C6 7.77629 5.97551 7.55831 5.92908 7.34857L9.13139 5.34713C9.644 5.75577 10.2935 6 11 6Z" fill="#000000"/>
-</svg></button>
-            <p>Share</p>
-          </div>
+  <!-- Bottom actions дотор container -->
+  <div class="bottom-actions">
+    <div class="bottom-left">
+      <div class="watchlist">
+        <div class="edit-icon" id="editWatchlist" title="Rename watch list">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
         </div>
+        <div class="name" id="watchlistName">Custom Watch List Name</div>
+        
+      </div>
+    </div>
+    <div class="bottom-mid">
+      <div class="actions-row">
+        <button class="action-btn" id="btnEdit">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/></svg>
+          Edit
+        </button>
+        <button class="action-btn" id="btnPublic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" fill="currentColor"/></svg>
+          Public
+        </button>
+        <button class="action-btn" id="btnExport">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 20h14v-2H5v2zM12 3v12l4-4h-3V3h-2z" fill="currentColor"/></svg>
+          Export
+        </button>
+        <button class="action-btn" id="btnShare">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M18 16.08a2.99 2.99 0 01-1.96.77L8.91 12.7a3.3 3.3 0 000-1.39l7.02-4.11A3 3 0 1015 5.91c0 .21.03.41.08.6L8.06 10.6A3 3 0 006 9c0-.21.03-.41.08-.6L1.6 6.45A3 3 0 104.6 9.45l6.47 3.79a3 3 0 000 1.52L4.6 18.8a3 3 0 10-3-2.35l4.48-1.9c-.05-.19-.08-.39-.08-.6a3 3 0 102.96-3.94l7.02-4.11c.05.19.08.39.08.6A3 3 0 1018 16.08z" fill="currentColor"/></svg>
+          Share
+        </button>
+      </div>
+    </div>
+    <div class="bottom-right">
+      <button class="action-btn" id="btnhaha">
+          Create new watchlist
+        </button>
+    </div>
+  </div>
+</div>
 
-    </section>
-    <section class="customlist-container">
+<section class="customlist-container">
       <article class="customlist-item">
 
         <div class="list-item-1">
@@ -400,9 +381,7 @@
       </article>
     </section>
 
-  </main>
-  <footer></footer>
+<script src="../js/customlist.js"></script>
 
-  <script src="../js/customlist.js"></script>
 </body>
 </html>
