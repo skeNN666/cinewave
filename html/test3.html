@@ -4,14 +4,435 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carousel + Info Panel with Background</title>
-<link rel="stylesheet" href="../css/customlist.css">
+<style>
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", "BBH Sans Bogle", sans-serif;
+  background-color: black;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 10px 25px;
+  font-family: "Nunito", sans-serif;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+  margin-right: 30px;
+}
+
+.logo .cine {
+  color: #007bff;
+}
+
+.logo .wave {
+  color: #00ffff;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;              
+  margin-right: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #00ffff;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  max-width: 1000px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.all-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.category-select {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 8px 32px 8px 12px; /* More padding on right for arrow */
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 120px;
+  height: 2.75rem;
+  font-size: var(--font-size-base);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Arrow styling - positioned closer to text */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Reduced from 12px to 10px */
+  background-size: 14px; /* Slightly smaller arrow */
+}
+
+.category-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 .15rem rgba(201, 13, 48, .18);
+  outline: none;
+}
+
+/* Remove default arrow in IE */
+.category-select::-ms-expand {
+  display: none;
+}
+
+.search-box {
+  position: relative;
+  z-index: 1000; /* Lower than dropdown */
+  flex: 1;
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: none;
+  color: white;
+  padding: 10px 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
+}
+
+.search-box input:focus {
+  background-color: #444;
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger svg {
+  transition: transform 0.2s ease;
+}
+
+.hamburger:hover svg {
+  transform: scale(1.1);
+}
+
+.sign-in {
+  background-color: #00ffff;
+  border: none;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sign-in:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+body {
+  margin:0;
+  font-family: Inter, sans-serif;
+  overflow-x:hidden;
+  background:#000;
+  color:white;
+}
+
+/* Container */
+.carousel-container {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  padding: 0 40px;
+  background-size: cover;
+  background-position: center;
+  transition: background 0.8s ease;
+}
+
+.top-actions {
+  display:flex;
+  width:100%;
+  max-width:2000px;
+  gap:20px;
+  align-items:center;
+  border: 1px solid rgba(255,255,255,0.1);
+  justify-content:center;
+}
+
+
+
+/* Panel Info & Carousel - 50/50 */
+.info-panel, .carousel { flex:1; max-width:50%; }
+
+/* Info Panel */
+.info-panel {
+  text-align:left;
+  padding:30px;
+}
+.info-panel .title { font-size:2.8rem; font-weight:700; margin-bottom:12px; }
+.info-panel .year-duration { font-size:1rem; margin-bottom:16px; }
+.info-panel .description { font-size:1.3rem; line-height:1.6; margin-bottom:24px; }
+
+/* Buttons: Watch + nav inline */
+.buttons {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.watch {
+  background:#ff3d3d; color:white; padding:16px 40px; border:none;
+  border-radius:8px; cursor:pointer; font-size:1.2rem; transition:0.2s;
+}
+.watch:hover { transform:scale(1.05); }
+
+.nav-buttons { display:flex; gap:8px; }
+.nav-buttons button{
+  background: rgba(255,255,255,0.1); color:white; width:45px; height:45px;
+  border-radius:50%; border:none; cursor:pointer; font-size:1.5rem; transition:0.2s;
+}
+.nav-buttons button:hover{ background: rgba(255,255,255,0.25); }
+
+/* Carousel */
+.carousel { height:400px; perspective:1200px; position:relative; margin-right: 10%; }
+.track { width:100%; height:100%; position:relative; transform-style: preserve-3d; }
+.slide {
+  position:absolute; top:50%; left:50%;
+  width:250px; height:400px;
+  transform-origin:center;
+  transform: translate(-50%,-50%) scale(.6) translateZ(-200px);
+  transition: transform 0.6s cubic-bezier(.22,.9,.3,1), opacity 0.6s;
+  border-radius:12px; overflow:hidden;
+  background-size: cover;
+  background-position: center;
+  opacity:0.5; z-index:1;
+}
+.center{ transform:translate(-50%,-50%) scale(1) translateZ(0); opacity:1; z-index:5;}
+.left{ transform:translate(calc(-50% - 200px),-50%) scale(.82) rotateY(18deg); opacity:.9; z-index:4;}
+.right{ transform:translate(calc(-50% + 200px),-50%) scale(.82) rotateY(-18deg); opacity:.9; z-index:4;}
+.left-2{ transform:translate(calc(-50% - 380px),-50%) scale(.6) rotateY(26deg); opacity:.6; z-index:3;}
+.right-2{ transform:translate(calc(-50% + 380px),-50%) scale(.6) rotateY(-26deg); opacity:.6; z-index:3;}
+
+/* Bottom section */
+.bottom-actions {
+  
+  display: flex;
+  flex: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 2000px;
+  margin: 20px 0;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.1);
+  gap: 20px;
+}
+
+.watchlist {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  padding: 14px 18px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.watchlist .name {
+  font-size: 1.15rem;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.watchlist .edit-icon {
+  display: inline-grid;
+  place-items: center;
+  width:36px; height:36px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background .15s, transform .12s;
+}
+.watchlist .edit-icon:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.98rem;
+  min-height: 44px;
+  transition: background .12s, transform .08s;
+  position: relative;
+  margin-left: 8px;
+}
+.action-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+.action-btn svg { width:18px; height:18px; }
+.action-btn:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: rgba(255,255,255,0.2);
+}
+
+.customlist-container {
+  display: relative;
+  flex-direction: column;
+  width: 70%;
+  margin: 0 auto;
+  background-color: white;
+  border: 5px solid black;
+  padding: 10px;
+}
+
+.customlist-item {
+  display: flex;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+}
+
+.list-item-1 {
+  flex: 0 0 10%;
+  display: relative;
+  background-color: lightgreen;
+}
+
+.list-item-1 button {
+  background: none;
+  display: absolute;
+  top: 0%;
+  left: 0%;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.list-item-2 {
+
+  flex: 0 0 84%;
+  padding-left: 1%;
+  background-color: rgb(235, 66, 0);
+}
+
+.list-item-2 h2 {
+  background-color: yellow;
+}
+
+.list-item-2 p:nth-child(-n+3) {
+
+  display: inline-block;
+  font-size: 10px;
+  margin: 0 0;
+  background-color: turquoise;
+  
+}
+
+.list-item-2 p:nth-child(n+4) {
+
+  display: inline-block;
+  font-size: 10px;
+  background-color: turquoise;
+  margin: 0;
+  
+}
+
+.list-item-2 button {
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  
+  align-items: center;
+  gap: 5px;
+
+}
+
+.list-item-2 button p {
+
+  display: inline-block;
+  margin: 0;
+
+
+}
+
+.list-item-3 {
+
+  display: flex;
+  flex: 0 0 5%;
+  justify-content: flex-end ;
+  background-color: #007bff;
+}
+
+.list-item-3 button {
+  background: none;
+  border: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+</style>
 </head>
 <body>
 
   <header>
-
-    <!-- Menu bar -->
-
   <nav class="navbar">
     <a href="index.html" class="logo">
       <span class="cine">CINE</span><span class="wave">WAVE</span>
@@ -49,10 +470,7 @@
 
 <div class="carousel-container" id="carousel-container">
 
-  <!-- Top actions -->
   <div class="top-actions">
-
-    <!-- Info Panel -->
     <div class="info-panel">
     <h2 class="title">Movie 1</h2>
     <p class="year-duration">2023 • 2h 10m</p>
@@ -77,10 +495,10 @@
     </div>
   </div>
   </div>
-  
+  <!-- Info Panel -->
   
 
-  <!-- Bottom actions -->
+  <!-- Bottom actions дотор container -->
   <div class="bottom-actions">
     <div class="bottom-left">
       <div class="watchlist">
@@ -118,8 +536,6 @@
     </div>
   </div>
 </div>
-
-<!-- Custom Жагсаалт -->
 
 <section class="customlist-container">
       <article class="customlist-item">
@@ -389,7 +805,97 @@
       </article>
     </section>
 
-<script src="../js/customlist.js"></script>
+<script>
+// Info data
+const titles = ["Tron: Ares","Superman","Weapons","Conjuring 4","Fantastic 4"];
+const years = ["2023","2022","2025","2024","2021"];
+const durations = ["2h 10m","1h 55m","2h 13m","2h 5m","1h 48m"];
+const descriptions = [
+  "Movie 1-ийн товч тайлбар",
+  "Movie 2-ийн тайлбар",
+  "Movie 3-ийн тайлбар",
+  "Movie 4-ийн тайлбар",
+  "Movie 5-ийн тайлбар"
+];
+
+const slides = Array.from(document.querySelectorAll(".slide"));
+const N = slides.length;
+let center = 0;
+
+// Info panel elements
+const titleEl = document.querySelector(".title");
+const yearEl = document.querySelector(".year-duration");
+const descEl = document.querySelector(".description");
+const container = document.getElementById("carousel-container");
+
+// Update info
+function updateInfo(idx){
+  titleEl.textContent = titles[idx];
+  yearEl.textContent = `${years[idx]} • ${durations[idx]}`;
+  descEl.textContent = descriptions[idx];
+}
+
+// Update carousel + info + background
+function setClasses(){
+  const c = center;
+  const mod = i => (i+N)%N;
+  slides.forEach(s=>s.className='slide');
+  slides[c].classList.add('center');
+  slides[mod(c-1)].classList.add('left');
+  slides[mod(c+1)].classList.add('right');
+  slides[mod(c-2)].classList.add('left-2');
+  slides[mod(c+2)].classList.add('right-2');
+
+  updateInfo(c);
+
+  // Background update
+  const bgUrl = slides[c].dataset.bg;
+  if(bgUrl){
+    container.style.backgroundImage = `url('${bgUrl}')`;
+  }
+}
+
+// Navigation
+document.querySelector(".left").addEventListener("click", ()=>{ center = (center-1+N)%N; setClasses(); });
+document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses(); });
+
+// Keyboard arrows
+window.addEventListener("keydown", e=>{
+  if(e.key==='ArrowLeft'){ center = (center-1+N)%N; setClasses(); }
+  if(e.key==='ArrowRight'){ center = (center+1)%N; setClasses(); }
+});
+
+setClasses();
+
+/* ---- Editable Watchlist Name ---- */
+const nameSpan = document.getElementById("watchlist-name");
+nameSpan.addEventListener("click", () => {
+  const currentText = nameSpan.textContent;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentText;
+  input.style.fontSize = "1.2rem";
+  input.style.background = "transparent";
+  input.style.color = "white";
+  input.style.border = "none";
+  input.style.borderBottom = "1px solid white";
+  input.style.outline = "none";
+  input.style.width = "250px";
+
+  nameSpan.replaceWith(input);
+  input.focus();
+
+  input.addEventListener("blur", () => {
+    const newText = input.value.trim() || currentText;
+    nameSpan.textContent = newText;
+    input.replaceWith(nameSpan);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") input.blur();
+  });
+});
+</script>
 
 </body>
 </html>
