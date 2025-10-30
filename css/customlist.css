@@ -356,11 +356,6 @@ body {
 
   flex: 0 0 84%;
   padding-left: 1%;
-  background-color: rgb(235, 66, 0);
-}
-
-.list-item-2 h2 {
-  background-color: yellow;
 }
 
 .list-item-2 p:nth-child(-n+3) {
@@ -406,7 +401,6 @@ body {
   display: flex;
   flex: 0 0 5%;
   justify-content: flex-end ;
-  background-color: #007bff;
 }
 
 .list-item-3 button {
