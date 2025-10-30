@@ -3,8 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carousel + Info Panel + Bottom Actions</title>
+<title>Carousel + Info Panel with Background</title>
 <style>
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", "BBH Sans Bogle", sans-serif;
+  background-color: black;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 10px 25px;
+  font-family: "Nunito", sans-serif;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+  margin-right: 30px;
+}
+
+.logo .cine {
+  color: #007bff;
+}
+
+.logo .wave {
+  color: #00ffff;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;              
+  margin-right: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #00ffff;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  max-width: 1000px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.all-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.category-select {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 8px 32px 8px 12px; /* More padding on right for arrow */
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 120px;
+  height: 2.75rem;
+  font-size: var(--font-size-base);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Arrow styling - positioned closer to text */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Reduced from 12px to 10px */
+  background-size: 14px; /* Slightly smaller arrow */
+}
+
+.category-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 .15rem rgba(201, 13, 48, .18);
+  outline: none;
+}
+
+/* Remove default arrow in IE */
+.category-select::-ms-expand {
+  display: none;
+}
+
+.search-box {
+  position: relative;
+  z-index: 1000; /* Lower than dropdown */
+  flex: 1;
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: none;
+  color: white;
+  padding: 10px 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: 15px;
+}
+
+.search-box input:focus {
+  background-color: #444;
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger svg {
+  transition: transform 0.2s ease;
+}
+
+.hamburger:hover svg {
+  transform: scale(1.1);
+}
+
+.sign-in {
+  background-color: #00ffff;
+  border: none;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sign-in:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 body {
   margin:0;
   font-family: Inter, sans-serif;
@@ -16,39 +173,37 @@ body {
 /* Container */
 .carousel-container {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  height: 90vh;
-  padding: 20px 60px;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  padding: 0 40px;
   background-size: cover;
   background-position: center;
   transition: background 0.8s ease;
 }
 
-/* Top actions: info panel + carousel */
-.top-actions {
-  display: flex;
-  gap: 20px;
-  flex: 1;
-  align-items: center;
-}
+/* Panel Info & Carousel - 50/50 */
+.info-panel, .carousel { flex:1; max-width:50%; }
 
-/* Info panel */
+/* Info Panel */
 .info-panel {
-  flex:1;
-  padding:20px;
+  text-align:left;
+  padding:30px;
 }
 .info-panel .title { font-size:2.8rem; font-weight:700; margin-bottom:12px; }
 .info-panel .year-duration { font-size:1rem; margin-bottom:16px; }
-.info-panel .description { font-size:1.2rem; line-height:1.6; margin-bottom:24px; }
+.info-panel .description { font-size:1.3rem; line-height:1.6; margin-bottom:24px; }
 
+/* Buttons: Watch + nav inline */
 .buttons {
   display:flex;
+  align-items:center;
   gap:12px;
 }
 .watch {
-  background:#ff3d3d; color:white; padding:12px 36px; border:none;
-  border-radius:8px; cursor:pointer; font-size:1.1rem; transition:0.2s;
+  background:#ff3d3d; color:white; padding:16px 40px; border:none;
+  border-radius:8px; cursor:pointer; font-size:1.2rem; transition:0.2s;
 }
 .watch:hover { transform:scale(1.05); }
 
@@ -60,7 +215,7 @@ body {
 .nav-buttons button:hover{ background: rgba(255,255,255,0.25); }
 
 /* Carousel */
-.carousel { flex:1; height:400px; perspective:1200px; position:relative; }
+.carousel { height:400px; perspective:1200px; position:relative; margin-right: 10%; }
 .track { width:100%; height:100%; position:relative; transform-style: preserve-3d; }
 .slide {
   position:absolute; top:50%; left:50%;
@@ -79,36 +234,30 @@ body {
 .left-2{ transform:translate(calc(-50% - 380px),-50%) scale(.6) rotateY(26deg); opacity:.6; z-index:3;}
 .right-2{ transform:translate(calc(-50% + 380px),-50%) scale(.6) rotateY(-26deg); opacity:.6; z-index:3;}
 
-/* Bottom actions */
-.bottom-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  background: rgba(0,0,0,0.4);
-  margin-top: auto;
-  gap:20px;
+/* Watchlist Section */
+.bottom-bar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 60px;
+  background: rgba(0,0,0,0.6);
 }
-.bottom-left, .bottom-mid, .bottom-right {
-  display: flex;
-  align-items: center;
-  gap:12px;
-}
-.bottom-mid { flex:1; justify-content:center; }
-.bottom-right { justify-content:flex-end; }
-
-.watchlist {
+.left-panel {
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
+  font-size:1.2rem;
   cursor:pointer;
 }
-.watchlist .name {
-  font-size:1.2rem;
-  color:white;
-  font-weight:600;
+.left-panel svg {
+  width:22px; height:22px; fill:white;
 }
-.action-btn {
+.right-panel {
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.right-panel button {
   display:flex;
   align-items:center;
   gap:6px;
@@ -118,68 +267,127 @@ body {
   font-size:1rem;
   cursor:pointer;
 }
+.right-panel button svg {
+  width:18px; height:18px; fill:white;
+}
+.divider {
+  width:1px;
+  height:20px;
+  background:white;
+  opacity:0.3;
+}
 </style>
 </head>
 <body>
 
-<div class="carousel-container" id="carousel-container">
-  <!-- Top actions -->
-  <div class="top-actions">
-    <!-- Info panel -->
-    <div class="info-panel">
-      <h2 class="title">Movie 1</h2>
-      <p class="year-duration">2023 • 2h 10m</p>
-      <p class="description">Movie 1-ийн товч тайлбар</p>
-      <div class="buttons">
-        <button class="watch">Watch Now</button>
-        <div class="nav-buttons">
-          <button class="left">‹</button>
-          <button class="right">›</button>
+  <header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <span class="cine">CINE</span><span class="wave">WAVE</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="movies.html">Кино</a>
+      <a href="html/customlist.html">Жагсаалт</a>
+      <a href="help.html">Тусламж</a>
+
+      <div class="search-group">
+        <div class="all-dropdown">
+          <select id="category-select" class="category-select">
+            <option value="all">Бүгд</option>
+            <option value="movies">Кино</option>
+            <option value="tv">TV цуврал</option>
+            <option value="celebs">Алдартнууд</option>
+          </select>
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="Хайх..." id="search-input">
         </div>
       </div>
-    </div>
-    <!-- Carousel -->
-    <div class="carousel">
-      <div class="track" id="track">
-        <div class="slide" data-index="0" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
-        <div class="slide" data-index="1" data-bg="../photos/wallpapers/supermanwallpaper.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
-        <div class="slide" data-index="2" data-bg="../photos/wallpapers/weaponswallpaper.webp" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
-        <div class="slide" data-index="3" data-bg="../photos/wallpapers/conjuringwallpaper.jpg" style="background-image:url('../photos/posters/conjuringposter.jpg');"></div>
-        <div class="slide" data-index="4" data-bg="../photos/wallpapers/fantasticwallpaper.jpg" style="background-image:url('../photos/posters/fantasticposter.jpg');"></div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
+    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+  </nav>
+</header>
+
+<div class="carousel-container" id="carousel-container">
+
+  <div class="top-actions">
+    <div class="info-panel">
+    <h2 class="title">Movie 1</h2>
+    <p class="year-duration">2023 • 2h 10m</p>
+    <p class="description">Movie 1-ийн товч тайлбар</p>
+    <div class="buttons">
+      <button class="watch">Watch Now</button>
+      <div class="nav-buttons">
+        <button class="left">‹</button>
+        <button class="right">›</button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom actions -->
+  <!-- Carousel -->
+  <div class="carousel">
+    <div class="track" id="track">
+      <div class="slide" data-index="0" data-bg="../photos/wallpapers/tronareswallpaper.webp" style="background-image:url('../photos/posters/tronaresposter.jpg');"></div>
+      <div class="slide" data-index="1" data-bg="../photos/wallpapers/supermanwallpaper.jpg" style="background-image:url('../photos/posters/supermanposter.jpg');"></div>
+      <div class="slide" data-index="2" data-bg="../photos/wallpapers/weaponswallpaper.webp" style="background-image:url('../photos/posters/weaponsposter.jpg');"></div>
+      <div class="slide" data-index="3" data-bg="../photos/wallpapers/conjuringwallpaper.jpg" style="background-image:url('../photos/posters/conjuringposter.jpg');"></div>
+      <div class="slide" data-index="4" data-bg="../photos/wallpapers/fantasticwallpaper.jpg" style="background-image:url('../photos/posters/fantasticposter.jpg');"></div>
+    </div>
+  </div>
+  </div>
+  <!-- Info Panel -->
+  
+
+  <!-- Bottom actions дотор container -->
   <div class="bottom-actions">
     <div class="bottom-left">
       <div class="watchlist">
-        <div class="edit-icon" id="editWatchlist">✎</div>
+        <div class="edit-icon" id="editWatchlist" title="Rename watch list">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+        </div>
         <div class="name" id="watchlistName">Custom Watch List Name</div>
+        
       </div>
     </div>
     <div class="bottom-mid">
-      <button class="action-btn" id="btnEdit">Edit</button>
-      <button class="action-btn" id="btnPublic">Public</button>
-      <button class="action-btn" id="btnExport">Export</button>
-      <button class="action-btn" id="btnShare">Share</button>
+      <div class="actions-row">
+        <button class="action-btn" id="btnEdit">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/></svg>
+          Edit
+        </button>
+        <button class="action-btn" id="btnPublic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" fill="currentColor"/></svg>
+          Public
+        </button>
+        <button class="action-btn" id="btnExport">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 20h14v-2H5v2zM12 3v12l4-4h-3V3h-2z" fill="currentColor"/></svg>
+          Export
+        </button>
+        <button class="action-btn" id="btnShare">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M18 16.08a2.99 2.99 0 01-1.96.77L8.91 12.7a3.3 3.3 0 000-1.39l7.02-4.11A3 3 0 1015 5.91c0 .21.03.41.08.6L8.06 10.6A3 3 0 006 9c0-.21.03-.41.08-.6L1.6 6.45A3 3 0 104.6 9.45l6.47 3.79a3 3 0 000 1.52L4.6 18.8a3 3 0 10-3-2.35l4.48-1.9c-.05-.19-.08-.39-.08-.6a3 3 0 102.96-3.94l7.02-4.11c.05.19.08.39.08.6A3 3 0 1018 16.08z" fill="currentColor"/></svg>
+          Share
+        </button>
+      </div>
     </div>
     <div class="bottom-right">
-      <button class="action-btn" id="btnhaha">Create new watchlist</button>
+      <button class="action-btn" id="btnhaha">
+          Create new watchlist
+        </button>
     </div>
   </div>
+
 </div>
 
 <script>
-const slides = Array.from(document.querySelectorAll(".slide"));
-const N = slides.length;
-let center = 0;
-
-const titleEl = document.querySelector(".title");
-const yearEl = document.querySelector(".year-duration");
-const descEl = document.querySelector(".description");
-const container = document.getElementById("carousel-container");
-
+// Info data
 const titles = ["Tron: Ares","Superman","Weapons","Conjuring 4","Fantastic 4"];
 const years = ["2023","2022","2025","2024","2021"];
 const durations = ["2h 10m","1h 55m","2h 13m","2h 5m","1h 48m"];
@@ -191,12 +399,24 @@ const descriptions = [
   "Movie 5-ийн тайлбар"
 ];
 
+const slides = Array.from(document.querySelectorAll(".slide"));
+const N = slides.length;
+let center = 0;
+
+// Info panel elements
+const titleEl = document.querySelector(".title");
+const yearEl = document.querySelector(".year-duration");
+const descEl = document.querySelector(".description");
+const container = document.getElementById("carousel-container");
+
+// Update info
 function updateInfo(idx){
   titleEl.textContent = titles[idx];
   yearEl.textContent = `${years[idx]} • ${durations[idx]}`;
   descEl.textContent = descriptions[idx];
 }
 
+// Update carousel + info + background
 function setClasses(){
   const c = center;
   const mod = i => (i+N)%N;
@@ -209,9 +429,54 @@ function setClasses(){
 
   updateInfo(c);
 
+  // Background update
   const bgUrl = slides[c].dataset.bg;
-  if(bgUrl){ container.style.backgroundImage = `url('${bgUrl}')`; }
+  if(bgUrl){
+    container.style.backgroundImage = `url('${bgUrl}')`;
+  }
 }
 
+// Navigation
 document.querySelector(".left").addEventListener("click", ()=>{ center = (center-1+N)%N; setClasses(); });
-document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses
+document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses(); });
+
+// Keyboard arrows
+window.addEventListener("keydown", e=>{
+  if(e.key==='ArrowLeft'){ center = (center-1+N)%N; setClasses(); }
+  if(e.key==='ArrowRight'){ center = (center+1)%N; setClasses(); }
+});
+
+setClasses();
+
+/* ---- Editable Watchlist Name ---- */
+const nameSpan = document.getElementById("watchlist-name");
+nameSpan.addEventListener("click", () => {
+  const currentText = nameSpan.textContent;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentText;
+  input.style.fontSize = "1.2rem";
+  input.style.background = "transparent";
+  input.style.color = "white";
+  input.style.border = "none";
+  input.style.borderBottom = "1px solid white";
+  input.style.outline = "none";
+  input.style.width = "250px";
+
+  nameSpan.replaceWith(input);
+  input.focus();
+
+  input.addEventListener("blur", () => {
+    const newText = input.value.trim() || currentText;
+    nameSpan.textContent = newText;
+    input.replaceWith(nameSpan);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") input.blur();
+  });
+});
+</script>
+
+</body>
+</html>
