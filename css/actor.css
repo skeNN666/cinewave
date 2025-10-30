@@ -158,6 +158,7 @@ body {
 /* Main */
 
 .main {
+    margin: 1%;
     padding: 1% 10% 0 10%;
 }
 
@@ -165,8 +166,6 @@ body {
     display: flex;
     flex: space-between;
     gap: 20px;
-    border-bottom: 1px solid #333;
-
 }
 
 .actor-picture {
@@ -202,7 +201,7 @@ body {
 /*  */
 
 .actor-photos {
-    margin-top: 50px;
+    margin-top: 30px;
     border-bottom: 1px solid #333;
 }
 
