@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Nunito", "BBH Sans Bogle", sans-serif;
+  background-color: black;
 }
 
 /* Navbar */
@@ -161,6 +162,7 @@ body {
 .main {
     margin: 1%;
     padding: 1% 10% 0 10%;
+    background-color: black;
 }
 
 .actor-profile {
@@ -182,7 +184,10 @@ body {
 
 .actor-details {
     flex: 1;
-    padding-top: 10px;
+    padding: 20px;
+    background-color: #0b0b0b;
+    color: white;
+    border-radius: 25px;
 }
 
 .famous-movies {
@@ -197,7 +202,8 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #007bff;
-    background-size: contain;
+    background-size: cover;
+    background-repeat: no-repeat;;
     border-radius: 10px;
     height: 250px; width: 180px;
 }
@@ -207,6 +213,7 @@ body {
 .actor-photos {
     margin-top: 30px;
     border-bottom: 1px solid #333;
+    color: white;
 }
 
 .actor-photos hr {
@@ -233,6 +240,7 @@ body {
 }
 
 .movies-container {
+    margin-top: 50px;
     margin: 0 30px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -245,6 +253,8 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #007bff;
+    background-repeat: no-repeat;
+    background-size: cover;
     border-radius: 10px;
     height: 450px; width: 290px;
 }
