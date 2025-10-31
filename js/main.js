@@ -83,20 +83,22 @@ function getMoviesBySection(sectionId) {
 function renderPaginatedSection(containerId, movies, page) {
     const container = document.getElementById(containerId);
     if (!container) return;
+    
     const startIndex = 0;
     const endIndex = page * ITEMS_PER_PAGE;
     const visibleMovies = movies.slice(startIndex, endIndex);
 
-    container.innerHTML = visibleMovies.map(movie => `
-        <article class="movie-card">
-            <img src="images/${movie.image}" alt="${movie.name}">
-            <h3>${movie.name}</h3>
-            <div class="neg-yum">
-                <span class="genre-year">${movie.yearOrSeason}</span>
-                <span class="type">${movie.category === 'movies' ? 'Кино' : 'Цуврал'}</span>
-            </div>
-        </article>
-    `).join('');
+    container.innerHTML = '';
+
+    visibleMovies.forEach(movie => {
+        const movieCard = document.createElement('movie-card');
+        movieCard.setAttribute('name', movie.name);
+        movieCard.setAttribute('image', movie.image);
+        movieCard.setAttribute('year-or-season', movie.yearOrSeason);
+        movieCard.setAttribute('category', movie.category);
+        
+        container.appendChild(movieCard);
+    });
 
     const button = container.closest(".movies").querySelector(".section-header button");
     button.style.display = "inline-block";

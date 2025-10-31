@@ -385,6 +385,7 @@ body {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 1rem;
+  align-items: start;
 }
 
 .section-header {
@@ -416,57 +417,18 @@ body {
   border-bottom: 2px solid white;
   margin-bottom: 1rem;
 } 
-
-.movie-card {
-  background-color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  text-align: center;
+/* IN home.css - UPDATE THE MOVIES-SECTION */
+.movies-section {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    align-items: start; /* ADD THIS */
 }
 
-.movie-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-.movie-card img {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-}
-
-.movie-card h3 {
-  font-size: 1rem;
-  margin: 0.5rem 0 0.2rem 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-  padding-left: 1rem;
-}
-
-.neg-yum {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  color: black;
-  padding: 0.5rem 1rem 0.5rem 1rem;
-}
-
-.genre-year {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.type {
-  font-weight: bold;
+/* ADD THIS TO MAKE ALL CARDS SAME HEIGHT */
+movie-card {
+    display: block;
+    height: 100%;
 }
 
 .footer {
