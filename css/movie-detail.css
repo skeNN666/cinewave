@@ -151,6 +151,7 @@ body {
   background-color: #007bff;
   color: white;
 }
+
 .movie-details-container {
   display: grid;
   grid-template-columns: 300px 1fr 200px;
@@ -163,12 +164,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 300px;
 }
 
-.movie-poster {
+/* WEB COMPONENT STYLES FOR POSTER MODE */
+movie-card.poster-mode {
+  display: block;
+  height: 450px;
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+}
+
+movie-card.poster-mode .movie-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 15px !important;
+  height: 450px !important;
+  width: 100% !important;
+}
+
+movie-card.poster-mode .movie-card img {
+  border-radius: 15px !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5) !important;
+  height: 450px !important;
+  width: 100% !important;
+  object-fit: cover !important;
+}
+
+/* HIDE TEXT IN POSTER MODE */
+movie-card.poster-mode .title-container,
+movie-card.poster-mode .neg-yum {
+  display: none !important;
 }
 
 .trailer-btn {
@@ -181,6 +206,7 @@ body {
   cursor: pointer;
   font-weight: bold;
   transition: background 0.2s;
+  margin-top: 1rem;
 }
 
 .trailer-btn:hover {
@@ -304,10 +330,9 @@ body {
 }
 
 .line {
-  grid-column: 1 / -1;
   border: none;
   border-bottom: 2px solid white;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 } 
 
 .related-photos {
@@ -322,7 +347,7 @@ body {
 
 .photos-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -338,16 +363,233 @@ body {
   transform: scale(1.05);
 }
 
+.user-reviews-section {
+    margin: 2rem 0;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.reviews-header h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.add-review-btn {
+    background-color: #00ffff;
+    color: black;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.add-review-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.line {
+    border: none;
+    border-bottom: 2px solid white;
+    margin: 1rem 0;
+}
+
+.rating-overview {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+}
+
+.rating-left {
+    flex: 0 0 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.big-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.big-star {
+    font-size: 3rem;
+}
+
+.average-score {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00ffff;
+}
+
+.total-ratings {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.rating-histogram {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 140px;
+}
+
+.histogram-bars {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.histogram-bar {
+    flex: 1;
+    background: linear-gradient(to top, #00ffff, #007bff);
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    transition: height 0.5s ease;
+}
+
+.histogram-numbers {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.4rem;
+}
+
+.histogram-numbers span {
+    flex: 1;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.histogram-counts {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+}
+
+.histogram-counts span {
+    flex: 1;
+    text-align: center;
+    color: #aaa;
+    font-size: 0.7rem;
+}
+
+.user-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.review-card {
+    background-color: #2e2e2e;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #444;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #00ffff, #007bff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.review-date {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.review-rating {
+    color: #ffcc00;
+    font-size: 1rem;
+}
+
+.review-content {
+    color: #ddd;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.review-content p {
+    margin: 0;
+}
+.similar-movies-section {
+    margin: 3rem 0;
+}
+
+.similar-header h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+}
+
+.similar-movies-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 movies per row */
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Make movie cards fit nicely in the grid */
+.similar-movies-grid movie-card {
+    display: block;
+    width: 100%;
+}
 .right-column {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
-}
-
-
-.right-column button:hover {
-  background-color: #444;
 }
 
 .right-column button {
@@ -358,7 +600,6 @@ body {
   color: #fff;
   border: none;
   padding: 0.7rem 1rem;
-  margin-bottom: 0.5rem;
   border-radius: 20px;
   width: 12rem;
   cursor: pointer;
@@ -411,9 +652,11 @@ body {
 .footer-column ul li a:hover {
   color: #4da3ff;
 }
+
 .brand {
   padding-top: 1rem;
 }
+
 .brand .cine {
   color: #007bff;
 }
@@ -485,4 +728,3 @@ body {
   color: #4da3ff;
   transform: translateY(-2px);
 }
-

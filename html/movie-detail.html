@@ -53,10 +53,10 @@
 
 <main class="movie-details-page">
   <div class="movie-details-container">
-    <div class="left-column">
-      <img src="../images/movie1.jpg" alt="Movie Poster" class="movie-poster">
-      <button class="trailer-btn">Трейлэр үзэх</button>
-    </div>
+    <div class="left-column" id="movie-poster-container">
+      <!-- Movie poster will be injected here -->
+    <button class="trailer-btn">Трейлэр үзэх</button>
+</div>
 
     <div class="middle-column">
       <div class="info-rating-row">
@@ -143,12 +143,23 @@
           </div>
 
           <div class="tab-content" id="details">
-            <p>Directed by James Wan. Produced by Peter Safran. Language: English. Country: USA. Release Date: 2025.</p>
-          </div>
+            <ul class="details-list">
+                <li><strong>Director:</strong> James Wan</li>
+                <li><strong>Producers:</strong> Peter Safran, Michael Clear</li>
+                <li><strong>Screenplay:</strong> David Leslie Johnson-McGoldrick</li>
+                <li><strong>Music:</strong> [Composer Name]</li>
+                <li><strong>Genre:</strong> Horror, Superhero, Action</li>
+                <li><strong>Language:</strong> English</li>
+                <li><strong>Country:</strong> USA</li>
+                <li><strong>Release Date:</strong> March 7, 2025 (USA)</li>
+                <li><strong>Budget:</strong> $205 million</li>
+                <li><strong>Runtime:</strong> N/A</li>
+                <li><strong>Distributor:</strong> Warner Bros. Pictures</li>
+            </ul>
         </div>
-        <!-- Related photos section -->
+    </div>
         <div class="related-photos">
-          <h3>Photos</h3>
+          <h3>Зураг</h3>
           <hr class="line">
           <div class="photos-grid">
             <img src="../images/photo1.jpg" alt="Movie Photo 1">
@@ -157,10 +168,149 @@
             <img src="../images/photo4.jpg" alt="Movie Photo 4">
           </div>
         </div>
-
+        <div class="user-reviews-section">
+            <div class="reviews-header">
+                <h3>Хэрэглэгчийн сэтгэгдлүүд</h3>
+                <button class="add-review-btn">+ Сэтгэгдэл нэмэх</button>
+            </div>
+            <hr class="line">
+            <div class="rating-overview">
+    <div class="rating-left">
+        <div class="big-rating">
+            <div class="big-star">⭐</div>
+            <div class="average-score">8.7</div>
+        </div>
+        <div class="total-ratings">1,234 хэрэглэгч</div>
+    </div>
+    
+    <div class="rating-histogram">
+        <!-- Bars Container -->
+        <div class="histogram-bars">
+            <div class="histogram-bar" style="height: 0%"></div>
+            <div class="histogram-bar" style="height: 0%"></div>
+            <div class="histogram-bar" style="height: 0%"></div>
+            <div class="histogram-bar" style="height: 1%"></div>
+            <div class="histogram-bar" style="height: 2%"></div>
+            <div class="histogram-bar" style="height: 4%"></div>
+            <div class="histogram-bar" style="height: 8%"></div>
+            <div class="histogram-bar" style="height: 15%"></div>
+            <div class="histogram-bar" style="height: 25%"></div>
+            <div class="histogram-bar" style="height: 45%"></div>
+        </div>
+        
+        <!-- Numbers 1-10 in one line -->
+        <div class="histogram-numbers">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
+            <span>7</span>
+            <span>8</span>
+            <span>9</span>
+            <span>10</span>
+        </div>
+        
+        <!-- Counts in one line -->
+        <div class="histogram-counts">
+            <span>1</span>
+            <span>0</span>
+            <span>0</span>
+            <span>12</span>
+            <span>25</span>
+            <span>49</span>
+            <span>98</span>
+            <span>185</span>
+            <span>308</span>
+            <span>556</span>
+        </div>
+    </div>
+</div>
+<div class="user-reviews-grid">
+    <!-- Review 1 -->
+    <div class="review-card">
+        <div class="review-header">
+            <div class="user-info">
+                <div class="user-avatar">B</div>
+                <div class="user-details">
+                    <div class="user-name">Болд</div>
+                    <div class="review-date">3 хоног өмнө</div>
+                </div>
+            </div>
+            <div class="review-rating">★★★★★</div>
+        </div>
+        <div class="review-content">
+            <p>Гайхалтай кино! Сүүлчийн хэсэг нь миний хөлийг сугалаа! Найруулагч James Wan ахын авьяас чадварыг дахин нотоллоо.</p>
+        </div>
     </div>
 
-    <div class="right-column">
+    <!-- Review 2 -->
+    <div class="review-card">
+        <div class="review-header">
+            <div class="user-info">
+                <div class="user-avatar">С</div>
+                <div class="user-details">
+                    <div class="user-name">Сара</div>
+                    <div class="review-date">5 хоног өмнө</div>
+                </div>
+            </div>
+            <div class="review-rating">★★★★☆</div>
+        </div>
+        <div class="review-content">
+            <p>Хөгжмийн зохиол маш сайн байсан. Гэхдээ зарим хэсэгт хэтэрхий аймшигтай байсан шүү. Үзэхэд бэлэн байгаа хүмүүст зөвлөж байна.</p>
+        </div>
+    </div>
+
+    <!-- Review 3 -->
+    <div class="review-card">
+        <div class="review-header">
+            <div class="user-info">
+                <div class="user-avatar">Т</div>
+                <div class="user-details">
+                    <div class="user-name">Тэмүүжин</div>
+                    <div class="review-date">1 долоо хоног өмнө</div>
+                </div>
+            </div>
+            <div class="review-rating">★★★★★</div>
+        </div>
+        <div class="review-content">
+            <p>Энэ онд гарсан хамгийн сайн аймшгийн кино! Зохиол, дүрүүд, гоо зүй бүгд маш сайн. Дараагийн хэсгийг хүлээж чадахгүй байна!</p>
+        </div>
+    </div>
+
+    <!-- Review 4 -->
+    <div class="review-card">
+        <div class="review-header">
+            <div class="user-info">
+                <div class="user-avatar">Х</div>
+                <div class="user-details">
+                    <div class="user-name">Хүслэн</div>
+                    <div class="review-date">2 долоо хоног өмнө</div>
+                </div>
+            </div>
+            <div class="review-rating">★★★☆☆</div>
+        </div>
+        <div class="review-content">
+            <p>Өмнөх хэсгүүдээс арай сул байсан. Гэхдээ үзэхэд зүгээр. Хүүхдүүдэд үзүүлэхгүй байхыг зөвлөж байна.</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="similar-movies-section">
+    <div class="similar-header">
+        <h3>Үүнтэй төстэй кинонууд</h3>
+    </div>
+    <hr class="line">
+    
+    <div class="similar-movies-grid" id="similar-movies-grid">
+        <!-- Movie card web components will be inserted here by JavaScript -->
+    </div>
+</div>
+  </div>
+  
+  <div class="right-column">
       <button class="watch-now-btn">
         <i class="fas fa-play"></i> Үзэх
       </button>
@@ -171,8 +321,6 @@
         <i class="fas fa-eye"></i> Үзсэн
       </button>
     </div>
-
-  </div>
 </main>
 
 <footer class="footer">
@@ -234,27 +382,148 @@
     </div>
   </div>
 </footer>
-
+<script src="../js/movie-card-component.js"></script>
 <script>
-  const tabButtons = document.querySelectorAll(".tab-btn");
-const tabContents = document.querySelectorAll(".tab-content");
+  const similarMovies = [
+    { 
+        name: "The Conjuring 2", 
+        image: "monster.jpg", 
+        yearOrSeason: "2016 • 134 мин", 
+        category: "movies" 
+    },
+    { 
+        name: "Annabelle", 
+        image: "annabelle.jpg", 
+        yearOrSeason: "2014 • 99 мин", 
+        category: "movies" 
+    },
+    { 
+        name: "The Nun", 
+        image: "thenun.jpg", 
+        yearOrSeason: "2018 • 96 мин", 
+        category: "movies" 
+    },
+    { 
+        name: "Insidious", 
+        image: "insidious.jpg", 
+        yearOrSeason: "2010 • 103 мин", 
+        category: "movies" 
+    },
+    { 
+        name: "Sinister", 
+        image: "sinister.jpg", 
+        yearOrSeason: "2012 • 110 мин", 
+        category: "movies" 
+    },
+    { 
+        name: "The Conjuring", 
+        image: "conjuring1.jpg", 
+        yearOrSeason: "2013 • 112 мин", 
+        category: "movies" 
+    }
+];
 
-tabButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const target = btn.dataset.tab;
-
-    tabButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    tabContents.forEach(content => {
-      content.classList.remove("active");
-      if (content.id === target) {
-        content.classList.add("active");
-      }
+// FUNCTION TO ADD SIMILAR MOVIES
+function addSimilarMovies() {
+    const grid = document.getElementById('similar-movies-grid');
+    
+    similarMovies.forEach(movie => {
+        const movieCard = document.createElement('movie-card');
+        movieCard.setAttribute('name', movie.name);
+        movieCard.setAttribute('image', movie.image);
+        movieCard.setAttribute('year-or-season', movie.yearOrSeason);
+        movieCard.setAttribute('category', movie.category);
+        
+        grid.appendChild(movieCard);
     });
-  });
-});
+}
+  // GET MOVIE DATA FROM URL PARAMETERS
+function getMovieFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieData = {
+        name: decodeURIComponent(urlParams.get('name') || 'The Conjuring: Last Rites'),
+        image: urlParams.get('image') || 'movie1.jpg',
+        yearOrSeason: decodeURIComponent(urlParams.get('year') || '2025 • 135 мин'),
+        category: urlParams.get('category') || 'movies'
+    };
+    
+    console.log('🎬 URL Params:', urlParams.toString());
+    console.log('📦 Movie Data:', movieData);
+    return movieData;
+}
 
+// UPDATE THE MOVIE POSTER COMPONENT
+function updateMoviePoster(movieData) {
+    console.log('🖼️ Creating poster for:', movieData.name);
+    
+    const container = document.getElementById('movie-poster-container');
+    console.log('📦 Container found:', !!container);
+    
+    // CLEAR EXISTING
+    const existingCard = container.querySelector('movie-card');
+    if (existingCard) {
+        console.log('🗑️ Removing existing card');
+        existingCard.remove();
+    }
+    
+    // CREATE NEW CARD WITH CORRECT DATA
+    const movieCard = document.createElement('movie-card');
+    console.log('🔧 Creating movie-card element:', movieCard);
+    
+    movieCard.setAttribute('name', movieData.name);
+    movieCard.setAttribute('image', movieData.image);
+    movieCard.setAttribute('year-or-season', movieData.yearOrSeason);
+    movieCard.setAttribute('category', movieData.category);
+    movieCard.setAttribute('clickable', 'false');
+    movieCard.classList.add('poster-mode');
+    
+    console.log('🎯 Attributes set, adding to container...');
+    container.insertBefore(movieCard, container.querySelector('.trailer-btn'));
+    
+    console.log('✅ Poster should be visible now!');
+    console.log('🔍 Check Elements tab for <movie-card>');
+}
+
+// UPDATE PAGE CONTENT WITH MOVIE DATA
+function updateMovieDetailPage() {
+    console.log('🚀 Starting page update...');
+    const movieData = getMovieFromURL();
+    
+    // UPDATE PAGE TITLE
+    document.querySelector('.movie-title').textContent = movieData.name;
+    document.querySelector('.movie-info').textContent = movieData.yearOrSeason;
+    document.title = `${movieData.name} - CINEWAVE`;
+    
+    console.log('📝 Page titles updated');
+    
+    // UPDATE POSTER
+    updateMoviePoster(movieData);
+}
+
+// CALL WHEN PAGE LOADS
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Loaded - starting movie detail page');
+    updateMovieDetailPage();
+    addSimilarMovies();
+    
+    // Your existing tab code...
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const target = btn.dataset.tab;
+            tabButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            tabContents.forEach(content => {
+                content.classList.remove("active");
+                if (content.id === target) {
+                    content.classList.add("active");
+                }
+            });
+        });
+    });
+});
 </script>
 </body>
 </html>
