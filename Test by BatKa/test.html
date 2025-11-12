@@ -6,6 +6,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="test.css">
     <title>CINEWAVE</title>
 </head>
@@ -17,23 +19,88 @@
                     <span class="logo-cine">CINE</span><span class="logo-wave">WAVE</span>
                 </a>
             </div>
-            <div><a href="movies.html">Movies</a></div>
-            <div><a href="">Series</a></div>
-            <div><a href="">Watchlist</a></div>
-            <div><a href="">Help</a></div>
+            <div><a href="movies.html">КИНО</a></div>
+            <div><a href="">ЦУВРАЛ</a></div>
+            <div><a href="">ЖАГСААЛТ</a></div>
+            <div><a href="">ТУСЛАМЖ</a></div>
             <div class="search-bar">
-                <input type="text" placeholder="Хайх..." id="search-input">
+                <button class="search-category" id="categoryBtn">Бүгд</button>
+                <input type="text" placeholder="Хайлт хийх..." id="search-input">
+                <div class="dropdown" id="dropdownMenu">
+                    <div class="dropdown-item">Бүгд</div>
+                    <div class="dropdown-item">Нэр</div>
+                    <div class="dropdown-item">Анги</div>
+                    <div class="dropdown-item">Алдартан</div>
+                    <div class="dropdown-item">Компани</div>
+                    <div class="dropdown-item">Түлхүүр</div>
+                </div>
             </div>
-            <div><a href="">☰</a></div>
-            <div><a href="">Sign in</a></div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="sign-button">SIGN IN</div>
         </nav>
     </header>
     <main>
-        
+        <div class="container">
+            <div class="curved-shape"></div>
+            <div class="form-box Login">
+                <h2>Login</h2>
+                <form action="#">
+                    <div class="input-box">
+                        <input type="text" required>
+                        <label for="">Username</label>
+                        <i class="bx bxs-user"></i>
+                    </div>
+                    <div class="input-box">
+                        <input type="text" required>
+                        <label for="">Password</label>
+                        <i class="bx bxs-lock-alt"></i>
+                    </div>
+                    <div class="input-box">
+                        <button class="btn" type="submit">Login</button>
+                    </div>
+                    <div class="regi-link">
+                        <p>Don't have a account? <a href="#" class="SignUpLink">Sign Up</a></p>
+                    </div>
+                </form>
+            </div>
+            <div class="info-content Login">
+                <h2>WELCOME BACK!</h2>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, unde?</p>
+
+            </div>
+        </div>
     </main>
     <footer>
-        
+
     </footer>
-    <script src="test.js"></script>
+    <script>
+        const categoryBtn = document.getElementById('categoryBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu')
+        const dropdownItems = dropdownMenu.querySelectorAll('.dropdown-item')
+
+        categoryBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        // сонголт хийгдсэн үед
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', () => {
+                categoryBtn.textContent = item.textContent + ' ';
+                dropdownMenu.classList.remove('show');
+            });
+        });
+
+        // гадна дарвал хаагдана
+        document.addEventListener('click', (e) => {
+            if (!dropdownMenu.contains(e.target) && e.target !== categoryBtn) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>
