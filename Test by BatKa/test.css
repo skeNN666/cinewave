@@ -1,3 +1,7 @@
+:root {
+    --main-color: #7fffd4;
+}
+
 * {
     font-family: 'Nunito', sans-serif;
     box-sizing: border-box;
@@ -7,12 +11,13 @@
 
 body {
     line-height: 1.5;
+    background: black;
 }
 
 /* MENU BAR */
 
 header {
-    background-color: #131313;
+    background: linear-gradient(#494949, #1a1a1a,  #0c0c0c);
     width: 100%;
 }
 
@@ -32,6 +37,7 @@ nav a {
 
 nav a:hover {
     color: rgb(218, 218, 218);
+    text-decoration: underline;
 }
 
 /* LOGO */
@@ -46,10 +52,11 @@ nav a:hover {
 
 .logo-cine {
     color: #00ffff;
+    
 }
 
 .logo-wave {
-    color: aquamarine;
+    color: #7fffd4;
 }
 
 /* SEARCH BAR */
@@ -70,6 +77,7 @@ nav a:hover {
     padding: 1% 12px;
     border-radius: 5px 0px 0px 5px;
     cursor: pointer;
+    border-right: 3px solid rgb(134, 134, 134);
 }
 
 
@@ -95,10 +103,16 @@ nav a:hover {
     width: 120px; display: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 10;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: 0.2s ease;
+
 }
 
 .dropdown.show {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .dropdown-item {
@@ -116,8 +130,13 @@ nav a:hover {
 .hamburger-menu {
     display: flex;
     flex-direction: column;
+    transition: transform 0.2s ease;
     cursor: pointer;
     gap: 5px;
+}
+
+.hamburger-menu:hover {
+    transform: scale(1.1);
 }
 
 .hamburger-menu span {
@@ -127,23 +146,81 @@ nav a:hover {
     border-radius: 3px;
 }
 
+
+
 /* SIGN IN BUTTON */
 
 .sign-button {
-    background-color: #00ffff;
-    color: rgb(0, 0, 0);
-    padding: 8px 16px;
-    border: none;
-    border-radius: 8px;
+    position: relative;
+    border-radius: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    color: #fff;
+    background: transparent;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.3s;
+    padding: 0px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0px 10px;
+    overflow: hidden;
+    z-index: 2;
 }
 
-.sign-button:hover {
-    background-color: #23d3ff;
+.sign-button::before {
+    content: "";
+    position: absolute;
+    height: 300%; width: 100%;
+    background: linear-gradient(#25252b, var(--main-color), #252525, var(--main-color));
+    top: -100%; left: 0;
+    z-index: -1;
+    transition: .5s;
+}
 
+.sign-button:hover::before {
+    top: 0;
+
+}
+
+/* MEDIA QUERY */
+
+@media (max-width: 900px) {
+  nav {
+    margin: 0 20px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .search-bar {
+    order: 3;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .nav > div:nth-child(2),
+  .nav > div:nth-child(3),
+  .nav > div:nth-child(4),
+  .nav > div:nth-child(5) {
+    display: none; /* десктопын линкүүд далдлана, hamburger-ээр гаргана */
+  }
+
+  .hamburger-menu {
+    display: flex;
+    order: 2;
+  }
+}
+
+/* Гар утас */
+@media (max-width: 480px) {
+  .container {
+    width: 92%;
+    height: auto;
+    margin: 20px;
+  }
+  .container .form-box { width: 100%; padding: 24px; }
+  .info-content { display: none; } /* шаардлагатай бол тааруул */
 }
 
 /*  */
@@ -153,16 +230,20 @@ main {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: rgb(14, 14, 14);
-    color: white;
+    background-color: rgb(0, 0, 0);
+    box-shadow: 0 0 25px rgb(31, 31, 31);
+    color: rgb(255, 255, 255);
+    margin: 0 14%;
 }
 
 .container {
     position: relative;
     width: 750px;
     height: 450px;
-    border: 2px solid rgb(255, 0, 106);
-    box-shadow: 0 0 25px rgb(255, 0, 106);
+    border: 2px solid var(--main-color);
+    border-radius: 15px;
+    box-shadow: 0 0 25px var(--main-color);
+    overflow: hidden;
 }
 
 .container .form-box {
@@ -208,8 +289,10 @@ main {
 
 .input-box input:focus ,
 .input-box input:valid {
-    border-bottom: 2px solid #ff2770;
+    border-bottom: 2px solid var(--main-color);
 }
+
+/* #ff2770 */
 
 .input-box label {
     position: absolute;
@@ -224,7 +307,7 @@ main {
 .input-box input:focus ~ label,
 .input-box input:valid ~ label {
     top: -5px;
-    color: #ff2770;
+    color: var(--main-color);
 }
 
 .input-box i {
@@ -238,7 +321,7 @@ main {
 
 .input-box input:focus ~ i,
 .input-box input:valid ~ i {
-    color: #ff2770;
+    color: var(--main-color);
 }
 
 .btn {
@@ -252,7 +335,7 @@ main {
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    border: 2px solid #ff2770;
+    border: 2px solid var(--main-color);
     overflow: hidden;
     z-index: 2;
 }
@@ -261,7 +344,7 @@ main {
     content: "";
     position: absolute;
     height: 300%; width: 100%;
-    background: linear-gradient(#25252b, #ff2770, #252525, #ff2770);
+    background: linear-gradient(#25252b, var(--main-color), #252525, var(--main-color));
     top: -100%; left: 0;
     z-index: -1;
     transition: .5s;
@@ -280,7 +363,7 @@ main {
 
 .regi-link a {
     text-decoration: none;
-    color: #ff2770;
+    color: var(--main-color);
     font-weight: 600;
 }
 
@@ -320,7 +403,7 @@ main {
     right: 0; top: -5px;
     height: 600px;
     width: 850px;
-    background-color: white;
-    background: linear-gradient(45deg, #25252b, #ff2770);
-    transform: rotate(10deg);
+    background: linear-gradient(45deg, #25252b, var(--main-color));
+    transform: rotate(10deg) skewY(40deg);
+    transform-origin: bottom right;
 }

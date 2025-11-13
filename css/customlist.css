@@ -1,9 +1,14 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Nunito", "BBH Sans Bogle", sans-serif;
-  background-color: black;
+:root {
+  --main-color: #7fffd4;
 }
+
+* {
+  font-family: 'Nunito', sans-serif;
+  box-sizing: border-box;
+  margin: 0%;
+  padding: 0%;
+}
+
 
 .navbar {
   display: flex;
