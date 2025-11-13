@@ -74,10 +74,10 @@ nav a:hover {
     background-color: #535353;
     border: none;
     color: white;
-    padding: 1% 12px;
+    padding: 1.3% 12px;
     border-radius: 5px 0px 0px 5px;
     cursor: pointer;
-    border-right: 3px solid rgb(134, 134, 134);
+    border-right: 1px solid rgb(134, 134, 134);
 }
 
 
@@ -116,7 +116,7 @@ nav a:hover {
 }
 
 .dropdown-item {
-    padding: 8px 10px;
+    padding: 10px 15px;
     color: white;
     cursor: pointer;
 }
