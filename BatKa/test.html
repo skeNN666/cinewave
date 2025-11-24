@@ -46,6 +46,7 @@
     <main>
         <div class="container">
             <div class="curved-shape"></div>
+            <div class="curved-shape2"></div>
             <div class="form-box Login">
                 <h2>Login</h2>
                 <form action="#">
@@ -71,35 +72,36 @@
                 <h2>WELCOME BACK!</h2>
                 <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, unde?</p>
             </div>
+            <div class="form-box Register">
+                <h2>Register</h2>
+                <form action="#">
+                    <div class="input-box">
+                        <input type="text" required>
+                        <label for="">Username</label>
+                        <i class="bx bxs-user"></i>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" required>
+                        <label for="">Password</label>
+                        <i class="bx bxs-lock-alt"></i>
+                    </div>
+                    <div class="input-box">
+                        <button class="btn" type="submit">Register</button>
+                    </div>
+                    <div class="regi-link">
+                        <p>Already have a account? <a href="#" class="SignInLink">Sign In</a></p>
+                    </div>
+                </form>
+            </div>
+            <div class="info-content Register">
+                <h2>WELCOME BACK!</h2>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, unde?</p>
+            </div>
         </div>
     </main>
     <footer>
 
     </footer>
-    <script>
-        const categoryBtn = document.getElementById('categoryBtn');
-        const dropdownMenu = document.getElementById('dropdownMenu')
-        const dropdownItems = dropdownMenu.querySelectorAll('.dropdown-item')
-
-        categoryBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
-
-        // сонголт хийгдсэн үед
-        dropdownItems.forEach(item => {
-            item.addEventListener('click', () => {
-                categoryBtn.textContent = item.textContent + ' ';
-                dropdownMenu.classList.remove('show');
-            });
-        });
-
-        // гадна дарвал хаагдана
-        document.addEventListener('click', (e) => {
-            if (!dropdownMenu.contains(e.target) && e.target !== categoryBtn) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
-    </script>
+    <script src="test.js"></script>
 </body>
 </html>

@@ -241,7 +241,6 @@ main {
     width: 750px;
     height: 450px;
     border: 2px solid var(--main-color);
-    border-radius: 15px;
     box-shadow: 0 0 25px var(--main-color);
     overflow: hidden;
 }
@@ -260,6 +259,12 @@ main {
     left: 0;
     padding: 0 40px;
 
+}
+
+.form-box.Register {
+    display: none;
+    right: 0;
+    padding: 0 60px;
 }
 
 .form-box h2 {
@@ -388,6 +393,13 @@ main {
     padding: 0 40px 60px 150px;
 }
 
+.info-content.Register {
+    right: 0; 
+    text-align: right;
+    padding: 0 40px 60px 150px;
+    display: none;
+}
+
 .info-content h2 {
     text-transform: uppercase;
     font-size: 36px;
@@ -404,6 +416,22 @@ main {
     height: 600px;
     width: 850px;
     background: linear-gradient(45deg, #25252b, var(--main-color));
+    transform: rotate(0deg) skewY(0deg);
+    transform-origin: bottom right;
+    transition: 1.5s ease;
+}
+
+.container.active .curved-shape {
+    transform: rotate(10deg) skewY(40deg);
+}
+
+.container .curved-shape2 {
+    position: absolute;
+    right: 0; top: -5px;
+    height: 600px;
+    width: 850px;
+    background: linear-gradient(45deg, #25252b, var(--main-color));
     transform: rotate(10deg) skewY(40deg);
     transform-origin: bottom right;
 }
+
