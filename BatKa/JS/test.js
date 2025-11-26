@@ -6,6 +6,9 @@ const container = document.querySelector('.container');
 const LoginLink = document.querySelector('.SignInlink');
 const RegisterLink = document.querySelector('SignUplink');
 
+const hamburger = document.querySelector('.hamburger');
+const burgerMenu = document.querySelector('.burger-menu');
+
 
 categoryBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -25,7 +28,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-RegisterLink.addEventListener('click', () => {
-    container.classList.add('active');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  burgerMenu.classList.toggle('show');
 });
-
