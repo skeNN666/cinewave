@@ -127,7 +127,7 @@ nav a:hover {
 
 /* HAMBURGER MENU */
 
-.hamburger-menu {
+.hamburger {
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease;
@@ -135,18 +135,52 @@ nav a:hover {
     gap: 5px;
 }
 
-.hamburger-menu:hover {
+.hamburger:hover {
     transform: scale(1.1);
 }
 
-.hamburger-menu span {
+.hamburger span {
     width: 25px;
     height: 3px;
     background: white;
     border-radius: 3px;
 }
 
+.hamburger.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg)
+}
 
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg)
+}
+
+.burger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  background: #1a1a1a;
+  padding: 20px;
+  position: absolute;
+  top: 77px;
+  right: 385px;
+  width: 200px;
+  border-radius: 10px;
+  z-index: 100;
+}
+
+.burger-menu.show {
+  display: flex;
+}
+
+.burger-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
 
 /* SIGN IN BUTTON */
 
@@ -182,4 +216,56 @@ nav a:hover {
 .sign-button:hover::before {
     top: 0;
 
+}
+
+/*  */
+
+/* MENU */
+
+/*  */
+
+main {
+    max-width: 1000px;
+    margin: 40px 15%;
+    color: white;
+}
+
+.movie-container {
+    width: 135%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.movie-banner {
+  width: 150px;      /* хүссэн өргөн */
+  height: 250px;     /* хүссэн өндөр */
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;        /* зураг box-оо дүүргэнэ */
+  background-position: center;   /* зураг голоороо харагдана */
+  transition: transform 0.3s ease;
+}
+
+.movie-banner:hover .banner-image {
+  transform: scale(1.1);         /* hover effect */
+}
+
+.banner-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  transition: opacity 0.3s ease;
 }
