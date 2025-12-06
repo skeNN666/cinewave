@@ -357,31 +357,38 @@ const database = [
     yearOrSeason: "Улирал: 4 • Анги: 10",
     genre: ["drama"]
   }
-];
+];// State management
 let currentFilters = {
     category: 'all',
-    genre: '',
+    genres: [], // Array for multiple genres
     search: ''
 };
 
+// Function to render movies with current filters
 function renderMovies() {
     const container = document.getElementById('movies-container');
     container.innerHTML = '';
     
     let filteredMovies = [...database];
     
+    // Apply category filter
     if (currentFilters.category !== 'all') {
         filteredMovies = filteredMovies.filter(movie => 
             movie.category === currentFilters.category
         );
     }
     
-    if (currentFilters.genre !== '') {
-        filteredMovies = filteredMovies.filter(movie => 
-            movie.genre.includes(currentFilters.genre)
-        );
+    // Apply MULTI-GENRE filter (AND logic)
+    if (currentFilters.genres.length > 0) {
+        filteredMovies = filteredMovies.filter(movie => {
+            // Check if movie has ALL selected genres
+            return currentFilters.genres.every(selectedGenre => 
+                movie.genre.includes(selectedGenre)
+            );
+        });
     }
     
+    // Apply search filter
     if (currentFilters.search.trim() !== '') {
         const searchTerm = currentFilters.search.toLowerCase();
         filteredMovies = filteredMovies.filter(movie => 
@@ -390,23 +397,44 @@ function renderMovies() {
         );
     }
     
+    // Update count
     updateItemsCount(filteredMovies.length);
     
+    // Render movies
     filteredMovies.forEach(movie => {
         const movieCard = document.createElement('movie-card');
         movieCard.setAttribute('name', movie.name);
         movieCard.setAttribute('image', movie.image);
         movieCard.setAttribute('year-or-season', movie.yearOrSeason);
         movieCard.setAttribute('category', movie.category);
-        movieCard.setAttribute('genre', movie.genre.join(','));
+        movieCard.setAttribute('genre', movie.genre.join(', '));
         container.appendChild(movieCard);
     });
     
+    // Update active filters display
     updateActiveFilters();
     
+    // Update selected state
+    updateSelectedState();
+    
+    // Observe new cards for lazy loading
     observeMovieCards();
 }
 
+// Update selected state (simplified - no numbers)
+function updateSelectedState() {
+    const genreButtons = document.querySelectorAll('.genre-btn');
+    genreButtons.forEach(button => {
+        const genre = button.getAttribute('data-genre');
+        if (currentFilters.genres.includes(genre)) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
+// Function to update items count
 function updateItemsCount(count) {
     let countElement = document.getElementById('items-count');
     if (!countElement) {
@@ -418,9 +446,23 @@ function updateItemsCount(count) {
             document.getElementById('movies-container')
         );
     }
-    countElement.innerHTML = `Нийт: <span>${count}</span> кино олдлоо`;
+    
+    // Show genre combination if multiple selected
+    let genreText = '';
+    if (currentFilters.genres.length > 0) {
+        const genreNames = currentFilters.genres.map(g => 
+            g.charAt(0).toUpperCase() + g.slice(1)
+        );
+        genreText = ` • ${genreNames.join(' + ')}`;
+    }
+    
+    const categoryText = currentFilters.category === 'all' ? '' : 
+        (currentFilters.category === 'movies' ? ' • Кино' : ' • TV Цуврал');
+    
+    countElement.innerHTML = `Нийт: <span>${count}</span> кино олдлоо${categoryText}${genreText}`;
 }
 
+// Function to update active filters display
 function updateActiveFilters() {
     let filtersContainer = document.querySelector('.active-filters');
     if (!filtersContainer) {
@@ -432,6 +474,20 @@ function updateActiveFilters() {
     
     filtersContainer.innerHTML = '';
     
+    // Only show filters if something is actually filtered
+    const hasActiveFilters = 
+        currentFilters.category !== 'all' || 
+        currentFilters.genres.length > 0 || 
+        currentFilters.search.trim() !== '';
+    
+    if (!hasActiveFilters) {
+        filtersContainer.style.display = 'none';
+        return;
+    }
+    
+    filtersContainer.style.display = 'flex';
+    
+    // Add category filter badge
     if (currentFilters.category !== 'all') {
         const categoryName = currentFilters.category === 'movies' ? 'Кино' : 'TV Цуврал';
         const badge = document.createElement('div');
@@ -440,14 +496,18 @@ function updateActiveFilters() {
         filtersContainer.appendChild(badge);
     }
     
-    if (currentFilters.genre !== '') { 
-        const genreName = currentFilters.genre.charAt(0).toUpperCase() + currentFilters.genre.slice(1);
-        const badge = document.createElement('div');
-        badge.className = 'filter-badge';
-        badge.innerHTML = `${genreName} <span class="remove" data-filter="genre">×</span>`;
-        filtersContainer.appendChild(badge);
+    // Add genre filter badges (simple, no numbers)
+    if (currentFilters.genres.length > 0) {
+        currentFilters.genres.forEach(genre => {
+            const genreName = genre.charAt(0).toUpperCase() + genre.slice(1);
+            const badge = document.createElement('div');
+            badge.className = 'filter-badge';
+            badge.innerHTML = `${genreName} <span class="remove" data-filter="genre" data-genre="${genre}">×</span>`;
+            filtersContainer.appendChild(badge);
+        });
     }
     
+    // Add search filter badge
     if (currentFilters.search.trim() !== '') {
         const badge = document.createElement('div');
         badge.className = 'filter-badge';
@@ -455,14 +515,26 @@ function updateActiveFilters() {
         filtersContainer.appendChild(badge);
     }
     
+    // Add remove handlers
     filtersContainer.querySelectorAll('.remove').forEach(removeBtn => {
         removeBtn.addEventListener('click', (e) => {
             const filterType = e.target.getAttribute('data-filter');
-            clearFilter(filterType);
+            const specificGenre = e.target.getAttribute('data-genre');
+            
+            if (filterType === 'genre' && specificGenre) {
+                // Remove specific genre from array
+                currentFilters.genres = currentFilters.genres.filter(g => g !== specificGenre);
+                updateSelectedState();
+            } else {
+                clearFilter(filterType);
+            }
+            
+            renderMovies();
         });
     });
 }
 
+// Function to clear a specific filter
 function clearFilter(filterType) {
     switch(filterType) {
         case 'category':
@@ -473,16 +545,14 @@ function clearFilter(filterType) {
                     btn.classList.add('active');
                 }
             });
-            currentFilters.genre = '';
-            document.querySelectorAll('.genre-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            // Also clear all genres when category changes
+            currentFilters.genres = [];
+            updateSelectedState();
             break;
         case 'genre':
-            currentFilters.genre = ''; // Changed from 'all' to ''
-            document.querySelectorAll('.genre-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            // Clear ALL genres
+            currentFilters.genres = [];
+            updateSelectedState();
             break;
         case 'search':
             currentFilters.search = '';
@@ -493,7 +563,7 @@ function clearFilter(filterType) {
     renderMovies();
 }
 
-// Function to get all unique genres from database (filtered by current category)
+// Function to get all unique genres from database
 function getAllGenres() {
     const allGenres = new Set();
     
@@ -508,31 +578,28 @@ function getAllGenres() {
     moviesToCheck.forEach(movie => {
         movie.genre.forEach(g => allGenres.add(g));
     });
-    return Array.from(allGenres).sort(); // Sort alphabetically
+    return Array.from(allGenres).sort();
 }
 
-// Create genre buttons dynamically based on current category
+// Create genre buttons dynamically
 function createGenreButtons() {
     const genres = getAllGenres();
     const genreFilters = document.querySelector('.genre-filters');
     
-    // Clear existing buttons (NO "All" button)
+    // Clear existing buttons
     genreFilters.innerHTML = '';
     
     // Add genre buttons
     genres.forEach(genre => {
         const button = document.createElement('button');
         button.className = 'genre-btn';
-        
-        // Mark as active if this genre is currently selected
-        if (currentFilters.genre === genre) {
-            button.classList.add('active');
-        }
-        
         button.setAttribute('data-genre', genre);
         button.textContent = genre.charAt(0).toUpperCase() + genre.slice(1);
         genreFilters.appendChild(button);
     });
+    
+    // Update selected state
+    updateSelectedState();
 }
 
 // Initialize the page
@@ -557,8 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update current category filter
             currentFilters.category = e.target.getAttribute('data-category');
             
-            // Clear genre when category changes
-            currentFilters.genre = ''; // Changed from 'all' to ''
+            // Clear all genres when category changes
+            currentFilters.genres = [];
             
             // Recreate genre buttons for new category
             createGenreButtons();
@@ -577,25 +644,17 @@ document.addEventListener('DOMContentLoaded', () => {
             button.addEventListener('click', (e) => {
                 const selectedGenre = e.target.getAttribute('data-genre');
                 
-                // Toggle genre selection
-                if (currentFilters.genre === selectedGenre) {
-                    // Clicking active genre deselects it
-                    currentFilters.genre = '';
-                    e.target.classList.remove('active');
+                // Toggle genre in array
+                if (currentFilters.genres.includes(selectedGenre)) {
+                    // Remove if already selected
+                    currentFilters.genres = currentFilters.genres.filter(g => g !== selectedGenre);
                 } else {
-                    // Remove active class from all genre buttons
-                    document.querySelectorAll('.genre-btn').forEach(btn => 
-                        btn.classList.remove('active')
-                    );
-                    
-                    // Add active class to clicked button
-                    e.target.classList.add('active');
-                    
-                    // Update current genre filter
-                    currentFilters.genre = selectedGenre;
+                    // Add if not selected
+                    currentFilters.genres.push(selectedGenre);
                 }
                 
-                // Re-render movies
+                // Update UI and render
+                updateSelectedState();
                 renderMovies();
             });
         });
@@ -610,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMovies();
     });
     
-    // Clear all filters button
+    // Clear all filters button (main clear button only)
     const clearAllBtn = document.createElement('button');
     clearAllBtn.className = 'clear-all-btn';
     clearAllBtn.textContent = 'Шүүлтүүрийг цэвэрлэх';
@@ -641,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset all filters
         currentFilters = {
             category: 'all',
-            genre: '', // Changed from 'all' to ''
+            genres: [],
             search: ''
         };
         
