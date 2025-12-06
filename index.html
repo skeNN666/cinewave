@@ -6,13 +6,13 @@
   <title>CINEWAVE</title>
 
   <!-- Google Font -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="icon" type="image/png" href="./frontend/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-  <link rel="stylesheet" href="./css/home.css">
+  <link rel="stylesheet" href="./frontend/css/home.css">
 </head>
 <body>
 <header>
@@ -22,9 +22,9 @@
     </a>
 
     <div class="nav-links">
-      <a href="html/movies.html">Кино</a>
-      <a href="html/customlist.html">Жагсаалт</a>
-      <a href="html/help.html">Тусламж</a>
+      <a href="./frontend/html/movies.html">Кино</a>
+      <a href="./frontend/html/customlist.html">Жагсаалт</a>
+      <a href="./frontend/html/help.html">Тусламж</a>
 
       <div class="search-group">
         <div class="all-dropdown">
@@ -47,7 +47,7 @@
     <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
 
-    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
+    <button class="sign-in" onclick="window.location.href='./frontend/html/login.html'">Нэвтрэх</button>
   </nav>
 </header>
 <section class="movie-slider">
@@ -67,7 +67,7 @@
 </section>
 
 <article class="promo-section">
-  <img src="images/promo-bg.jpg" alt="Promo" class="promo-bg">
+  <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
   <div class="slogan top-left">Дуртай киногоо үз</div>
   <div class="slogan center">Бодол санаагаа бич</div>
   <div class="slogan bottom-right">Бусдад түгээ</div>
@@ -161,8 +161,9 @@
     </div>
   </div>
 </footer>
-
-<script src="js/movie-card-component.js"></script>
-<script src="js/main.js"></script>
+<!-- Update the scripts section at the bottom of your HTML -->
+<script src="./frontend/js/database.js"></script>
+<script src="./frontend/js/movie-card-component.js"></script>
+<script src="./frontend/js/main.js"></script>
 </body>
 </html>
