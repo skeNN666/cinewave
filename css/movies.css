@@ -154,9 +154,304 @@ body {
   color: white;
 }
 
+main {
+    max-width: 1800px; /* INCREASED FOR 6 COLUMNS */
+    margin: 0 auto;
+    padding: 2rem;
+}
+/* GENRE FILTERS */
+.genre-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 40px; /* Minimum height for when no genres are selected */
+}
 
+.genre-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
 
+.genre-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
 
+.genre-btn.active {
+    background: #1e90ff;
+    border-color: #1e90ff;
+    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+}
+
+/* When no genre is selected */
+.genre-filters:empty::after {
+    content: "Ангилал сонгоно уу";
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 1rem;
+}
+
+/* 6 MOVIES PER ROW GRID */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* EXACTLY 6 COLUMNS */
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Movie card sizing for 6 columns */
+movie-card {
+    width: 100%;
+    display: block;
+}
+
+/* Ensure the movie card component fits properly */
+.movie-card {
+    width: 100% !important;
+    height: 350px !important; /* Adjusted height for density */
+}
+
+/* Image adjustment for tighter grid */
+.movie-card img {
+    height: 250px !important; /* Slightly smaller for density */
+}
+
+.title-container {
+    top: 255px !important; /* Adjusted for new image height */
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 1400px) {
+    .movies-grid {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns on medium-large screens */
+    }
+}
+
+@media (max-width: 1200px) {
+    .movies-grid {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns on laptops */
+    }
+}
+
+@media (max-width: 992px) {
+    .movies-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablets */
+        gap: 1.25rem;
+    }
+    
+    main {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .movies-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
+        gap: 1rem;
+    }
+    
+    .genre-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .movie-card {
+        height: 320px !important;
+    }
+    
+    .movie-card img {
+        height: 220px !important;
+    }
+    
+    .title-container {
+        top: 225px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .movies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .movie-card {
+        height: 280px !important;
+    }
+    
+    .movie-card img {
+        height: 190px !important;
+    }
+    
+    .title-container {
+        top: 195px !important;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+    }
+}
+
+/* CATEGORY FILTERS */
+.category-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    min-width: 120px;
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.category-btn.active {
+    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+/* Make genre filters smaller when category filters are present */
+.genre-filters {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.genre-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.genre-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.genre-btn.active {
+    background: #1e90ff;
+    border-color: #1e90ff;
+    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+}
+
+/* Active filters indicator */
+.active-filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-badge {
+    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-badge .remove {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.filter-badge .remove:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Count indicator */
+.items-count {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.items-count span {
+    color: #1e90ff;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .category-filters {
+        gap: 0.5rem;
+    }
+    
+    .category-btn {
+        padding: 0.6rem 1rem;
+        min-width: 100px;
+        font-size: 0.9rem;
+    }
+    
+    .genre-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* PAGE TITLE */
+.page-title {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.page-subtitle {
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+}
 
 .footer {
   background-color: #1e1e1e;

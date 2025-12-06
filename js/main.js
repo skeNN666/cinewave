@@ -23,6 +23,90 @@ const database = [
   { name: "It: Welcome to Derry", category: "tv", image: "welcometoderry.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
   { name: "Blue Moon", category: "movies", image: "bluemoon.jpg", yearOrSeason: "2025 • 100 мин" },
   { name: "Talamasca: The Secret Order", category: "tv", image: "talamasca.jpg", yearOrSeason: "Улирал: 1 • Анги: 1" },
+  { 
+    name: "Oppenheimer", 
+    category: "movies", 
+    image: "oppenheimer.jpg", 
+    yearOrSeason: "2023 • 180 мин",
+    genre: ["drama", "biography", "history"]
+  },
+  { 
+    name: "Barbie", 
+    category: "movies", 
+    image: "barbie.jpg", 
+    yearOrSeason: "2023 • 114 мин",
+    genre: ["comedy", "adventure", "fantasy"]
+  },
+  { 
+    name: "John Wick: Chapter 4", 
+    category: "movies", 
+    image: "johnwick4.jpg", 
+    yearOrSeason: "2023 • 169 мин",
+    genre: ["action", "thriller", "crime"]
+  },
+  { 
+    name: "Avatar: The Way of Water", 
+    category: "movies", 
+    image: "avatar2.jpg", 
+    yearOrSeason: "2022 • 192 мин",
+    genre: ["sci-fi", "adventure", "fantasy"]
+  },
+  { 
+    name: "Stranger Things", 
+    category: "tv", 
+    image: "strangerthings.jpg", 
+    yearOrSeason: "Улирал: 4 • Анги: 9",
+    genre: ["drama", "fantasy", "horror"]
+  },
+  { 
+    name: "The Last of Us", 
+    category: "tv", 
+    image: "thelastofus.jpg", 
+    yearOrSeason: "Улирал: 1 • Анги: 9",
+    genre: ["drama", "adventure", "horror"]
+  },
+  { 
+    name: "The Batman", 
+    category: "movies", 
+    image: "thebatman.jpg", 
+    yearOrSeason: "2022 • 176 мин",
+    genre: ["action", "crime", "drama"]
+  },
+  { 
+    name: "Everything Everywhere All at Once", 
+    category: "movies", 
+    image: "eeaao.jpg", 
+    yearOrSeason: "2022 • 139 мин",
+    genre: ["action", "adventure", "comedy"]
+  },
+  { 
+    name: "Top Gun: Maverick", 
+    category: "movies", 
+    image: "topgun.jpg", 
+    yearOrSeason: "2022 • 130 мин",
+    genre: ["action", "drama"]
+  },
+  { 
+    name: "House of the Dragon", 
+    category: "tv", 
+    image: "hotd.jpg", 
+    yearOrSeason: "Улирал: 2 • Анги: 8",
+    genre: ["action", "adventure", "drama"]
+  },
+  { 
+    name: "The Bear", 
+    category: "tv", 
+    image: "thebear.jpg", 
+    yearOrSeason: "Улирал: 3 • Анги: 10",
+    genre: ["comedy", "drama"]
+  },
+  { 
+    name: "Succession", 
+    category: "tv", 
+    image: "succession.jpg", 
+    yearOrSeason: "Улирал: 4 • Анги: 10",
+    genre: ["drama"]
+  }
 ];
 
 let selectedCategory = "all";
