@@ -46,11 +46,11 @@ function setClasses(){
   }
 }
 
-// Navigation
-document.querySelector(".left").addEventListener("click", ()=>{ center = (center-1+N)%N; setClasses(); });
-document.querySelector(".right").addEventListener("click", ()=>{ center = (center+1)%N; setClasses(); });
+// Үндсэн хөдөлгөдөг товчлуурууд
+document.querySelector(".leftBtn").addEventListener("click", ()=>{ center = (center-1+N)%N; setClasses(); });
+document.querySelector(".rightBtn").addEventListener("click", ()=>{ center = (center+1)%N; setClasses(); });
 
-// Keyboard arrows
+// Keyboard сум ашиглан хөдөлгөх
 window.addEventListener("keydown", e=>{
   if(e.key==='ArrowLeft'){ center = (center-1+N)%N; setClasses(); }
   if(e.key==='ArrowRight'){ center = (center+1)%N; setClasses(); }
