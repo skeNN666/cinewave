@@ -166,7 +166,7 @@ class CineWaveNavbar extends HTMLElement {
     const html = document.createElement('div');
     html.innerHTML = `
       <nav class="navbar">
-        <a href="/index.html" class="logo">
+        <a href="../../index.html" class="logo">
           <span class="cine">CINE</span><span class="wave">WAVE</span>
         </a>
 
