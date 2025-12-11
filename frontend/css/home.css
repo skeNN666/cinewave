@@ -71,7 +71,7 @@ body {
   background: #333;
   color: white;
   border: none;
-  padding: 8px 32px 8px 12px; /* More padding on right for arrow */
+  padding: 8px 32px 8px 12px; 
   cursor: pointer;
   border-radius: 5px;
   min-width: 120px;
@@ -80,11 +80,10 @@ body {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  /* Arrow styling - positioned closer to text */
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 10px center; /* Reduced from 12px to 10px */
-  background-size: 14px; /* Slightly smaller arrow */
+  background-position: right 10px center;
+  background-size: 14px; 
 }
 
 .category-select:focus {
@@ -93,14 +92,13 @@ body {
   outline: none;
 }
 
-/* Remove default arrow in IE */
 .category-select::-ms-expand {
   display: none;
 }
 
 .search-box {
   position: relative;
-  z-index: 1000; /* Lower than dropdown */
+  z-index: 1000; 
   flex: 1;
 }
 

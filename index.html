@@ -4,166 +4,151 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CINEWAVE</title>
-
-  <!-- Google Font -->
   <link rel="icon" type="image/png" href="./frontend/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="./frontend/css/home.css">
 </head>
 <body>
-<header>
-  <nav class="navbar">
-    <a href="index.html" class="logo">
-      <span class="cine">CINE</span><span class="wave">WAVE</span>
-    </a>
 
-    <div class="nav-links">
-      <a href="./frontend/html/movies.html">Кино</a>
-      <a href="./frontend/html/customlist.html">Жагсаалт</a>
-      <a href="./frontend/html/help.html">Тусламж</a>
+  <cinewave-navbar></cinewave-navbar>
 
-      <div class="search-group">
-        <div class="all-dropdown">
-          <select id="category-select" class="category-select">
-            <option value="all">Бүгд</option>
-            <option value="movies">Кино</option>
-            <option value="tv">TV цуврал</option>
-            <option value="celebs">Алдартнууд</option>
-          </select>
+  <main>
+    <!-- Movie slider section -->
+    <section class="movie-slider">
+      <div class="carousel-container">
+        <button class="nav-arrow left">‹</button>
+        <div class="carousel-track">
+          <!-- Carousel will be dynamically populated by main.js -->
         </div>
-        <div class="search-box">
-          <input type="text" placeholder="Хайх..." id="search-input">
-        </div>
+        <button class="nav-arrow right">›</button>
       </div>
 
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </button>
+      <div class="movie-info">
+        <h2 class="movie-name"></h2>
+      </div>
 
-    <button class="sign-in" onclick="window.location.href='./frontend/html/login.html'">Нэвтрэх</button>
-  </nav>
-</header>
-<section class="movie-slider">
-  <div class="carousel-container">
-    <button class="nav-arrow left">‹</button>
-    <div class="carousel-track">
+      <div class="dots">
+        <!-- Dots will be dynamically added by main.js -->
+      </div>
+    </section>
+
+    <!-- Promo section -->
+    <article class="promo-section">
+      <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
+      <div class="slogan top-left">Дуртай киногоо үз</div>
+      <div class="slogan center">Бодол санаагаа бич</div>
+      <div class="slogan bottom-right">Бусдад түгээ</div>
+      <button class="join-btn">Бидэнтэй нэгд</button>
+    </article>
+
+    <!-- Latest movies -->
+    <section class="movies">
+      <div class="section-header">
+        <h2>Сүүлд нэмэгдсэн кино</h2>
+        <button id="show-more-movies" class="show-more-btn">Илүү ихийг</button>
+      </div>
+      <hr class="line">
+      <section class="movies-section" id="latest-movies">
+        <!-- Movie cards will be dynamically added by main.js -->
+      </section>
+    </section>
+
+    <!-- Latest TV series -->
+    <section class="movies">
+      <div class="section-header">
+        <h2>Сүүлд нэмэгдсэн цуврал</h2>
+        <button id="show-more-tv" class="show-more-btn">Илүү ихийг</button>
+      </div>
+      <hr class="line">
+      <section class="movies-section" id="latest-tv">
+        <!-- TV series cards will be dynamically added by main.js -->
+      </section>
+    </section>
+
+    <!-- Upcoming movies -->
+    <section class="movies">
+      <div class="section-header">
+        <h2>Тун удахгүй</h2>
+        <button id="show-more-upcoming" class="show-more-btn">Илүү ихийг</button>
+      </div>
+      <hr class="line">
+      <section class="movies-section" id="upcoming-movies">
+        <!-- Upcoming movie cards will be dynamically added by main.js -->
+      </section>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-column brand">
+        <span class="cine">CINE</span><span class="wave">WAVE</span>
+      </div>
+
+      <div class="footer-column">
+        <h3>Кино</h3>
+        <ul>
+          <li><a href="#">Хайх</a></li>
+          <li><a href="#">Эрэлтэд</a></li>
+          <li><a href="#">Өндөр үнэлгээтэй</a></li>
+          <li><a href="#">Шинэ гаралтууд</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Community</h3>
+        <ul>
+          <li><a href="#">Найзууд</a></li>
+          <li><a href="#">Жагсаалт</a></li>
+          <li><a href="#">Хэлэлцүүлэг</a></li>
+          <li><a href="#">Шүүмж</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Компани</h3>
+        <ul>
+          <li><a href="#">Бидний тухай</a></li>
+          <li><a href="#">Ажлын байр</a></li>
+          <li><a href="#">Холбоо барих</a></li>
+          <li><a href="#">Биднийг дэмжих</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column newsletter">
+        <h3>Сонин</h3>
+        <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
     </div>
-    <button class="nav-arrow right">›</button>
-  </div>
 
-  <div class="movie-info">
-    <h2 class="movie-name"></h2>
-  </div>
-
-  <div class="dots">
-  </div>
-</section>
-
-<article class="promo-section">
-  <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
-  <div class="slogan top-left">Дуртай киногоо үз</div>
-  <div class="slogan center">Бодол санаагаа бич</div>
-  <div class="slogan bottom-right">Бусдад түгээ</div>
-  <button class="join-btn">Бидэнтэй нэгд</button>
-</article>
-
-<section class="movies">
-  <div class="section-header">
-    <h2>Сүүлд нэмэгдсэн кино</h2>
-    <button id="show-more">Илүү ихийг</button>
-  </div>
-  <hr class="line">
-  <section class="movies-section" id="latest-movies"></section>
-</section>
-
-<section class="movies">
-    <div class="section-header">
-      <h2>Сүүлд нэмэгдсэн цуврал</h2>
-      <button id="show-more">Илүү ихийг</button>
-    </div>
     <hr class="line">
-  <section class="movies-section" id="latest-tv"></section>
-</section>
+    <div class="footer-bottom">
+      <p>© 2025 CineWave. All rights reserved.</p>
 
-
-<section class="movies">
-  <div class="section-header">
-    <h2>Тун удахгүй</h2>
-    <button id="show-more">Илүү ихийг</button>
-  </div>
-  <hr class="line">
-  <section class="movies-section" id="upcoming-movies"></section>
-</section>
-
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-column brand">
-      <span class="cine">CINE</span><span class="wave">WAVE</span>
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-x-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
     </div>
+  </footer>
 
-    <div class="footer-column">
-      <h3>Кино</h3>
-      <ul>
-        <li><a href="#">Хайх</a></li>
-        <li><a href="#">Эрэлтэд</a></li>
-        <li><a href="#">Өндөр үнэлгээтэй</a></li>
-        <li><a href="#">Шинэ гаралтууд</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Community</h3>
-      <ul>
-        <li><a href="#">Найзууд</a></li>
-        <li><a href="#">Жагсаалт</a></li>
-        <li><a href="#">Хэлэлцүүлэг</a></li>
-        <li><a href="#">Шүүмж</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Компани</h3>
-      <ul>
-        <li><a href="#">Бидний тухай</a></li>
-        <li><a href="#">Ажлын байр</a></li>
-        <li><a href="#">Холбоо барих</a></li>
-        <li><a href="#">Биднийг дэмжих</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column newsletter">
-      <h3>Сонин</h3>
-      <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Enter your email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-    </div>
-  </div>
-
-  <hr class="line">
-  <div class="footer-bottom">
-    <p>© 2025 CineWave. All rights reserved.</p>
-
-    <div class="footer-socials">
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-x-twitter"></i></a>
-      <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
-    </div>
-  </div>
-</footer>
-<!-- Update the scripts section at the bottom of your HTML -->
-<script src="./frontend/js/database.js"></script>
-<script src="./frontend/js/movie-card-component.js"></script>
-<script src="./frontend/js/main.js"></script>
+  <!-- Scripts -->
+   <script src="./frontend/js/movie-card-component.js"></script>
+  <script type="module" src="./frontend/js/navbar-component.js"></script>
+  <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>
