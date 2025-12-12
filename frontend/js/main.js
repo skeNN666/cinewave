@@ -70,7 +70,6 @@ function getMoviesBySection(sectionId) {
             return [];
     }
 }
-
 function renderPaginatedSection(containerId, movies, page) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -81,19 +80,28 @@ function renderPaginatedSection(containerId, movies, page) {
 
     container.innerHTML = '';
 
-    visibleMovies.forEach(movie => {
+    visibleMovies.forEach((movie, index) => {
         const movieCard = document.createElement('movie-card');
         movieCard.setAttribute('name', movie.name);
         movieCard.setAttribute('image', movie.image);
-        movieCard.setAttribute('year-or-season', movie.yearOrSeason || movie.yearOrSeason || '');
+        movieCard.setAttribute('year-or-season', movie.yearOrSeason || '');
         movieCard.setAttribute('category', movie.category || '');
         
+        // Pass ALL attributes from JSON
         if (movie.rating) movieCard.setAttribute('rating', movie.rating);
         if (movie.duration) movieCard.setAttribute('duration', movie.duration);
         if (movie.description) movieCard.setAttribute('description', movie.description);
         if (movie.director) movieCard.setAttribute('director', movie.director);
-        if (movie.cast) movieCard.setAttribute('cast', JSON.stringify(movie.cast));
-
+        if (movie.cast && Array.isArray(movie.cast)) {
+            movieCard.setAttribute('cast', JSON.stringify(movie.cast));
+        }
+        if (movie.genre && Array.isArray(movie.genre)) {
+            movieCard.setAttribute('genre', JSON.stringify(movie.genre));
+        }
+        if (movie.trailer) {
+            movieCard.setAttribute('trailer', movie.trailer);
+        }
+        
         container.appendChild(movieCard);
     });
 
