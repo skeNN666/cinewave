@@ -9,18 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-  <!-- Custom CSS -->
   <link rel="stylesheet" href="./frontend/css/home.css">
 </head>
 <body>
 
   <cinewave-navbar></cinewave-navbar>
-
+  <auth-modal></auth-modal>
   <main>
-    <!-- Movie slider section -->
     <section class="movie-slider">
       <div class="carousel-container">
         <button class="nav-arrow left">‹</button>
@@ -34,11 +31,9 @@
       </div>
 
       <div class="dots">
-        <!-- Dots will be dynamically added by main.js -->
       </div>
     </section>
 
-    <!-- Promo section -->
     <article class="promo-section">
       <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
       <div class="slogan top-left">Дуртай киногоо үз</div>
@@ -47,7 +42,6 @@
       <button class="join-btn">Бидэнтэй нэгд</button>
     </article>
 
-    <!-- Latest movies -->
     <section class="movies">
       <div class="section-header">
         <h2>Сүүлд нэмэгдсэн кино</h2>
@@ -55,11 +49,9 @@
       </div>
       <hr class="line">
       <section class="movies-section" id="latest-movies">
-        <!-- Movie cards will be dynamically added by main.js -->
       </section>
     </section>
 
-    <!-- Latest TV series -->
     <section class="movies">
       <div class="section-header">
         <h2>Сүүлд нэмэгдсэн цуврал</h2>
@@ -67,11 +59,9 @@
       </div>
       <hr class="line">
       <section class="movies-section" id="latest-tv">
-        <!-- TV series cards will be dynamically added by main.js -->
       </section>
     </section>
 
-    <!-- Upcoming movies -->
     <section class="movies">
       <div class="section-header">
         <h2>Тун удахгүй</h2>
@@ -79,75 +69,13 @@
       </div>
       <hr class="line">
       <section class="movies-section" id="upcoming-movies">
-        <!-- Upcoming movie cards will be dynamically added by main.js -->
       </section>
     </section>
   </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-column brand">
-        <span class="cine">CINE</span><span class="wave">WAVE</span>
-      </div>
-
-      <div class="footer-column">
-        <h3>Кино</h3>
-        <ul>
-          <li><a href="#">Хайх</a></li>
-          <li><a href="#">Эрэлтэд</a></li>
-          <li><a href="#">Өндөр үнэлгээтэй</a></li>
-          <li><a href="#">Шинэ гаралтууд</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h3>Community</h3>
-        <ul>
-          <li><a href="#">Найзууд</a></li>
-          <li><a href="#">Жагсаалт</a></li>
-          <li><a href="#">Хэлэлцүүлэг</a></li>
-          <li><a href="#">Шүүмж</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h3>Компани</h3>
-        <ul>
-          <li><a href="#">Бидний тухай</a></li>
-          <li><a href="#">Ажлын байр</a></li>
-          <li><a href="#">Холбоо барих</a></li>
-          <li><a href="#">Биднийг дэмжих</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column newsletter">
-        <h3>Сонин</h3>
-        <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Enter your email" required>
-          <button type="submit">Subscribe</button>
-        </form>
-      </div>
-    </div>
-
-    <hr class="line">
-    <div class="footer-bottom">
-      <p>© 2025 CineWave. All rights reserved.</p>
-
-      <div class="footer-socials">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-x-twitter"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-   <script src="./frontend/js/movie-card-component.js"></script>
+  <cinewave-footer></cinewave-footer>
+  <script src="./frontend/js/movie-card-component.js"></script>
   <script type="module" src="./frontend/js/navbar-component.js"></script>
+  <script src="./frontend/js/footer-component.js"></script>
   <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>

@@ -33,13 +33,13 @@
   // ============ CORE FUNCTIONS ============
   
   // Function to render movies
-  function renderMovies() {
+function renderMovies() {
     console.log('🔄 Rendering movies with filters:', currentFilters);
     
     const container = document.getElementById('movies-container');
     if (!container) {
-      console.error('❌ movies-container not found!');
-      return;
+        console.error('❌ movies-container not found!');
+        return;
     }
     
     container.innerHTML = '';
@@ -49,31 +49,31 @@
     
     // 1. Category filter
     if (currentFilters.category !== 'all') {
-      filteredMovies = filteredMovies.filter(movie => 
-        movie.category === currentFilters.category
-      );
-      console.log(`📁 After category filter (${currentFilters.category}):`, filteredMovies.length);
+        filteredMovies = filteredMovies.filter(movie => 
+            movie.category === currentFilters.category
+        );
+        console.log(`📁 After category filter (${currentFilters.category}):`, filteredMovies.length);
     }
     
     // 2. Genre filter (AND logic - must have ALL selected genres)
     if (currentFilters.genres.length > 0) {
-      filteredMovies = filteredMovies.filter(movie => {
-        const hasAllGenres = currentFilters.genres.every(selectedGenre => 
-          movie.genre.includes(selectedGenre)
-        );
-        return hasAllGenres;
-      });
-      console.log(`🎭 After genre filter (${currentFilters.genres.join(', ')}):`, filteredMovies.length);
+        filteredMovies = filteredMovies.filter(movie => {
+            const hasAllGenres = currentFilters.genres.every(selectedGenre => 
+                movie.genre.includes(selectedGenre)
+            );
+            return hasAllGenres;
+        });
+        console.log(`🎭 After genre filter (${currentFilters.genres.join(', ')}):`, filteredMovies.length);
     }
     
     // 3. Search filter
     if (currentFilters.search.trim() !== '') {
-      const searchTerm = currentFilters.search.toLowerCase();
-      filteredMovies = filteredMovies.filter(movie => 
-        movie.name.toLowerCase().includes(searchTerm) ||
-        movie.genre.some(g => g.toLowerCase().includes(searchTerm))
-      );
-      console.log(`🔍 After search filter ("${currentFilters.search}"):`, filteredMovies.length);
+        const searchTerm = currentFilters.search.toLowerCase();
+        filteredMovies = filteredMovies.filter(movie => 
+            movie.name.toLowerCase().includes(searchTerm) ||
+            movie.genre.some(g => g.toLowerCase().includes(searchTerm))
+        );
+        console.log(`🔍 After search filter ("${currentFilters.search}"):`, filteredMovies.length);
     }
     
     // Update count
@@ -81,29 +81,68 @@
     
     // Render movies
     if (filteredMovies.length === 0) {
-      container.innerHTML = `
+        container.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
           <h3>Кино олдсонгүй</h3>
           <p>Шүүлтүүр тохируулна уу</p>
         </div>
       `;
     } else {
-      filteredMovies.forEach(movie => {
-        const movieCard = document.createElement('movie-card');
-        movieCard.setAttribute('name', movie.name);
-        movieCard.setAttribute('image', movie.image);
-        movieCard.setAttribute('year-or-season', movie.yearOrSeason);
-        movieCard.setAttribute('category', movie.category);
-        movieCard.setAttribute('genre', movie.genre.join(', '));
-        container.appendChild(movieCard);
-      });
+        filteredMovies.forEach(movie => {
+            const movieCard = document.createElement('movie-card');
+            
+            // Pass BASIC attributes
+            movieCard.setAttribute('name', movie.name);
+            movieCard.setAttribute('image', movie.image);
+            movieCard.setAttribute('year-or-season', movie.yearOrSeason);
+            movieCard.setAttribute('category', movie.category);
+            
+            // Pass ALL ADDITIONAL attributes for modal
+            if (movie.genre && Array.isArray(movie.genre)) {
+                movieCard.setAttribute('genre', JSON.stringify(movie.genre));
+            }
+            
+            if (movie.description) {
+                movieCard.setAttribute('description', movie.description);
+            }
+            
+            if (movie.rating) {
+                movieCard.setAttribute('rating', movie.rating.toString());
+            }
+            
+            if (movie.duration) {
+                movieCard.setAttribute('duration', movie.duration);
+            }
+            
+            if (movie.director) {
+                movieCard.setAttribute('director', movie.director);
+            }
+            
+            if (movie.cast && Array.isArray(movie.cast)) {
+                movieCard.setAttribute('cast', JSON.stringify(movie.cast));
+            }
+            
+            if (movie.trailer) {
+                movieCard.setAttribute('trailer', movie.trailer);
+            }
+            
+            // Debug: Check what's being passed
+            console.log(`Creating card for "${movie.name}":`, {
+                hasGenre: !!movie.genre,
+                hasTrailer: !!movie.trailer,
+                hasCast: !!movie.cast,
+                hasRating: !!movie.rating
+            });
+            
+            container.appendChild(movieCard);
+        });
     }
     
     // Update active filters display
     updateActiveFilters();
     
     console.log(`✅ Displaying ${filteredMovies.length} movies`);
-  }
+}
   
   // Function to update items count
   function updateItemsCount(count) {

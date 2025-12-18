@@ -332,7 +332,7 @@ movie-card {
 }
 
 .category-btn.active {
-    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    background: linear-gradient(90deg, #007fff, #007bff);
     border-color: transparent;
     box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
 }
@@ -378,7 +378,7 @@ movie-card {
 }
 
 .filter-badge {
-    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    background: linear-gradient(90deg, #007fff, #007bff);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -440,8 +440,9 @@ movie-card {
     font-size: 3rem;
     margin-bottom: 0.5rem;
     text-align: center;
-    background: linear-gradient(90deg, #ff4757, #ff6b81);
+    background: linear-gradient(90deg, #007fff, #007bff);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
 }

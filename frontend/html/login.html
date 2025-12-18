@@ -12,41 +12,7 @@
   <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
-<header>
-  <nav class="navbar">
-    <a href="../index.html" class="logo">
-      <span class="cine">CINE</span><span class="wave">WAVE</span>
-    </a>
-
-    <div class="nav-links">
-      <a href="movies.html">Кино</a>
-      <a href="customlist.html">Жагсаалт</a>
-      <a href="help.html">Тусламж</a>
-
-      <div class="search-group">
-        <div class="all-dropdown">
-          <select id="category-select" class="category-select">
-            <option value="all">Бүгд</option>
-            <option value="movies">Кино</option>
-            <option value="tv">TV цуврал</option>
-            <option value="celebs">Алдартнууд</option>
-          </select>
-        </div>
-        <div class="search-box">
-          <input type="text" placeholder="Хайх..." id="search-input">
-        </div>
-      </div>
-
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 7L20 7" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 12H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M4 17H20" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </button>
-
-    <button class="sign-in" onclick="window.location.href='./html/login.html'">Нэвтрэх</button>
-  </nav>
-</header>
+<cinewave-navbar></cinewave-navbar>
   <div class="container">
     <div class="login-section" id="loginSection">
       <h1>Нэвтрэх</h1>
@@ -86,65 +52,10 @@
       </ul>
     </div>
   </div>
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-column brand">
-      <span class="cine">CINE</span><span class="wave">WAVE</span>
-    </div>
-
-    <div class="footer-column">
-      <h3>Кино</h3>
-      <ul>
-        <li><a href="#">Хайх</a></li>
-        <li><a href="#">Эрэлтэд</a></li>
-        <li><a href="#">Өндөр үнэлгээтэй</a></li>
-        <li><a href="#">Шинэ гаралтууд</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Community</h3>
-      <ul>
-        <li><a href="#">Найзууд</a></li>
-        <li><a href="#">Жагсаалт</a></li>
-        <li><a href="#">Хэлэлцүүлэг</a></li>
-        <li><a href="#">Шүүмж</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Компани</h3>
-      <ul>
-        <li><a href="#">Бидний тухай</a></li>
-        <li><a href="#">Ажлын байр</a></li>
-        <li><a href="#">Холбоо барих</a></li>
-        <li><a href="#">Биднийг дэмжих</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column newsletter">
-      <h3>Сонин</h3>
-      <p>Сүүлийн үеийн кино урлагийн талаарх мэдлэгийг таны гарт.</p>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Enter your email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-    </div>
-  </div>
-
-  <hr class="line">
-  <div class="footer-bottom">
-    <p>© 2025 CineWave. All rights reserved.</p>
-
-    <div class="footer-socials">
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-x-twitter"></i></a>
-      <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
-    </div>
-  </div>
-</footer>
+<cinewave-footer></cinewave-footer>
+  <script src="../js/footer-component.js"></script>
+  <script src="../js/navbar-component.js"></script>
+  <script type="module" src="../js/auth-component.js"></script>
   <script>
     const showCreate = document.getElementById("showCreateAccount");
     const backToLogin = document.getElementById("backToLogin");
@@ -171,6 +82,32 @@
     function signInFacebook() {
       window.location.href = 'https://www.facebook.com/login';
     }
+    // In your login.html, update the signInCinewave function:
+function signInCinewave() {
+    // Get form values
+    const username = "Батар"; // You can get this from your form
+    const email = "batarbold@gmail.com"; // You can get this from your form
+    
+    // Save to localStorage
+    localStorage.setItem('cinewave-token', 'user-logged-in');
+    localStorage.setItem('cinewave-user', JSON.stringify({
+        id: Date.now(),
+        username: username,
+        email: email
+    }));
+    
+    // Redirect back to previous page or home
+    const previousPage = document.referrer || '../index.html';
+    window.location.href = previousPage;
+}
+
+// Also add this at the top of your login page:
+document.addEventListener('DOMContentLoaded', function() {
+    // If user is already logged in, redirect to home
+    if (localStorage.getItem('cinewave-token')) {
+        window.location.href = '../index.html';
+    }
+});
   </script>
 </body>
 </html>
