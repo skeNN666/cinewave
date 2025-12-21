@@ -173,7 +173,7 @@ class CineWaveNavbar extends HTMLElement {
         <div class="nav-links">
           <a href="./frontend/html/movies.html">Кино</a>
           <a href="./frontend/html/customlist.html">Жагсаалт</a>
-          <a href="./frontend/html/help.html">Тусламж</a>
+          <a href="./frontend/html/reviews.html">Шүүмж</a>
 
           <div class="search-group">
             <div class="all-dropdown">

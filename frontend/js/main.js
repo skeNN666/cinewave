@@ -183,6 +183,20 @@ function initializeCarousel() {
         }, 800);
     }
 
+    // Add click/tap navigation to movie cards
+    document.querySelectorAll(".card").forEach(card => {
+        card.addEventListener("click", () => {
+            const index = Number(card.dataset.index);
+            if (index !== carouselIndex) {
+                updateCarousel(index);
+            }
+        });
+        
+        // Add cursor pointer to indicate clickable
+        card.style.cursor = "pointer";
+    });
+
+    // Existing navigation controls
     if (leftArrow) leftArrow.addEventListener("click", () => updateCarousel(carouselIndex - 1));
     if (rightArrow) rightArrow.addEventListener("click", () => updateCarousel(carouselIndex + 1));
 
@@ -190,30 +204,43 @@ function initializeCarousel() {
         dot.addEventListener("click", () => updateCarousel(Number(dot.dataset.index)));
     });
 
-    document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", () => updateCarousel(Number(card.dataset.index)));
-    });
-
     document.addEventListener("keydown", e => {
         if (e.key === "ArrowLeft") updateCarousel(carouselIndex - 1);
         else if (e.key === "ArrowRight") updateCarousel(carouselIndex + 1);
     });
 
+    // Touch/swipe support
     let touchStartX = 0;
     let touchEndX = 0;
-    document.addEventListener("touchstart", e => touchStartX = e.changedTouches[0].screenX);
-    document.addEventListener("touchend", e => {
+    let isTouch = false;
+    
+    track.addEventListener("touchstart", e => {
+        touchStartX = e.changedTouches[0].screenX;
+        isTouch = true;
+    }, { passive: true });
+    
+    track.addEventListener("touchend", e => {
         touchEndX = e.changedTouches[0].screenX;
         const diff = touchStartX - touchEndX;
-        if (Math.abs(diff) > 50) updateCarousel(diff > 0 ? carouselIndex + 1 : carouselIndex - 1);
-    });
+        if (Math.abs(diff) > 50) {
+            updateCarousel(diff > 0 ? carouselIndex + 1 : carouselIndex - 1);
+        }
+        isTouch = false;
+    }, { passive: true });
+    
+    
+    track.addEventListener("click", (e) => {
+        if (isTouch) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
 
     // expose updateCarousel to other functions (applyFilters uses it)
     window.updateCarousel = updateCarousel;
 
     updateCarousel(0);
 }
-
 function initializeFilters() {
     console.log("Initializing filters...");
     
