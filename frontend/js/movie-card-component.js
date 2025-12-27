@@ -1,10 +1,9 @@
-// movie-card-component.js (UPDATED - Dynamic reviews from JSON)
+// frontend/js/movie-card-component.js
 class MovieCard extends HTMLElement {
     constructor() {
         super();
         
         this.attachShadow({ mode: 'open' });
-        this.movieData = null;
         
         this.shadowRoot.innerHTML = `
     <style>
@@ -226,6 +225,13 @@ class MovieCard extends HTMLElement {
             box-shadow: 0 6px 15px rgba(194, 27, 227, 0.4);
         }
 
+        .trailer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
         /* User Actions */
         .user-actions {
             display: flex;
@@ -290,14 +296,15 @@ class MovieCard extends HTMLElement {
         
         .info-grid {
             display: grid;
-            grid-template-columns: auto 1fr;
+            grid-template-columns: 150px 1fr;
             gap: 12px;
+            align-items: start;
         }
         
         .info-label {
             font-weight: 600;
-            color: #ccc;
-            min-width: 120px;
+            color: #4da3ff;
+            min-width: 150px;
         }
         
         .info-value {
@@ -315,8 +322,35 @@ class MovieCard extends HTMLElement {
             font-size: 1.2rem;
             letter-spacing: 2px;
         }
+
+        .rating-number {
+            color: gold;
+            font-weight: bold;
+            margin-left: 8px;
+        }
         
-        /* ACTORS MOVED TO COLUMN 3 - REMOVED FROM HERE */
+        /* Modal year formatting */
+        .modal-year {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .year-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .year-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        .year-value {
+            color: #fff;
+            font-weight: 500;
+        }
         
         .movie-description {
             color: #ccc;
@@ -334,6 +368,9 @@ class MovieCard extends HTMLElement {
             cursor: pointer;
             margin-top: 10px;
             transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .show-more-btn:hover {
@@ -366,9 +403,40 @@ class MovieCard extends HTMLElement {
             color: #fff;
         }
 
-        .more-info p {
+        /* More details grid */
+        .more-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            background: #2a2a2a;
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #4da3ff;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        
+        .detail-value ul {
             margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        .detail-value li {
             color: #ccc;
+            margin-bottom: 3px;
         }
 
         .genre-tags {
@@ -448,7 +516,7 @@ class MovieCard extends HTMLElement {
             box-shadow: 0 6px 15px rgba(194, 27, 227, 0.4);
         }
         
-        /* Actors Section in Column 3 */
+        /* Actors Section */
         .actors-section {
             background: #1a1a1a;
             border-radius: 10px;
@@ -456,17 +524,29 @@ class MovieCard extends HTMLElement {
             margin-top: 15px;
         }
         
+        .actors-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .actor-count {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
         .actors-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 300px;
+            gap: 10px;
+            max-height: 400px;
             overflow-y: auto;
             padding-right: 5px;
         }
         
         .actors-list::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         .actors-list::-webkit-scrollbar-track {
@@ -479,17 +559,29 @@ class MovieCard extends HTMLElement {
             border-radius: 4px;
         }
         
+        .actors-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
         .actor {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 0;
+            gap: 12px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+        
+        .actor:hover {
+            background: #333;
         }
         
         .actor-avatar {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            object-fit: cover;
             background: linear-gradient(135deg, #e50914 0%, #b81d24 100%);
             display: flex;
             align-items: center;
@@ -498,17 +590,37 @@ class MovieCard extends HTMLElement {
             font-weight: bold;
             font-size: 0.9rem;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .actor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .actor-info {
+            flex: 1;
+            min-width: 0;
         }
         
         .actor-name {
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
             font-size: 0.95rem;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .actor-role {
             font-size: 0.85rem;
             color: #aaa;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         /* Reviews Section */
@@ -712,6 +824,29 @@ class MovieCard extends HTMLElement {
             font-size: 0.9rem;
         }
         
+        /* Loading states */
+        .loading-actors {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 1024px) {
             .modal-body {
                 grid-template-columns: 1fr 1fr;
@@ -736,6 +871,15 @@ class MovieCard extends HTMLElement {
             .actors-section {
                 grid-column: span 2;
                 margin-top: 0;
+            }
+            
+            .more-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
             }
         }
         
@@ -768,7 +912,8 @@ class MovieCard extends HTMLElement {
             }
         }
     </style>
-<article class="movie-card">
+    
+    <article class="movie-card">
         <img src="" alt="">
         <div class="title-container">
             <h3></h3>
@@ -788,14 +933,13 @@ class MovieCard extends HTMLElement {
             </div>
             
             <div class="modal-body">
-                <!-- Column 1: Poster & User Actions (FIXED) -->
+                <!-- Column 1: Poster & User Actions -->
                 <div class="poster-column">
                     <img class="modal-poster" src="" alt="">
                     <button class="trailer-btn">
                         <i class="fas fa-play"></i> Трейлер үзэх
                     </button>
                     
-                    <!-- User Actions -->
                     <div class="user-actions">
                         <button class="action-btn watchlist-btn" id="watchlist-btn">
                             <i class="fas fa-plus"></i> Watchlist
@@ -806,13 +950,18 @@ class MovieCard extends HTMLElement {
                     </div>
                 </div>
                 
-                <!-- Column 2: Movie Information & Reviews (SCROLLS) -->
+                <!-- Column 2: Movie Information & Reviews -->
                 <div class="info-column">
                     <div class="movie-info-section">
                         <h3 class="section-title">Киноны мэдээлэл</h3>
                         <div class="info-grid">
-                            <div class="info-label">Он/Үргэлжлэх хугацаа:</div>
-                            <div class="info-value modal-year"></div>
+                            <div class="info-label">Он:</div>
+                            <div class="info-value">
+                                <div class="modal-year" id="modal-year"></div>
+                            </div>
+                            
+                            <div class="info-label">Үргэлжлэх хугацаа:</div>
+                            <div class="info-value" id="modal-duration"></div>
                             
                             <div class="info-label">Төрөл:</div>
                             <div class="info-value modal-type"></div>
@@ -821,7 +970,7 @@ class MovieCard extends HTMLElement {
                             <div class="info-value">
                                 <div class="rating">
                                     <span class="stars">★★★☆☆</span>
-                                    <span class="rating-text">7.5/10</span>
+                                    <span class="rating-number">7.5/10</span>
                                 </div>
                             </div>
                             
@@ -832,43 +981,33 @@ class MovieCard extends HTMLElement {
                         </div>
                     </div>
                     
-                    <!-- ACTORS REMOVED FROM HERE -->
-                    
                     <div class="movie-info-section">
                         <h3 class="section-title">Тайлбар</h3>
                         <div class="movie-description"></div>
-                        <button class="show-more-btn">Дэлгэрэнгүй үзэх</button>
+                        <button class="show-more-btn">
+                            <i class="fas fa-chevron-down"></i>
+                            <span class="show-more-text">Дэлгэрэнгүй үзэх</span>
+                        </button>
                         <div class="more-content">
                             <div class="more-info">
-                                <h4>Нэмэлт мэдээлэл:</h4>
-                                <div class="more-details"></div>
+                                <h4>Нэмэлт мэдээлэл</h4>
+                                <div class="more-details" id="more-details"></div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Reviews Section -->
                     <div class="movie-info-section review-section">
                         <h3 class="section-title">Хэрэглэгчийн үнэлгээ</h3>
-                        
-                        <!-- Average Rating -->
-                        <div class="average-rating" id="average-rating">
-                            <!-- Will be populated dynamically -->
-                        </div>
-                        
-                        <!-- Login Prompt -->
+                        <div class="average-rating" id="average-rating"></div>
                         <div class="login-prompt" id="login-prompt">
                             <p>Үнэлгээ өгөх, watchlist нэмэх эсвэл кино үзсэн гэж тэмдэглэхийн тулд нэвтрэх шаардлагатай</p>
                             <button class="login-btn" id="go-to-login-btn">Нэвтрэх</button>
                         </div>
-                        
-                        <!-- Reviews List -->
-                        <div class="reviews-list" id="reviews-list">
-                            <!-- Reviews will be loaded here -->
-                        </div>
+                        <div class="reviews-list" id="reviews-list"></div>
                     </div>
                 </div>
                 
-                <!-- Column 3: Streaming Options & Actors (FIXED) -->
+                <!-- Column 3: Streaming Options & Actors -->
                 <div class="actions-column">
                     <button class="streaming-btn netflix-btn">
                         <i class="fab fa-netflix"></i> Netflix
@@ -880,10 +1019,12 @@ class MovieCard extends HTMLElement {
                         <i class="fas fa-play"></i> Үзэх
                     </button>
                     
-                    <!-- Actors Section Moved Here -->
                     <div class="actors-section">
-                        <h3 class="section-title">Гол дүрүд</h3>
-                        <div class="actors-list"></div>
+                        <div class="actors-header">
+                            <h3 class="section-title">Дүрүүдэд</h3>
+                            <span class="actor-count" id="actor-count">(0)</span>
+                        </div>
+                        <div class="actors-list" id="actors-list"></div>
                     </div>
                 </div>
             </div>
@@ -993,9 +1134,15 @@ class MovieCard extends HTMLElement {
         showMoreBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             moreContent.classList.toggle('expanded');
-            showMoreBtn.textContent = moreContent.classList.contains('expanded') 
-                ? 'Багасгах' 
-                : 'Дэлгэрэнгүй үзэх';
+            const showMoreText = showMoreBtn.querySelector('.show-more-text');
+            const icon = showMoreBtn.querySelector('i');
+            if (moreContent.classList.contains('expanded')) {
+                showMoreText.textContent = 'Багасгах';
+                icon.className = 'fas fa-chevron-up';
+            } else {
+                showMoreText.textContent = 'Дэлгэрэнгүй үзэх';
+                icon.className = 'fas fa-chevron-down';
+            }
         });
         
         streamingBtns.forEach(btn => {
@@ -1028,60 +1175,337 @@ class MovieCard extends HTMLElement {
         }
     }
 
-    goToLoginPage() {
-        const currentPath = window.location.pathname;
-        
-        if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('.html') === false) {
-            window.location.href = 'html/login.html';
-        } 
-        else if (currentPath.includes('/html/')) {
-            window.location.href = 'login.html';
-        }
-        else {
-            window.location.href = '../html/login.html';
-        }
-    }
-
     async showMovieDetails() {
         const modal = this.shadowRoot.querySelector('.movie-modal');
         const shadow = this.shadowRoot;
+        
+        // Show loading state
+        modal.style.display = 'flex';
+        shadow.querySelector('.modal-title').textContent = 'Ачааллаж байна...';
+        shadow.querySelector('.actors-list').innerHTML = '<div class="loading-actors">Жүжигчдийг ачааллаж байна...</div>';
+        shadow.querySelector('#more-details').innerHTML = '<div class="loading-actors">Нэмэлт мэдээлэл ачааллаж байна...</div>';
+        
+        const tmdbId = this.getAttribute('data-tmdb-id');
+        const mediaType = this.getAttribute('data-media-type') || 'movie';
+        
+        if (tmdbId) {
+            await this.showTMDBDetails(tmdbId, mediaType);
+        } else {
+            this.showLocalDetails();
+        }
+        
+        document.body.style.overflow = 'hidden';
+    }
+
+    async showTMDBDetails(tmdbId, mediaType) {
+        const shadow = this.shadowRoot;
+        
+        try {
+            const details = mediaType === 'movie' 
+                ? await tmdbService.getMovieDetails(tmdbId)
+                : await tmdbService.getTVDetails(tmdbId);
+            
+            if (!details) throw new Error('TMDB-аас мэдээлэл ирээгүй');
+            
+            this.populateModalWithTMDBData(details);
+            await this.loadReviewsFromJSON(details.name);
+            
+        } catch (error) {
+            console.error('TMDB мэдээлэл авахад алдаа:', error);
+            shadow.querySelector('.modal-title').textContent = 'Алдаа гарлаа';
+            this.showLocalDetails();
+        }
+    }
+
+    populateModalWithTMDBData(details) {
+        const shadow = this.shadowRoot;
+        
+        // Basic info
+        shadow.querySelector('.modal-title').textContent = details.name;
+        shadow.querySelector('.modal-poster').src = details.image;
+        shadow.querySelector('.modal-poster').alt = details.name;
+        shadow.querySelector('.modal-type').textContent = details.category === 'movies' ? 'Кино' : 'Цуврал';
+        
+        // Year
+        const yearContainer = shadow.querySelector('#modal-year');
+        yearContainer.innerHTML = '';
+        if (details.year && details.year !== 'N/A') {
+            const yearDiv = document.createElement('div');
+            yearDiv.className = 'year-item';
+            yearDiv.innerHTML = `<span class="year-value">${details.year}</span>`;
+            yearContainer.appendChild(yearDiv);
+        }
+        
+        // Duration
+        const durationEl = shadow.querySelector('#modal-duration');
+        if (details.duration && details.duration !== 'Тодорхойгүй') {
+            durationEl.textContent = details.duration;
+        } else if (details.runtime) {
+            const hours = Math.floor(details.runtime / 60);
+            const minutes = details.runtime % 60;
+            durationEl.textContent = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
+        } else if (details.episode_runtime) {
+            durationEl.textContent = `${details.episode_runtime}м (нэг анги)`;
+        } else {
+            durationEl.textContent = 'Тодорхойгүй';
+        }
+        
+        // Rating
+        if (details.rating) {
+            const rating = parseFloat(details.rating);
+            const starCount = Math.round((rating / 10) * 5);
+            const stars = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+            shadow.querySelector('.stars').textContent = stars;
+            shadow.querySelector('.rating-number').textContent = `${rating.toFixed(1)}/10`;
+        }
+        
+        // Genres
+        const genreContainer = shadow.querySelector('.genre-tags');
+        genreContainer.innerHTML = '';
+        if (details.genres && details.genres.length > 0) {
+            details.genres.forEach(genre => {
+                const tag = document.createElement('span');
+                tag.className = 'genre-tag';
+                tag.textContent = genre;
+                genreContainer.appendChild(tag);
+            });
+        }
+        
+        // Description
+        shadow.querySelector('.movie-description').textContent = 
+            details.description || 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
+        
+        // Actors
+        this.displayActors(details.cast || []);
+        
+        // More details
+        this.populateMoreDetails(details);
+        
+        // Trailer
+        const trailerBtn = shadow.querySelector('.trailer-btn');
+        if (details.trailer) {
+            trailerBtn.dataset.trailerUrl = tmdbService.getTrailerUrl(details.trailer);
+            trailerBtn.disabled = false;
+            trailerBtn.innerHTML = '<i class="fas fa-play"></i> Трейлер үзэх';
+        } else {
+            trailerBtn.disabled = true;
+            trailerBtn.innerHTML = '<i class="fas fa-ban"></i> Трейлер байхгүй';
+        }
+        
+        // Auth UI
+        this.updateAuthUI();
+    }
+
+    displayActors(cast) {
+        const shadow = this.shadowRoot;
+        const actorsList = shadow.querySelector('#actors-list');
+        const actorCount = shadow.querySelector('#actor-count');
+        
+        actorsList.innerHTML = '';
+        
+        if (!cast || cast.length === 0) {
+            actorsList.innerHTML = '<div class="loading-actors">Жүжигчдийн мэдээлэл олдсонгүй</div>';
+            actorCount.textContent = '(0)';
+            return;
+        }
+        
+        actorCount.textContent = `(${cast.length})`;
+        
+        // Sort by order
+        const sortedCast = [...cast].sort((a, b) => (a.order || 999) - (b.order || 999));
+        
+        sortedCast.forEach(actor => {
+            const actorDiv = document.createElement('div');
+            actorDiv.className = 'actor';
+            
+            let avatarHTML = '';
+            if (actor.profile_path) {
+                avatarHTML = `<img src="${actor.profile_path}" alt="${actor.name}" loading="lazy">`;
+            } else {
+                const nameParts = actor.name.split(' ');
+                const initials = nameParts.length >= 2 
+                    ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+                    : actor.name.substring(0, 2).toUpperCase();
+                avatarHTML = initials;
+            }
+            
+            actorDiv.innerHTML = `
+                <div class="actor-avatar">${avatarHTML}</div>
+                <div class="actor-info">
+                    <div class="actor-name">${actor.name}</div>
+                    <div class="actor-role">${actor.character || 'Тодорхойгүй дүр'}</div>
+                </div>
+            `;
+            actorsList.appendChild(actorDiv);
+        });
+    }
+
+    populateMoreDetails(details) {
+        const shadow = this.shadowRoot;
+        const moreDetailsContainer = shadow.querySelector('#more-details');
+        moreDetailsContainer.innerHTML = '';
+        
+        const detailSections = [];
+        
+        // Director/Creator
+        if (details.director && details.director !== 'Тодорхойгүй') {
+            detailSections.push({
+                label: 'Найруулагч',
+                value: details.director
+            });
+        } else if (details.created_by && details.created_by.length > 0) {
+            detailSections.push({
+                label: 'Бүтээгчид',
+                value: `<ul>${details.created_by.map(creator => `<li>${creator}</li>`).join('')}</ul>`
+            });
+        }
+        
+        // Certification
+        if (details.certification && details.certification !== 'Тодорхойгүй') {
+            detailSections.push({
+                label: 'Зөвшөөрөл',
+                value: details.certification
+            });
+        }
+        
+        // Budget and Revenue
+        if (details.budget && details.budget !== 'Тодорхойгүй') {
+            detailSections.push({
+                label: 'Төсөв',
+                value: details.budget
+            });
+        }
+        
+        if (details.revenue && details.revenue !== 'Тодорхойгүй') {
+            detailSections.push({
+                label: 'Орлого',
+                value: details.revenue
+            });
+        }
+        
+        // Status
+        if (details.status) {
+            detailSections.push({
+                label: 'Төлөв',
+                value: details.status
+            });
+        }
+        
+        // Production Companies
+        if (details.production_companies && details.production_companies.length > 0) {
+            detailSections.push({
+                label: 'Продакшн компани',
+                value: `<ul>${details.production_companies.map(company => `<li>${company}</li>`).join('')}</ul>`
+            });
+        }
+        
+        // Languages
+        if (details.spoken_languages && details.spoken_languages.length > 0) {
+            detailSections.push({
+                label: 'Хэл',
+                value: details.spoken_languages.join(', ')
+            });
+        }
+        
+        // Countries
+        if (details.production_countries && details.production_countries.length > 0) {
+            detailSections.push({
+                label: 'Улс',
+                value: details.production_countries.join(', ')
+            });
+        }
+        
+        // Tagline
+        if (details.tagline && details.tagline !== 'Тодорхойгүй') {
+            detailSections.push({
+                label: 'Уриа',
+                value: `"${details.tagline}"`
+            });
+        }
+        
+        // For TV shows
+        if (details.seasons) {
+            detailSections.push({
+                label: 'Улирал',
+                value: details.seasons
+            });
+        }
+        
+        if (details.episodes) {
+            detailSections.push({
+                label: 'Анги',
+                value: details.episodes
+            });
+        }
+        
+        if (details.networks && details.networks.length > 0) {
+            detailSections.push({
+                label: 'Сүлжээ',
+                value: details.networks.join(', ')
+            });
+        }
+        
+        // Create HTML
+        detailSections.forEach(section => {
+            const detailItem = document.createElement('div');
+            detailItem.className = 'detail-item';
+            detailItem.innerHTML = `
+                <div class="detail-label">${section.label}:</div>
+                <div class="detail-value">${section.value}</div>
+            `;
+            moreDetailsContainer.appendChild(detailItem);
+        });
+        
+        if (detailSections.length === 0) {
+            moreDetailsContainer.innerHTML = '<div class="loading-actors">Нэмэлт мэдээлэл байхгүй</div>';
+        }
+    }
+
+    showLocalDetails() {
+        // Your existing local data code
+        const shadow = this.shadowRoot;
+        const modal = shadow.querySelector('.movie-modal');
         
         const movieName = this.getAttribute('name') || 'Unknown Movie';
         const yearOrSeason = this.getAttribute('year-or-season') || 'Unknown';
         const category = this.getAttribute('category');
         const rating = this.getAttribute('rating');
-        const duration = this.getAttribute('duration');
         const description = this.getAttribute('description');
-        const director = this.getAttribute('director');
         const castAttr = this.getAttribute('cast');
         const genreAttr = this.getAttribute('genre');
-        const trailerUrl = this.getAttribute('trailer');
         
         shadow.querySelector('.modal-title').textContent = movieName;
         shadow.querySelector('.modal-poster').src = shadow.querySelector('img').src;
-        shadow.querySelector('.modal-poster').alt = movieName;
-        shadow.querySelector('.modal-year').textContent = yearOrSeason;
         shadow.querySelector('.modal-type').textContent = category === 'movies' ? 'Кино' : 'Цуврал';
         
-        const trailerBtn = shadow.querySelector('.trailer-btn');
-        if (trailerUrl) {
-            trailerBtn.dataset.trailerUrl = trailerUrl;
+        // Year
+        const yearContainer = shadow.querySelector('#modal-year');
+        yearContainer.innerHTML = '';
+        const yearMatch = yearOrSeason.match(/\d{4}/);
+        if (yearMatch) {
+            const yearDiv = document.createElement('div');
+            yearDiv.className = 'year-item';
+            yearDiv.innerHTML = `<span class="year-value">${yearMatch[0]}</span>`;
+            yearContainer.appendChild(yearDiv);
         }
         
+        // Duration (if available)
+        const duration = this.getAttribute('duration');
+        const durationEl = shadow.querySelector('#modal-duration');
+        durationEl.textContent = duration || 'Тодорхойгүй';
+        
+        // Rating
         if (rating) {
             const ratingNum = parseFloat(rating);
             const starCount = Math.round(ratingNum / 2);
             const stars = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
             shadow.querySelector('.stars').textContent = stars;
-            shadow.querySelector('.rating-text').textContent = `${rating}/10`;
-        } else {
-            shadow.querySelector('.stars').textContent = '★★★☆☆';
-            shadow.querySelector('.rating-text').textContent = '7.5/10';
+            shadow.querySelector('.rating-number').textContent = `${rating}/10`;
         }
         
+        // Genres
         const genreContainer = shadow.querySelector('.genre-tags');
         genreContainer.innerHTML = '';
-        
         if (genreAttr) {
             try {
                 const genres = JSON.parse(genreAttr);
@@ -1092,65 +1516,94 @@ class MovieCard extends HTMLElement {
                         tag.textContent = genre;
                         genreContainer.appendChild(tag);
                     });
-                } else {
-                    this.showDefaultGenres(genreContainer, category);
                 }
             } catch (e) {
-                this.showDefaultGenres(genreContainer, category);
+                console.error('Error parsing genres:', e);
             }
-        } else {
-            this.showDefaultGenres(genreContainer, category);
         }
         
-        if (description) {
-            shadow.querySelector('.movie-description').textContent = description;
-        } else {
-            shadow.querySelector('.movie-description').textContent = 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
-        }
+        // Description
+        shadow.querySelector('.movie-description').textContent = description || 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
         
-        const actorsList = shadow.querySelector('.actors-list');
+        // Actors
+        const actorsList = shadow.querySelector('#actors-list');
         actorsList.innerHTML = '';
+        const actorCount = shadow.querySelector('#actor-count');
         
         if (castAttr) {
             try {
                 const cast = JSON.parse(castAttr);
                 if (Array.isArray(cast) && cast.length > 0) {
-                    const actorsToShow = cast.slice(0, 4);
-                    actorsToShow.forEach(actor => {
+                    actorCount.textContent = `(${cast.length})`;
+                    cast.forEach(actor => {
                         this.addActorToModal(actor, actorsList);
                     });
                 } else {
                     this.showDefaultActors(actorsList);
+                    actorCount.textContent = '(4)';
                 }
             } catch (e) {
                 this.showDefaultActors(actorsList);
+                actorCount.textContent = '(4)';
             }
         } else {
             this.showDefaultActors(actorsList);
+            actorCount.textContent = '(4)';
         }
         
-        const moreDetails = shadow.querySelector('.more-details');
-        moreDetails.innerHTML = '';
+        // More details
+        const moreDetailsContainer = shadow.querySelector('#more-details');
+        moreDetailsContainer.innerHTML = '<div class="loading-actors">Нэмэлт мэдээлэл байхгүй</div>';
         
-        if (director) {
-            const p = document.createElement('p');
-            p.textContent = `• Найруулагч: ${director}`;
-            moreDetails.appendChild(p);
+        // Trailer
+        const trailerBtn = shadow.querySelector('.trailer-btn');
+        const trailerUrl = this.getAttribute('trailer');
+        if (trailerUrl) {
+            trailerBtn.dataset.trailerUrl = trailerUrl;
+            trailerBtn.disabled = false;
+            trailerBtn.innerHTML = '<i class="fas fa-play"></i> Трейлер үзэх';
+        } else {
+            trailerBtn.disabled = true;
+            trailerBtn.innerHTML = '<i class="fas fa-ban"></i> Трейлер байхгүй';
         }
         
-        const yearMatch = yearOrSeason.match(/\d{4}/);
-        if (yearMatch) {
-            const p = document.createElement('p');
-            p.textContent = `• Бүтээсэн он: ${yearMatch[0]}`;
-            moreDetails.appendChild(p);
-        }
+        this.updateAuthUI();
+    }
+
+    addActorToModal(actorName, container, character = null) {
+        const actorDiv = document.createElement('div');
+        actorDiv.className = 'actor';
         
-        if (duration) {
-            const p = document.createElement('p');
-            p.textContent = `• Үргэлжлэх хугацаа: ${duration}`;
-            moreDetails.appendChild(p);
-        }
+        const nameParts = actorName.split(' ');
+        const initials = nameParts.length >= 2 
+            ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+            : actorName.substring(0, 2).toUpperCase();
         
+        actorDiv.innerHTML = `
+            <div class="actor-avatar">${initials}</div>
+            <div class="actor-info">
+                <div class="actor-name">${actorName}</div>
+                <div class="actor-role">${character || 'Гол дүр'}</div>
+            </div>
+        `;
+        container.appendChild(actorDiv);
+    }
+
+    showDefaultActors(container) {
+        const defaultActors = [
+            {name: 'Том Круз', character: 'Гол дүр'},
+            {name: 'Женнифер Лоуренс', character: 'Туслах дүр'},
+            {name: 'Леонардо ДиКаприо', character: 'Гол дүр'},
+            {name: 'Скарлет Йоханссон', character: 'Туслах дүр'}
+        ];
+        
+        defaultActors.forEach(actor => {
+            this.addActorToModal(actor.name, container, actor.character);
+        });
+    }
+
+    updateAuthUI() {
+        const shadow = this.shadowRoot;
         const isLoggedIn = this.checkAuthStatus();
         
         if (isLoggedIn) {
@@ -1169,91 +1622,68 @@ class MovieCard extends HTMLElement {
                 
                 if (addReviewBtn) {
                     addReviewBtn.addEventListener('click', () => {
+                        const movieName = shadow.querySelector('.modal-title').textContent;
                         this.addReview(movieName);
                     });
                 }
                 
                 if (checkWatchlistBtn) {
                     checkWatchlistBtn.addEventListener('click', () => {
+                        const movieName = shadow.querySelector('.modal-title').textContent;
                         this.checkWatchlistStatus(movieName);
                     });
                 }
             }
-            
-            const watchlistBtn = shadow.querySelector('#watchlist-btn');
-            const watchedBtn = shadow.querySelector('#watched-btn');
-            
-            if (watchlistBtn) {
-                watchlistBtn.style.cursor = 'pointer';
-                watchlistBtn.title = 'Watchlist-д нэмэх';
-            }
-            
-            if (watchedBtn) {
-                watchedBtn.style.cursor = 'pointer';
-                watchedBtn.title = 'Үзсэн гэж тэмдэглэх';
-            }
-        } else {
-            const watchlistBtn = shadow.querySelector('#watchlist-btn');
-            const watchedBtn = shadow.querySelector('#watched-btn');
-            
-            if (watchlistBtn) {
-                watchlistBtn.style.cursor = 'pointer';
-                watchlistBtn.title = 'Watchlist-д нэмэх (Нэвтрэх шаардлагатай)';
-            }
-            
-            if (watchedBtn) {
-                watchedBtn.style.cursor = 'pointer';
-                watchedBtn.title = 'Үзсэн гэж тэмдэглэх (Нэвтрэх шаардлагатай)';
-            }
         }
-        
-        // Load reviews dynamically from JSON
-        await this.loadReviewsFromJSON(movieName);
-        
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
     }
 
-    // NEW METHOD: Load reviews from JSON file
+    // ... (keep all your other existing methods: goToLoginPage, loadReviewsFromJSON, etc.)
+    // Make sure to copy all the remaining methods from your original file
+
+    goToLoginPage() {
+        const currentPath = window.location.pathname;
+        
+        if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('.html') === false) {
+            window.location.href = 'html/login.html';
+        } 
+        else if (currentPath.includes('/html/')) {
+            window.location.href = 'login.html';
+        }
+        else {
+            window.location.href = '../html/login.html';
+        }
+    }
+
     async loadReviewsFromJSON(movieName) {
         try {
             const currentPath = window.location.pathname;
             let jsonPath;
             
-            // Determine correct path for reviews.json
             if (currentPath.includes('/html/') || currentPath.includes('movie-detail.html')) {
                 jsonPath = '../data/reviews.json';
             } else {
                 jsonPath = 'frontend/data/reviews.json';
             }
             
-            // Fetch reviews from JSON file
             const response = await fetch(jsonPath);
-            if (!response.ok) {
-                throw new Error(`Failed to load reviews: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Failed to load reviews: ${response.status}`);
             
             const data = await response.json();
             const allReviews = data.reviews || [];
             
-            // Filter reviews for this specific movie
             const movieReviews = allReviews.filter(review => 
                 this.matchesMovieName(review.movie, movieName)
             );
             
-            // Display the reviews
             this.displayReviews(movieName, movieReviews);
             
         } catch (error) {
             console.error('Error loading reviews from JSON:', error);
-            // Fallback to localStorage if JSON fetch fails
             this.loadReviewsFromLocalStorage(movieName);
         }
     }
     
-    // Helper: Check if review matches movie name
     matchesMovieName(reviewMovie, movieName) {
-        // Convert to lowercase and remove special characters for comparison
         const normalize = (str) => 
             str.toLowerCase()
                .replace(/[^a-z0-9\s]/g, '')
@@ -1263,7 +1693,6 @@ class MovieCard extends HTMLElement {
         const reviewNorm = normalize(reviewMovie);
         const movieNorm = normalize(movieName);
         
-        // Check for partial matches (in case names are slightly different)
         return reviewNorm.includes(movieNorm) || 
                movieNorm.includes(reviewNorm) ||
                this.getMovieNameVariants(movieName).some(variant => 
@@ -1271,26 +1700,15 @@ class MovieCard extends HTMLElement {
                );
     }
     
-    // Helper: Generate possible name variants
     getMovieNameVariants(movieName) {
         const variants = [movieName];
-        
-        // Remove common prefixes/suffixes
         const withoutYear = movieName.replace(/\s*\(\d{4}\)\s*$/, '').trim();
-        if (withoutYear !== movieName) {
-            variants.push(withoutYear);
-        }
-        
-        // Remove "The " prefix
+        if (withoutYear !== movieName) variants.push(withoutYear);
         const withoutThe = movieName.replace(/^The\s+/i, '').trim();
-        if (withoutThe !== movieName) {
-            variants.push(withoutThe);
-        }
-        
+        if (withoutThe !== movieName) variants.push(withoutThe);
         return variants;
     }
     
-    // Fallback: Load reviews from localStorage
     loadReviewsFromLocalStorage(movieName) {
         try {
             const savedReviews = localStorage.getItem(`reviews-${movieName}`);
@@ -1299,7 +1717,6 @@ class MovieCard extends HTMLElement {
             if (savedReviews) {
                 reviews = JSON.parse(savedReviews);
             } else {
-                // Default sample reviews if none exist
                 reviews = [
                     {
                         reviewer: 'Батар',
@@ -1321,7 +1738,6 @@ class MovieCard extends HTMLElement {
         }
     }
     
-    // Display reviews in the modal
     displayReviews(movieName, reviews) {
         const shadow = this.shadowRoot;
         const reviewsList = shadow.querySelector('#reviews-list');
@@ -1329,7 +1745,6 @@ class MovieCard extends HTMLElement {
         
         if (!reviewsList) return;
         
-        // Calculate average rating
         if (reviews.length > 0) {
             const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
             const averageRating = totalRating / reviews.length;
@@ -1364,11 +1779,9 @@ class MovieCard extends HTMLElement {
             return;
         }
         
-        // Sort reviews by date (newest first)
         reviews.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
         reviewsList.innerHTML = reviews.map(review => {
-            // Format date
             const reviewDate = new Date(review.timestamp);
             const formattedDate = reviewDate.toLocaleDateString('mn-MN', {
                 year: 'numeric',
@@ -1376,11 +1789,9 @@ class MovieCard extends HTMLElement {
                 day: 'numeric'
             });
             
-            // Create star rating
             const starCount = Math.round(review.rating / 2);
             const stars = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
             
-            // Check if content needs "Read More"
             const content = review.content || '';
             const needsReadMore = content.length > 200;
             const displayContent = needsReadMore ? content.substring(0, 200) + '...' : content;
@@ -1420,7 +1831,6 @@ class MovieCard extends HTMLElement {
             `;
         }).join('');
         
-        // Add event listeners
         reviewsList.querySelectorAll('.read-more-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1429,13 +1839,11 @@ class MovieCard extends HTMLElement {
                 const reviewTextEl = shadow.querySelector(`#review-text-${reviewId}`);
                 
                 if (reviewTextEl.classList.contains('expanded')) {
-                    // Collapse
                     const shortText = fullText.substring(0, 200) + '...';
                     reviewTextEl.textContent = shortText;
                     reviewTextEl.classList.remove('expanded');
                     btn.textContent = 'Дэлгэрэнгүй унших';
                 } else {
-                    // Expand
                     reviewTextEl.textContent = fullText;
                     reviewTextEl.classList.add('expanded');
                     btn.textContent = 'Багасгах';
@@ -1461,17 +1869,13 @@ class MovieCard extends HTMLElement {
             return;
         }
         
-        // Get current likes
         const likeCountEl = button.querySelector('.like-count');
         let currentLikes = parseInt(likeCountEl.textContent) || 0;
         
-        // Update UI
         currentLikes += 1;
         likeCountEl.textContent = currentLikes;
         button.classList.add('liked');
         
-        // In a real app, you would save this to your backend
-        // For now, we'll update localStorage
         try {
             const savedReviews = localStorage.getItem(`reviews-${movieName}`);
             if (savedReviews) {
@@ -1489,7 +1893,6 @@ class MovieCard extends HTMLElement {
         }
     }
 
-    // Rest of the methods remain the same...
     handleUserAction(action) {
         const isLoggedIn = this.checkAuthStatus();
         const movieName = this.getAttribute('name');
@@ -1559,7 +1962,6 @@ class MovieCard extends HTMLElement {
             return;
         }
         
-        // Get user info
         const userData = JSON.parse(localStorage.getItem('cinewave-user') || '{}');
         const username = userData.username || 'Зочин';
         
@@ -1575,7 +1977,6 @@ class MovieCard extends HTMLElement {
             likes: 0
         };
         
-        // Save to localStorage
         try {
             const savedReviews = localStorage.getItem(`reviews-${movieName}`);
             let reviews = [];
@@ -1587,7 +1988,6 @@ class MovieCard extends HTMLElement {
             reviews.unshift(newReview);
             localStorage.setItem(`reviews-${movieName}`, JSON.stringify(reviews));
             
-            // Reload reviews
             this.loadReviewsFromLocalStorage(movieName);
             alert('Үнэлгээ амжилттай нэмэгдлээ!');
         } catch (error) {
@@ -1627,58 +2027,15 @@ class MovieCard extends HTMLElement {
         }
     }
 
-    addActorToModal(actorName, container) {
-        const actorDiv = document.createElement('div');
-        actorDiv.className = 'actor';
-        
-        const nameParts = actorName.split(' ');
-        const initials = nameParts.length >= 2 
-            ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
-            : actorName.substring(0, 2).toUpperCase();
-        
-        actorDiv.innerHTML = `
-            <div class="actor-avatar">${initials}</div>
-            <div>
-                <div class="actor-name">${actorName}</div>
-                <div class="actor-role">Гол дүр</div>
-            </div>
-        `;
-        container.appendChild(actorDiv);
-    }
-
-    showDefaultActors(container) {
-        const defaultActors = [
-            'Том Круз',
-            'Женнифер Лоуренс', 
-            'Леонардо ДиКаприо',
-            'Скарлет Йоханссон'
-        ];
-        
-        defaultActors.forEach(actor => {
-            this.addActorToModal(actor, container);
-        });
-    }
-
-    showDefaultGenres(container, category) {
-        const defaultMovieGenres = ['Адал явдал', 'Драма', 'Триллер'];
-        const defaultTVGenres = ['Драма', 'Цуврал', 'Инээдмийн'];
-        
-        const genres = category === 'movies' ? defaultMovieGenres : defaultTVGenres;
-        
-        genres.forEach(genre => {
-            const tag = document.createElement('span');
-            tag.className = 'genre-tag';
-            tag.textContent = genre;
-            container.appendChild(tag);
-        });
-    }
-
     closeModal(modal, moreContent, showMoreBtn) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
         if (moreContent && showMoreBtn) {
             moreContent.classList.remove('expanded');
-            showMoreBtn.textContent = 'Дэлгэрэнгүй үзэх';
+            const showMoreText = showMoreBtn.querySelector('.show-more-text');
+            const icon = showMoreBtn.querySelector('i');
+            showMoreText.textContent = 'Дэлгэрэнгүй үзэх';
+            icon.className = 'fas fa-chevron-down';
         }
     }
 }
