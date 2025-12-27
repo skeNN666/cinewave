@@ -632,7 +632,6 @@ body {
   cursor: pointer;
   transition: color var(--transition-fast);
 }
-/* Show More Button Styling */
 .show-more-btn {
     background: linear-gradient(135deg, var(--color-accent-primary) 0%, #764ba2 100%);
     color: white;
