@@ -28,8 +28,6 @@ export class TMDBService {
             throw error;
         }
     }
-
-    // Get RECENT movies (released in last 6 months, sorted by date)
     async getNowPlayingMovies(page = 1) {
         const today = new Date();
         const sixMonthsAgo = new Date(today);
@@ -69,7 +67,7 @@ export class TMDBService {
             'air_date.lte': oneMonthFromNow.toISOString().split('T')[0],
             sort_by: 'popularity.desc',  // Popular shows currently airing
             'vote_count.gte': 20,
-            with_status: '0|2',  // 0 = Returning Series, 2 = Currently Airing
+            with_status: '0|2',  // 0 = Үргэлжлэх, 2 = Одоо гарч байгаа
             with_type: '0|2|3'   // 0 = Documentary, 2 = Scripted, 3 = Miniseries
         });
         
@@ -88,7 +86,6 @@ export class TMDBService {
         return data.results.map(tv => this.mapTVData(tv));
     }
 
-    // Get ON THE AIR TV shows (currently airing series) - Backup method
     async getOnTheAirTV(page = 1) {
         const data = await this.fetchFromTMDB('/tv/on_the_air', { page });
         console.log(`📺 On The Air TV shows: ${data.results.length}`);
@@ -101,13 +98,11 @@ export class TMDBService {
         return data.results.map(tv => this.mapTVData(tv));
     }
 
-    // Get ACTUAL upcoming movies - use TMDB's dedicated endpoint
     async getUpcomingMovies(page = 1) {
         try {
-            // First try the official upcoming endpoint
             const data = await this.fetchFromTMDB('/movie/upcoming', { 
                 page,
-                region: 'US'  // Get US releases
+                region: 'US'  
             });
             
             console.log(`🔮 Upcoming movies from /movie/upcoming: ${data.results.length} results`);
@@ -118,7 +113,6 @@ export class TMDBService {
                     release_date: m.release_date
                 })));
                 
-                // Sort by release date (soonest first)
                 const sortedResults = data.results.sort((a, b) => {
                     const dateA = new Date(a.release_date || '9999-12-31');
                     const dateB = new Date(b.release_date || '9999-12-31');
@@ -128,34 +122,27 @@ export class TMDBService {
                 return sortedResults.map(movie => this.mapMovieData(movie));
             }
             
-            // If no results, return empty array
             console.warn('⚠️ No upcoming movies found from TMDB endpoint');
             return [];
             
         } catch (error) {
             console.error('❌ Error fetching upcoming movies:', error);
-            // Return empty array on error
             return [];
         }
     }
 
-    // Get movie details by ID (with credits and videos)
     async getMovieDetails(movieId) {
         const data = await this.fetchFromTMDB(`/movie/${movieId}`, {
             append_to_response: 'credits,videos,release_dates'
         });
         return this.mapMovieDetails(data);
     }
-
-    // Get TV details by ID
     async getTVDetails(tvId) {
         const data = await this.fetchFromTMDB(`/tv/${tvId}`, {
             append_to_response: 'credits,videos,content_ratings'
         });
         return this.mapTVDetails(data);
     }
-
-    // Map TMDB movie data to your format
     mapMovieData(movie) {
         return {
             id: movie.id,
@@ -178,8 +165,6 @@ export class TMDBService {
             media_type: 'movie'
         };
     }
-
-    // Map TMDB TV data to your format
     mapTVData(tv) {
         return {
             id: tv.id,
@@ -214,8 +199,6 @@ export class TMDBService {
             const minutes = details.runtime % 60;
             durationText = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
         }
-        
-        // Get certification/rating
         let certification = 'Тодорхойгүй';
         if (details.release_dates && details.release_dates.results) {
             const usRelease = details.release_dates.results.find(r => r.iso_3166_1 === 'US');
@@ -255,11 +238,8 @@ export class TMDBService {
         };
     }
 
-    // Map detailed TV data
     mapTVDetails(details) {
         const baseData = this.mapTVData(details);
-        
-        // Get certification/rating
         let certification = 'Тодорхойгүй';
         if (details.content_ratings && details.content_ratings.results) {
             const usRating = details.content_ratings.results.find(r => r.iso_3166_1 === 'US');
@@ -297,15 +277,14 @@ export class TMDBService {
         };
     }
 
-    // Helper method to translate status
     translateStatus(status) {
         const statusMap = {
             'Released': 'Гарсан',
             'Post Production': 'Пост продюсер',
             'In Production': 'Хийгдэж байгаа',
             'Planned': 'Төлөвлөгдсөн',
-            'Canceled': 'Цуцалсан',
-            'Returning Series': 'Үргэлжлэлтэй',
+            'Canceled': 'Цуцлагдсан',
+            'Returning Series': 'Үргэлжлэл бий',
             'Ended': 'Дууссан',
             'Rumored': 'Яриатай'
         };

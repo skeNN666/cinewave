@@ -1,3 +1,4 @@
+// navbar-component.js - Updated for SPA
 class CineWaveNavbar extends HTMLElement {
   constructor() {
     super();
@@ -13,7 +14,7 @@ class CineWaveNavbar extends HTMLElement {
         color: white;
         padding: 10px 25px;
         font-family: "Nunito", sans-serif;
-        position: fixed;       /* Fixed at top */
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
@@ -27,6 +28,7 @@ class CineWaveNavbar extends HTMLElement {
         letter-spacing: 1px;
         text-decoration: none;
         margin-right: 30px;
+        cursor: pointer;
       }
 
       .logo .cine { color: #007bff; }
@@ -46,9 +48,11 @@ class CineWaveNavbar extends HTMLElement {
         text-decoration: none;
         font-weight: 600;
         transition: color 0.2s ease;
+        cursor: pointer;
       }
 
       .nav-links a:hover { color: #00ffff; }
+      .nav-links a.active { color: #00ffff; border-bottom: 2px solid #00ffff; }
 
       .search-group {
         display: flex;
@@ -61,35 +65,6 @@ class CineWaveNavbar extends HTMLElement {
         overflow: hidden;
         border: 1px solid #555;
       }
-
-      .all-dropdown { position: relative; display: inline-block; }
-
-      .category-select {
-        background: #333;
-        color: white;
-        border: none;
-        padding: 8px 32px 8px 12px;
-        cursor: pointer;
-        border-radius: 5px;
-        min-width: 120px;
-        height: 2.75rem;
-        font-size: var(--font-size-base);
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
-      }
-
-      .category-select:focus {
-        border-color: var(--color-accent);
-        box-shadow: 0 0 0 .15rem rgba(201, 13, 48, .18);
-        outline: none;
-      }
-
-      .category-select::-ms-expand { display: none; }
 
       .search-box {
         position: relative;
@@ -115,7 +90,7 @@ class CineWaveNavbar extends HTMLElement {
         border: none;
         cursor: pointer;
         padding: 4px;
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
       }
@@ -141,6 +116,8 @@ class CineWaveNavbar extends HTMLElement {
       }
 
       @media (max-width: 900px) {
+        .hamburger { display: flex; }
+        
         .nav-links {
           position: absolute;
           top: 60px;
@@ -150,40 +127,34 @@ class CineWaveNavbar extends HTMLElement {
           flex-direction: column;
           max-height: 0;
           overflow: hidden;
+          padding: 0;
         }
 
         .nav-links.show {
           max-height: 500px;
+          padding: 10px 0;
         }
 
         .search-group { margin: 10px 0; width: 90%; }
       }
 
-      /* Add spacing to avoid content hidden under fixed navbar */
-      :host { display: block; padding-top: 70px; }
+      :host { display: block; }
     `;
 
     const html = document.createElement('div');
     html.innerHTML = `
       <nav class="navbar">
-        <a href="../../index.html" class="logo">
+        <div class="logo">
           <span class="cine">CINE</span><span class="wave">WAVE</span>
-        </a>
+        </div>
 
         <div class="nav-links">
-          <a href="./frontend/html/movies.html">Кино</a>
-          <a href="./frontend/html/customlist.html">Жагсаалт</a>
-          <a href="./frontend/html/reviews.html">Шүүмж</a>
+          <a href="/" data-link data-route="home">Нүүр</a>
+          <a href="/movies" data-link data-route="movies">Кино</a>
+          <a href="/customlist" data-link data-route="customlist">Жагсаалт</a>
+          <a href="/reviews" data-link data-route="reviews">Шүүмж</a>
 
           <div class="search-group">
-            <div class="all-dropdown">
-              <select id="category-select" class="category-select">
-                <option value="all">Бүгд</option>
-                <option value="movies">Кино</option>
-                <option value="tv">TV цуврал</option>
-                <option value="celebs">Алдартнууд</option>
-              </select>
-            </div>
             <div class="search-box">
               <input type="text" placeholder="Хайх..." id="search-input">
             </div>
@@ -210,26 +181,69 @@ class CineWaveNavbar extends HTMLElement {
     this.signInBtn = this.shadowRoot.querySelector('.sign-in');
     this.searchInput = this.shadowRoot.querySelector('#search-input');
     this.categorySelect = this.shadowRoot.querySelector('#category-select');
+    this.logo = this.shadowRoot.querySelector('.logo');
+    this.links = this.shadowRoot.querySelectorAll('a[data-link]');
   }
 
   connectedCallback() {
+    // Toggle mobile menu
     this.hamburger.addEventListener('click', () => {
       this.navLinks.classList.toggle('show');
     });
 
-    this.signInBtn.addEventListener('click', () => {
-      window.location.href = './frontend/html/login.html';
+    // Handle logo click
+    this.logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.navigate('/');
     });
 
+    // Handle navigation clicks
+    this.links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const path = link.getAttribute('href');
+        this.navigate(path);
+        this.navLinks.classList.remove('show'); // Close mobile menu
+      });
+    });
+
+    // Sign in button
+    this.signInBtn.addEventListener('click', () => {
+      this.navigate('/login');
+    });
+
+    // Search functionality
     this.searchInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const query = this.searchInput.value.trim();
         const category = this.categorySelect.value;
-        this.dispatchEvent(new CustomEvent('search', {
-          detail: { query, category },
-          bubbles: true,
-          composed: true
-        }));
+        
+        if (query) {
+          this.dispatchEvent(new CustomEvent('search', {
+            detail: { query, category },
+            bubbles: true,
+            composed: true
+          }));
+        }
+      }
+    });
+
+    // Update active link on route change
+    this.updateActiveLink();
+    window.addEventListener('hashchange', () => this.updateActiveLink());
+  }
+
+  navigate(path) {
+    window.location.hash = path;
+  }
+
+  updateActiveLink() {
+    const currentPath = window.location.hash.slice(1) || '/';
+    this.links.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
       }
     });
   }

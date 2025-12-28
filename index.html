@@ -8,21 +8,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
   <link rel="stylesheet" href="./frontend/css/home.css">
+  <link rel="stylesheet" href="./frontend/css/movies.css">
 </head>
 <body>
-
   <cinewave-navbar></cinewave-navbar>
+  
   <auth-modal></auth-modal>
-  <main>
+  
+  <div class="spa-loading" id="spa-loading">
+    <i class="fas fa-spinner fa-spin"></i> Ачааллаж байна...
+  </div>
+  
+  <main id="app">
     <section class="movie-slider">
       <div class="carousel-container">
         <button class="nav-arrow left">‹</button>
-        <div class="carousel-track">
-        </div>
+        <div class="carousel-track"></div>
         <button class="nav-arrow right">›</button>
       </div>
 
@@ -30,8 +33,7 @@
         <h2 class="movie-name"></h2>
       </div>
 
-      <div class="dots">
-      </div>
+      <div class="dots"></div>
     </section>
 
     <article class="promo-section">
@@ -48,8 +50,7 @@
         <button id="show-more-movies" class="show-more-btn">Илүү ихийг</button>
       </div>
       <hr class="line">
-      <section class="movies-section" id="latest-movies">
-      </section>
+      <section class="movies-section" id="latest-movies"></section>
     </section>
 
     <section class="movies">
@@ -58,8 +59,7 @@
         <button id="show-more-tv" class="show-more-btn">Илүү ихийг</button>
       </div>
       <hr class="line">
-      <section class="movies-section" id="latest-tv">
-      </section>
+      <section class="movies-section" id="latest-tv"></section>
     </section>
 
     <section class="movies">
@@ -68,15 +68,18 @@
         <button id="show-more-upcoming" class="show-more-btn">Илүү ихийг</button>
       </div>
       <hr class="line">
-      <section class="movies-section" id="upcoming-movies">
-      </section>
+      <section class="movies-section" id="upcoming-movies"></section>
     </section>
   </main>
+  
   <cinewave-footer></cinewave-footer>
   <script src="./frontend/js/movie-card-component.js"></script>
-  <script type="module" src="./frontend/js/navbar-component.js"></script>
   <script src="./frontend/js/footer-component.js"></script>
+  <script type="module" src="./frontend/js/navbar-component.js"></script>
+  <script type="module" src="./frontend/js/database.js"></script>
   <script type="module" src="./frontend/js/tmdb-service.js"></script>
+  <script type="module" src="./frontend/js/router.js"></script>
+  <script type="module" src="./frontend/js/app.js"></script>
   <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>
