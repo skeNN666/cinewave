@@ -7,7 +7,6 @@ import { tmdbService } from './tmdb-service.js';
 let database = [];
 let selectedCategory = "all";
 let filteredData = [];
-let currentIndex = 0;
 
 const ITEMS_PER_PAGE = 6;
 let sectionState = {
@@ -101,20 +100,21 @@ const views = {
         const main = document.querySelector('main');
         main.innerHTML = `
             <main>
-                <h1 class="page-title">Кинонууд</h1>
-                <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
-                <div class="category-filters">
-                    <button class="category-btn active" data-category="all">Бүгд</button>
-                    <button class="category-btn" data-category="movies">Кино</button>
-                    <button class="category-btn" data-category="tv">TV Цуврал</button>
-                </div>
-                
-                <div class="genre-filters">
-                </div>
-                <div class="movies-grid" id="movies-container">
-                </div>
-            </main>
+    <h1 class="page-title">Кинонууд</h1>
+    <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
+    <div class="category-filters">
+        <button class="category-btn active" data-category="all">Бүгд</button>
+        <button class="category-btn" data-category="movies">Кино</button>
+        <button class="category-btn" data-category="tv">TV Цуврал</button>
+    </div>
+    
+    <div class="genre-filters">
+    </div>
+    <div class="movies-grid" id="movies-container">
+    </div>
+</main>
         `;
+        
         await initMoviesPage();
     },
 
@@ -607,7 +607,6 @@ function initializeCarousel() {
 }
 
 function initializeFilters() {
-    // Filters are handled in navbar component via search event
 }
 
 function applyFilters() {
@@ -1079,9 +1078,11 @@ async function initMoviesPage() {
         }
     }
 }
+
 // ============================================
 // LOGIN PAGE FUNCTIONALITY
 // ============================================
+
 function initLoginPage() {
     console.log('🔐 Initializing login page...');
     
@@ -1258,7 +1259,7 @@ initializeApp().then(() => {
 
 // Handle search from navbar
 document.addEventListener('search', (e) => {
-    const { query, category } = e.detail;
+    const { category } = e.detail;
     selectedCategory = category === 'all' ? 'all' : category;
     applyFilters();
 });
@@ -1287,463 +1288,6 @@ style.textContent = `
         font-size: 18px;
         background: rgba(0,0,0,0.05);
         border-radius: 10px;
-    }
-    
-    /* Login Page Styles */
-    .page-wrapper-login {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(135deg, #000 0%, #1a1a2e 100%);
-      position: relative;
-    }
-    
-    .page-wrapper-login::before {
-      content: '';
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0, 123, 255, 0.15) 0%, transparent 70%);
-      top: -200px;
-      left: -200px;
-      animation: float 20s infinite ease-in-out;
-      pointer-events: none;
-    }
-    
-    .page-wrapper-login::after {
-      content: '';
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
-      bottom: -150px;
-      right: -150px;
-      animation: float 15s infinite ease-in-out reverse;
-      pointer-events: none;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(50px, 50px) scale(1.1); }
-    }
-    
-    .main-content-login {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 20px 80px;
-      animation: fadeInContent 0.8s ease-out forwards;
-    }
-    
-    @keyframes fadeInContent {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    .auth-container {
-      display: flex;
-      max-width: 1100px;
-      width: 100%;
-      background: rgba(26, 26, 26, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      position: relative;
-      animation: slideUpFade 0.6s ease-out 0.2s both, containerPulse 4s infinite 1s;
-    }
-    
-    @keyframes slideUpFade {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    @keyframes containerPulse {
-      0%, 100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
-      50% { box-shadow: 0 20px 60px rgba(0, 123, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.2); }
-    }
-    
-    .form-section {
-      flex: 1;
-      padding: 60px 50px;
-      position: relative;
-    }
-    
-    .info-section {
-      flex: 1;
-      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-      padding: 60px 50px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .info-section::before {
-      content: '';
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 50%;
-      top: -100px;
-      right: -100px;
-      animation: rotate 30s infinite linear;
-    }
-    
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    
-    .form-section .logo {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 40px;
-      letter-spacing: 1px;
-      position: relative;
-    }
-    
-    .form-section .logo::after {
-      content: '';
-      position: absolute;
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(90deg, #007bff, #00ffff);
-      bottom: -10px;
-      left: 0;
-      border-radius: 2px;
-      animation: logoUnderline 4s infinite;
-    }
-    
-    @keyframes logoUnderline {
-      0%, 100% { width: 0px; }
-      50% { width: 180px; }
-    }
-    
-    .form-section .logo .cine {
-      color: #007bff;
-      display: inline-block;
-      animation: cineWave 3s infinite;
-    }
-    
-    @keyframes cineWave {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-    
-    .form-section .logo .wave {
-      color: #00ffff;
-      display: inline-block;
-      animation: cineWave 3s infinite 0.5s;
-    }
-    
-    .form-container {
-      opacity: 1;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .form-container.hidden {
-      opacity: 0;
-      position: absolute;
-      pointer-events: none;
-    }
-    
-    .form-container h1 {
-      color: #fff;
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-    
-    .social-buttons {
-      display: flex;
-      gap: 15px;
-      margin: 30px 0;
-    }
-    
-    .social-btn {
-      flex: 1;
-      padding: 14px;
-      border: 1px solid #333;
-      background: #2a2a2a;
-      color: #fff;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .social-btn:hover {
-      background: rgba(0, 123, 255, 0.1);
-      border-color: #007bff;
-      transform: translateY(-2px);
-    }
-    
-    .divider {
-      display: flex;
-      align-items: center;
-      margin: 30px 0;
-      color: #999;
-      font-size: 13px;
-    }
-    
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #333;
-    }
-    
-    .divider span {
-      padding: 0 15px;
-    }
-    
-    .input-group {
-      margin-bottom: 20px;
-      position: relative;
-    }
-    
-    .input-group label {
-      display: block;
-      color: #fff;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .input-group input {
-      width: 100%;
-      padding: 14px 16px;
-      background: #2a2a2a;
-      border: 2px solid transparent;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      font-family: 'Nunito', sans-serif;
-      transition: all 0.3s ease;
-    }
-    
-    .input-group input:focus {
-      outline: none;
-      border-color: #007bff;
-      background: #252525;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    }
-    
-    .forgot-password {
-      text-align: right;
-      margin-top: 8px;
-    }
-    
-    .forgot-password a {
-      color: #00ffff;
-      text-decoration: none;
-      font-size: 13px;
-      transition: color 0.3s ease;
-    }
-    
-    .forgot-password a:hover {
-      color: #007bff;
-    }
-    
-    .primary-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 25px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-    }
-    
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-    }
-    
-    .switch-form {
-      text-align: center;
-      margin-top: 25px;
-      color: #999;
-      font-size: 14px;
-    }
-    
-    .switch-form a {
-      color: #00ffff;
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-    
-    .switch-form a:hover {
-      color: #007bff;
-    }
-    
-    .info-section h2 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-      animation: textGlow 4s infinite;
-    }
-    
-    @keyframes textGlow {
-      0%, 100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
-      50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
-    }
-    
-    .info-section p {
-      font-size: 16px;
-      line-height: 1.7;
-      margin-bottom: 30px;
-      opacity: 0.95;
-      z-index: 1;
-      position: relative;
-    }
-    
-    .features {
-      list-style: none;
-      z-index: 1;
-      position: relative;
-    }
-    
-    .features li {
-      padding: 12px 0;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .features li::before {
-      content: '✓';
-      width: 24px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      flex-shrink: 0;
-      animation: checkPulse 2s infinite;
-    }
-    
-    @keyframes checkPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-      50% { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0); }
-    }
-    
-    .name-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    
-    .floating-particles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    .particle {
-      position: absolute;
-      background: rgba(0, 123, 255, 0.2);
-      border-radius: 50%;
-      animation: floatParticle 15s infinite linear;
-    }
-    
-    @keyframes floatParticle {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-1000px) rotate(720deg);
-        opacity: 0;
-      }
-    }
-    
-    @keyframes formSwitchIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    @keyframes formSwitchOut {
-      from { opacity: 1; transform: translateX(0); }
-      to { opacity: 0; transform: translateX(20px); }
-    }
-    
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOutRight {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    @media (max-width: 900px) {
-      .auth-container {
-        flex-direction: column;
-      }
-      
-      .info-section {
-        order: -1;
-        padding: 40px 30px;
-      }
-      
-      .form-section {
-        padding: 40px 30px;
-      }
-      
-      .info-section h2 {
-        font-size: 28px;
-      }
-    }
-    
-    @media (max-width: 500px) {
-      .social-buttons {
-        flex-direction: column;
-      }
-      
-      .name-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .form-section, .info-section {
-        padding: 30px 25px;
-      }
     }
 `;
 document.head.appendChild(style);
