@@ -101,21 +101,20 @@ const views = {
         const main = document.querySelector('main');
         main.innerHTML = `
             <main>
-    <h1 class="page-title">Кинонууд</h1>
-    <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
-    <div class="category-filters">
-        <button class="category-btn active" data-category="all">Бүгд</button>
-        <button class="category-btn" data-category="movies">Кино</button>
-        <button class="category-btn" data-category="tv">TV Цуврал</button>
-    </div>
-    
-    <div class="genre-filters">
-    </div>
-    <div class="movies-grid" id="movies-container">
-    </div>
-</main>
+                <h1 class="page-title">Кинонууд</h1>
+                <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="all">Бүгд</button>
+                    <button class="category-btn" data-category="movies">Кино</button>
+                    <button class="category-btn" data-category="tv">TV Цуврал</button>
+                </div>
+                
+                <div class="genre-filters">
+                </div>
+                <div class="movies-grid" id="movies-container">
+                </div>
+            </main>
         `;
-        
         await initMoviesPage();
     },
 
@@ -151,37 +150,127 @@ const views = {
         `;
     },
 
-    login: () => {
+    login: async () => {
         const main = document.querySelector('main');
         main.innerHTML = `
-            <section class="page-content" style="padding-top: 100px;">
-                <div style="padding: 40px 20px; max-width: 500px; margin: 0 auto;">
-                    <h1 style="color: white; text-align: center; margin-bottom: 30px;">Нэвтрэх</h1>
-                    <form class="login-form" style="background: #1e1e1e; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                        <div style="margin-bottom: 20px;">
-                            <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Имэйл</label>
-                            <input type="email" required style="width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #555; background: #333; color: white; font-family: 'Nunito', sans-serif; font-size: 15px;">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Нууц үг</label>
-                            <input type="password" required style="width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #555; background: #333; color: white; font-family: 'Nunito', sans-serif; font-size: 15px;">
-                        </div>
-                        <button type="submit" style="width: 100%; padding: 12px; background: #00ffff; color: black; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 16px; transition: all 0.2s;">
-                            Нэвтрэх
-                        </button>
-                        <p style="color: #999; text-align: center; margin-top: 20px;">
-                            Бүртгэлгүй юу? <a href="/register" data-link style="color: #00ffff; text-decoration: none; font-weight: 600;">Бүртгүүлэх</a>
-                        </p>
-                    </form>
+      <div class="page-wrapper-login">
+        <div class="main-content-login">
+          <div class="auth-container">
+            <div class="floating-particles" id="particles"></div>
+            
+            <div class="form-section">
+              <div class="logo">
+                <span class="cine">CINE</span><span class="wave">WAVE</span>
+              </div>
+              <div class="form-container" id="loginForm">
+                <h1>Нэвтрэх</h1>
+                <div class="social-buttons">
+                  <button class="social-btn" id="google-btn">
+                    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707 0-.593.102-1.17.282-1.709V4.958H.957C.347 6.173 0 7.548 0 9c0 1.452.348 2.827.957 4.042l3.007-2.335z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+                    Google
+                  </button>
+                  <button class="social-btn" id="facebook-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                  </button>
                 </div>
-            </section>
-        `;
+
+                <div class="divider"><span>эсвэл</span></div>
+
+                <form id="login-form">
+                  <div class="input-group">
+                    <label>И-мейл</label>
+                    <input type="email" placeholder="example@gmail.com" required>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Нууц үг</label>
+                    <input type="password" placeholder="••••••••" required>
+                    <div class="forgot-password">
+                      <a href="#" id="forgot-password">Нууц үгээ мартсан уу?</a>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="primary-btn">Нэвтрэх</button>
+                </form>
+
+                <div class="switch-form">
+                  Бүртгэлгүй хэрэглэгч? <a id="showSignup">Бүртгүүлэх</a>
+                </div>
+              </div>
+              <div class="form-container hidden" id="signupForm">
+                <h1>Бүртгүүлэх</h1>
+                <div class="social-buttons">
+                  <button class="social-btn" id="google-btn-signup">
+                    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707 0-.593.102-1.17.282-1.709V4.958H.957C.347 6.173 0 7.548 0 9c0 1.452.348 2.827.957 4.042l3.007-2.335z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+                    Google
+                  </button>
+                  <button class="social-btn" id="facebook-btn-signup">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                  </button>
+                </div>
+
+                <div class="divider"><span>эсвэл</span></div>
+
+                <form id="signup-form">
+                  <div class="name-row">
+                    <div class="input-group">
+                      <label>Овог</label>
+                      <input type="text" placeholder="Овог" required>
+                    </div>
+                    <div class="input-group">
+                      <label>Нэр</label>
+                      <input type="text" placeholder="Нэр" required>
+                    </div>
+                  </div>
+
+                  <div class="input-group">
+                    <label>И-мейл</label>
+                    <input type="email" placeholder="example@gmail.com" required>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Утасны дугаар</label>
+                    <input type="tel" placeholder="+976 9999 9999" required>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Нууц үг</label>
+                    <input type="password" placeholder="••••••••" required>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Нууц үг баталгаажуулах</label>
+                    <input type="password" placeholder="••••••••" required>
+                  </div>
+
+                  <button type="submit" class="primary-btn">Бүртгүүлэх</button>
+                </form>
+
+                <div class="switch-form">
+                  Бүртгэлтэй хэрэглэгч? <a id="showLogin">Нэвтрэх</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h2>CINEWAVE-д тавтай морилно уу</h2>
+              <p>Кино, цуврал үзэх туршлагаа илүү сайн болго. Таны дуртай контентыг танд зориулан.</p>
+              <ul class="features">
+                <li>Хувь хүний санал зөвлөмж — Таны амттай тохирсон контент</li>
+                <li>Үзэх жагсаалт — Ирээдүйн үзэх киногоо хянах</li>
+                <li>Үнэлгээ өгөх — Үзсэн контентоо үнэлээд санаж бай</li>
+                <li>CINEWAVE-д хувь нэмэр оруулах — Олон сая хэрэглэгчдэд туслах мэдээлэл нэмэх</li>
+                <li>Илүүд үзэх платформ — Дуртай стриминг үйлчилгээгээ тохируулах</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
         
-        const form = document.querySelector('.login-form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Нэвтрэх функц удахгүй нэмэгдэнэ');
-        });
+        await initLoginPage();
     }
 };
 
@@ -518,6 +607,7 @@ function initializeCarousel() {
 }
 
 function initializeFilters() {
+    // Filters are handled in navbar component via search event
 }
 
 function applyFilters() {
@@ -989,6 +1079,166 @@ async function initMoviesPage() {
         }
     }
 }
+// ============================================
+// LOGIN PAGE FUNCTIONALITY
+// ============================================
+function initLoginPage() {
+    console.log('🔐 Initializing login page...');
+    
+    createParticles();
+    
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const showSignup = document.getElementById('showSignup');
+    const showLogin = document.getElementById('showLogin');
+    
+    if (showSignup) {
+        showSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.animation = 'formSwitchOut 0.4s ease forwards';
+            
+            setTimeout(() => {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                signupForm.style.animation = 'formSwitchIn 0.4s ease forwards';
+            }, 400);
+            
+            setTimeout(() => {
+                loginForm.style.animation = '';
+                signupForm.style.animation = '';
+            }, 800);
+        });
+    }
+    
+    if (showLogin) {
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.style.animation = 'formSwitchOut 0.4s ease forwards';
+            
+            setTimeout(() => {
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                loginForm.style.animation = 'formSwitchIn 0.4s ease forwards';
+            }, 400);
+            
+            setTimeout(() => {
+                signupForm.style.animation = '';
+                loginForm.style.animation = '';
+            }, 800);
+        });
+    }
+    
+    const googleBtn = document.getElementById('google-btn');
+    const facebookBtn = document.getElementById('facebook-btn');
+    const googleBtnSignup = document.getElementById('google-btn-signup');
+    const facebookBtnSignup = document.getElementById('facebook-btn-signup');
+    
+    if (googleBtn) googleBtn.onclick = () => handleSocialLogin('Google', googleBtn);
+    if (facebookBtn) facebookBtn.onclick = () => handleSocialLogin('Facebook', facebookBtn);
+    if (googleBtnSignup) googleBtnSignup.onclick = () => handleSocialLogin('Google', googleBtnSignup);
+    if (facebookBtnSignup) facebookBtnSignup.onclick = () => handleSocialLogin('Facebook', facebookBtnSignup);
+    
+    const loginFormEl = document.getElementById('login-form');
+    const signupFormEl = document.getElementById('signup-form');
+    
+    if (loginFormEl) {
+        loginFormEl.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleFormSubmit(e.target);
+        });
+    }
+    
+    if (signupFormEl) {
+        signupFormEl.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleFormSubmit(e.target);
+        });
+    }
+    
+    console.log('✅ Login page initialized');
+}
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (!particlesContainer) return;
+    
+    const particleCount = 20;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 8 + 2;
+        const posX = Math.random() * 100;
+        const duration = Math.random() * 10 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${posX}%`;
+        particle.style.background = i % 3 === 0 ? 
+            'rgba(0, 123, 255, 0.3)' : 
+            i % 3 === 1 ? 
+            'rgba(0, 255, 255, 0.3)' : 
+            'rgba(255, 255, 255, 0.2)';
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+function handleSocialLogin(provider, btn) {
+    console.log(`${provider} sign in`);
+    btn.style.transform = 'scale(0.95)';
+    btn.style.background = provider === 'Google' ? 'rgba(66, 133, 244, 0.2)' : 'rgba(24, 119, 242, 0.2)';
+    setTimeout(() => {
+        btn.style.transform = '';
+        btn.style.background = '';
+        showNotification(`${provider}-ээр нэвтрэх функц удахгүй нэмэгдэнэ`, 'success');
+    }, 300);
+}
+
+function handleFormSubmit(form) {
+    const submitBtn = form.querySelector('.primary-btn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Түр хүлээнэ үү...';
+    submitBtn.style.opacity = '0.8';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.style.opacity = '1';
+        submitBtn.disabled = false;
+        showNotification('Амжилттай!', 'success');
+    }, 1500);
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? '#007bff' : '#ff4757'};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease forwards;
+        font-weight: 600;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
 
 // ============================================
 // ROUTER SETUP
@@ -1037,6 +1287,463 @@ style.textContent = `
         font-size: 18px;
         background: rgba(0,0,0,0.05);
         border-radius: 10px;
+    }
+    
+    /* Login Page Styles */
+    .page-wrapper-login {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #000 0%, #1a1a2e 100%);
+      position: relative;
+    }
+    
+    .page-wrapper-login::before {
+      content: '';
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 123, 255, 0.15) 0%, transparent 70%);
+      top: -200px;
+      left: -200px;
+      animation: float 20s infinite ease-in-out;
+      pointer-events: none;
+    }
+    
+    .page-wrapper-login::after {
+      content: '';
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+      bottom: -150px;
+      right: -150px;
+      animation: float 15s infinite ease-in-out reverse;
+      pointer-events: none;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(50px, 50px) scale(1.1); }
+    }
+    
+    .main-content-login {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 80px;
+      animation: fadeInContent 0.8s ease-out forwards;
+    }
+    
+    @keyframes fadeInContent {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .auth-container {
+      display: flex;
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: slideUpFade 0.6s ease-out 0.2s both, containerPulse 4s infinite 1s;
+    }
+    
+    @keyframes slideUpFade {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes containerPulse {
+      0%, 100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+      50% { box-shadow: 0 20px 60px rgba(0, 123, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.2); }
+    }
+    
+    .form-section {
+      flex: 1;
+      padding: 60px 50px;
+      position: relative;
+    }
+    
+    .info-section {
+      flex: 1;
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .info-section::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      animation: rotate 30s infinite linear;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .form-section .logo {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+      position: relative;
+    }
+    
+    .form-section .logo::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #007bff, #00ffff);
+      bottom: -10px;
+      left: 0;
+      border-radius: 2px;
+      animation: logoUnderline 4s infinite;
+    }
+    
+    @keyframes logoUnderline {
+      0%, 100% { width: 0px; }
+      50% { width: 180px; }
+    }
+    
+    .form-section .logo .cine {
+      color: #007bff;
+      display: inline-block;
+      animation: cineWave 3s infinite;
+    }
+    
+    @keyframes cineWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .form-section .logo .wave {
+      color: #00ffff;
+      display: inline-block;
+      animation: cineWave 3s infinite 0.5s;
+    }
+    
+    .form-container {
+      opacity: 1;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .form-container.hidden {
+      opacity: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    
+    .form-container h1 {
+      color: #fff;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .social-buttons {
+      display: flex;
+      gap: 15px;
+      margin: 30px 0;
+    }
+    
+    .social-btn {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid #333;
+      background: #2a2a2a;
+      color: #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .social-btn:hover {
+      background: rgba(0, 123, 255, 0.1);
+      border-color: #007bff;
+      transform: translateY(-2px);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 30px 0;
+      color: #999;
+      font-size: 13px;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #333;
+    }
+    
+    .divider span {
+      padding: 0 15px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .input-group label {
+      display: block;
+      color: #fff;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #2a2a2a;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: #007bff;
+      background: #252525;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    .forgot-password {
+      text-align: right;
+      margin-top: 8px;
+    }
+    
+    .forgot-password a {
+      color: #00ffff;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s ease;
+    }
+    
+    .forgot-password a:hover {
+      color: #007bff;
+    }
+    
+    .primary-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    }
+    
+    .switch-form {
+      text-align: center;
+      margin-top: 25px;
+      color: #999;
+      font-size: 14px;
+    }
+    
+    .switch-form a {
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    
+    .switch-form a:hover {
+      color: #007bff;
+    }
+    
+    .info-section h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      animation: textGlow 4s infinite;
+    }
+    
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+      50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+    }
+    
+    .info-section p {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      opacity: 0.95;
+      z-index: 1;
+      position: relative;
+    }
+    
+    .features {
+      list-style: none;
+      z-index: 1;
+      position: relative;
+    }
+    
+    .features li {
+      padding: 12px 0;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .features li::before {
+      content: '✓';
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      animation: checkPulse 2s infinite;
+    }
+    
+    @keyframes checkPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+      50% { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0); }
+    }
+    
+    .name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .floating-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(0, 123, 255, 0.2);
+      border-radius: 50%;
+      animation: floatParticle 15s infinite linear;
+    }
+    
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes formSwitchIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes formSwitchOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(20px); }
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @media (max-width: 900px) {
+      .auth-container {
+        flex-direction: column;
+      }
+      
+      .info-section {
+        order: -1;
+        padding: 40px 30px;
+      }
+      
+      .form-section {
+        padding: 40px 30px;
+      }
+      
+      .info-section h2 {
+        font-size: 28px;
+      }
+    }
+    
+    @media (max-width: 500px) {
+      .social-buttons {
+        flex-direction: column;
+      }
+      
+      .name-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-section, .info-section {
+        padding: 30px 25px;
+      }
     }
 `;
 document.head.appendChild(style);
