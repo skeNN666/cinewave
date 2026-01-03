@@ -1637,9 +1637,6 @@ class MovieCard extends HTMLElement {
         }
     }
 
-    // ... (keep all your other existing methods: goToLoginPage, loadReviewsFromJSON, etc.)
-    // Make sure to copy all the remaining methods from your original file
-
     goToLoginPage() {
         const currentPath = window.location.pathname;
         

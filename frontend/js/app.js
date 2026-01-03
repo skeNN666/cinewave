@@ -2,6 +2,8 @@
 import router from './router.js';
 import { movieDatabase, loadMovieDatabase, isUsingTMDB } from './database.js';
 import { tmdbService } from './tmdb-service.js';
+import { authService } from './auth-service.js';
+import { renderProfilePage, initProfilePage } from './profile-page.js';
 
 // Data containers
 let database = [];
@@ -116,6 +118,12 @@ const views = {
         `;
         
         await initMoviesPage();
+    },
+
+    profile: async () => {
+        const main = document.querySelector('main');
+        main.innerHTML = renderProfilePage();
+        await initProfilePage(authService);
     },
 
     customlist: () => {
@@ -553,6 +561,7 @@ function initializeCarousel() {
 
         let carouselIndex = 0;
         let carouselAnimating = false;
+        let autoSlideInterval;
 
         function updateCarousel(newIndex) {
             if (carouselAnimating || carouselItems.length === 0) return;
@@ -588,18 +597,81 @@ function initializeCarousel() {
             setTimeout(() => { carouselAnimating = false; }, 800);
         }
 
+        function startAutoSlide() {
+            // Clear any existing interval
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            
+            // Set up new interval for auto-sliding every 3 seconds
+            autoSlideInterval = setInterval(() => {
+                if (!carouselAnimating) {
+                    updateCarousel(carouselIndex + 1);
+                }
+            }, 3000);
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = null;
+            }
+        }
+
+        // Start auto-sliding on initialization
+        startAutoSlide();
+
+        // Pause auto-sliding when hovering over the carousel
+        const carouselContainer = document.querySelector('.carousel-container');
+        if (carouselContainer) {
+            carouselContainer.addEventListener('mouseenter', () => {
+                stopAutoSlide();
+            });
+            
+            carouselContainer.addEventListener('mouseleave', () => {
+                startAutoSlide();
+            });
+        }
+
+        // Pause auto-sliding when hovering over individual cards
         document.querySelectorAll(".card").forEach(card => {
+            card.addEventListener("mouseenter", () => {
+                stopAutoSlide();
+            });
+            
+            card.addEventListener("mouseleave", () => {
+                startAutoSlide();
+            });
+            
             card.addEventListener("click", () => {
                 const index = Number(card.dataset.index);
                 if (index !== carouselIndex) updateCarousel(index);
             });
         });
 
-        if (leftArrow) leftArrow.onclick = () => updateCarousel(carouselIndex - 1);
-        if (rightArrow) rightArrow.onclick = () => updateCarousel(carouselIndex + 1);
+        if (leftArrow) {
+            leftArrow.onclick = () => {
+                stopAutoSlide();
+                updateCarousel(carouselIndex - 1);
+                // Restart auto-slide after manual interaction
+                setTimeout(() => startAutoSlide(), 5000);
+            };
+        }
+        
+        if (rightArrow) {
+            rightArrow.onclick = () => {
+                stopAutoSlide();
+                updateCarousel(carouselIndex + 1);
+                // Restart auto-slide after manual interaction
+                setTimeout(() => startAutoSlide(), 5000);
+            };
+        }
 
         document.querySelectorAll(".dot").forEach(dot => {
-            dot.onclick = () => updateCarousel(Number(dot.dataset.index));
+            dot.onclick = () => {
+                stopAutoSlide();
+                updateCarousel(Number(dot.dataset.index));
+                // Restart auto-slide after manual interaction
+                setTimeout(() => startAutoSlide(), 5000);
+            };
         });
 
         updateCarousel(0);
@@ -1142,19 +1214,71 @@ function initLoginPage() {
     const loginFormEl = document.getElementById('login-form');
     const signupFormEl = document.getElementById('signup-form');
     
-    if (loginFormEl) {
-        loginFormEl.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleFormSubmit(e.target);
-        });
-    }
-    
-    if (signupFormEl) {
-        signupFormEl.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleFormSubmit(e.target);
-        });
-    }
+    // In initLoginPage function, update form handlers:
+        if (loginFormEl) {
+            loginFormEl.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('.primary-btn');
+                submitBtn.textContent = 'Түр хүлээнэ үү...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const email = e.target.querySelector('input[type="email"]').value;
+                    const password = e.target.querySelector('input[type="password"]').value;
+                    
+                    await authService.login(email, password);
+                    showNotification('Амжилттай нэвтэрлээ!', 'success');
+                    
+                    // Redirect to profile
+                    setTimeout(() => {
+                        window.location.hash = '#/profile';
+                    }, 1000);
+                    
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Нэвтрэх';
+                }
+            });
+        }
+
+        if (signupFormEl) {
+            signupFormEl.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('.primary-btn');
+                submitBtn.textContent = 'Түр хүлээнэ үү...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const form = e.target;
+                    const userData = {
+                        firstName: form.querySelector('input[placeholder="Нэр"]').value,
+                        lastName: form.querySelector('input[placeholder="Овог"]').value,
+                        email: form.querySelector('input[type="email"]').value,
+                        phone: form.querySelector('input[type="tel"]').value,
+                        password: form.querySelectorAll('input[type="password"]')[0].value,
+                        confirmPassword: form.querySelectorAll('input[type="password"]')[1].value
+                    };
+                    
+                    if (userData.password !== userData.confirmPassword) {
+                        throw new Error('Нууц үг таарахгүй байна');
+                    }
+                    
+                    await authService.register(userData);
+                    showNotification('Амжилттай бүртгэгдлээ!', 'success');
+                    
+                    // Redirect to profile
+                    setTimeout(() => {
+                        window.location.hash = '#/profile';
+                    }, 1000);
+                    
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Бүртгүүлэх';
+                }
+            });
+        }
     
     console.log('✅ Login page initialized');
 }
@@ -1248,6 +1372,7 @@ function showNotification(message, type) {
 // Register all routes
 router.addRoute('/', views.home);
 router.addRoute('/movies', views.movies);
+router.addRoute('/profile', views.profile);
 router.addRoute('/customlist', views.customlist);
 router.addRoute('/reviews', views.reviews);
 router.addRoute('/login', views.login);

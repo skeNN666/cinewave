@@ -3,7 +3,7 @@ class CineWaveNavbar extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-
+    
     const style = document.createElement('style');
     style.textContent = `
       .navbar {
@@ -183,6 +183,7 @@ class CineWaveNavbar extends HTMLElement {
     this.categorySelect = this.shadowRoot.querySelector('#category-select');
     this.logo = this.shadowRoot.querySelector('.logo');
     this.links = this.shadowRoot.querySelectorAll('a[data-link]');
+    this.updateNavForAuth();
   }
 
   connectedCallback() {
@@ -247,6 +248,24 @@ class CineWaveNavbar extends HTMLElement {
       }
     });
   }
+  updateNavForAuth() {
+    import('./auth-service.js').then(({ authService }) => {
+        if (authService.isAuthenticated()) {
+            const user = authService.getCurrentUser();
+            const signInBtn = this.shadowRoot.querySelector('.sign-in');
+            
+            // Replace sign-in button with user avatar
+            signInBtn.innerHTML = `
+                <img src="${user.avatar}" 
+                     alt="Profile" 
+                     style="width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">
+            `;
+            signInBtn.onclick = () => {
+                window.location.hash = '#/profile';
+            };
+        }
+    });
+}
 }
 
 customElements.define('cinewave-navbar', CineWaveNavbar);
