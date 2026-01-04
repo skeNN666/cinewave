@@ -93,28 +93,26 @@ const views = {
                 <section class="movies-section" id="upcoming-movies"></section>
             </section>
         `;
-        
-        // Initialize home page functionality
         await initializeHomePage();
     },
 
     movies: async () => {
         const main = document.querySelector('main');
         main.innerHTML = `
-            <main>
-    <h1 class="page-title">Кинонууд</h1>
-    <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
-    <div class="category-filters">
-        <button class="category-btn active" data-category="all">Бүгд</button>
-        <button class="category-btn" data-category="movies">Кино</button>
-        <button class="category-btn" data-category="tv">TV Цуврал</button>
-    </div>
-    
-    <div class="genre-filters">
-    </div>
-    <div class="movies-grid" id="movies-container">
-    </div>
-</main>
+            <section>
+                <h1 class="page-title">Кинонууд</h1>
+                <p class="page-subtitle">6,000+ кино, цувралуудыг сонирхлоороо сонгоно уу</p>
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="all">Бүгд</button>
+                    <button class="category-btn" data-category="movies">Кино</button>
+                    <button class="category-btn" data-category="tv">TV Цуврал</button>
+                </div>
+                
+                <div class="genre-filters">
+                </div>
+                <div class="movies-grid" id="movies-container">
+                </div>
+            </section>
         `;
         
         await initMoviesPage();
@@ -281,10 +279,6 @@ const views = {
         await initLoginPage();
     }
 };
-
-// ============================================
-// HOME PAGE FUNCTIONALITY
-// ============================================
 
 async function initializeHomePage() {
     console.log('🎬 Initializing home page...');

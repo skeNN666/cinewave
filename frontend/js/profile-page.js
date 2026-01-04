@@ -1,5 +1,3 @@
-// profile-page.js - User Profile Page View and Logic
-
 export function renderProfilePage() {
     return `
         <div class="profile-page">
@@ -191,18 +189,12 @@ export async function initProfilePage(authService) {
         return;
     }
 
-    // Load user data
     loadUserData(user);
 
-    // Setup tabs
     setupTabs();
-
-    // Setup forms
     setupProfileForm(authService);
     setupPasswordForm(authService);
     setupQuickEditForm(authService);
-
-    // Setup buttons
     setupButtons(authService);
 
     console.log('✅ Profile page initialized');
@@ -368,22 +360,18 @@ function setupQuickEditForm(authService) {
 }
 
 function setupButtons(authService) {
-    // Logout button
     const logoutBtn = document.getElementById('logout-btn');
     logoutBtn.addEventListener('click', () => {
         if (confirm('Та гарахдаа итгэлтэй байна уу?')) {
             authService.logout();
         }
     });
-
-    // Delete account button
     const deleteBtn = document.getElementById('delete-account-btn');
     deleteBtn.addEventListener('click', () => {
         const confirmed = confirm('Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй!');
         if (confirmed) {
             const doubleCheck = prompt('Баталгаажуулахын тулд "DELETE" гэж бичнэ үү:');
             if (doubleCheck === 'DELETE') {
-                // Delete account logic here
                 authService.logout();
                 showNotification('Бүртгэл амжилттай устлаа', 'success');
             }

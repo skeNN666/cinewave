@@ -379,20 +379,14 @@ class CineWaveFooter extends HTMLElement {
         
         const route = routes[linkText];
         if (route) {
-            // Implement your routing logic here
-            // window.location.href = route;
         }
     }
-
-    // Optional: Method to update copyright year dynamically
     updateCopyrightYear(year) {
         const copyrightText = this.shadowRoot.querySelector('.footer-bottom p');
         if (copyrightText) {
             copyrightText.textContent = `© ${year} CineWave. All rights reserved.`;
         }
     }
-
-    // Optional: Method to set custom colors
     setColors(colors) {
         const style = this.shadowRoot.querySelector('style');
         if (colors.primary) {

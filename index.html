@@ -23,65 +23,14 @@
     <i class="fas fa-spinner fa-spin"></i> Ачааллаж байна...
   </div>
   
-  <main id="app">
-    <section class="movie-slider">
-      <div class="carousel-container">
-        <button class="nav-arrow left">‹</button>
-        <div class="carousel-track"></div>
-        <button class="nav-arrow right">›</button>
-      </div>
-
-      <div class="movie-info">
-        <h2 class="movie-name"></h2>
-      </div>
-
-      <div class="dots"></div>
-    </section>
-
-    <article class="promo-section">
-      <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
-      <div class="slogan top-left">Дуртай киногоо үз</div>
-      <div class="slogan center">Бодол санаагаа бич</div>
-      <div class="slogan bottom-right">Бусдад түгээ</div>
-      <button class="join-btn">Бидэнтэй нэгд</button>
-    </article>
-
-    <section class="movies">
-      <div class="section-header">
-        <h2>Сүүлд нэмэгдсэн кино</h2>
-        <button id="show-more-movies" class="show-more-btn">Илүү ихийг</button>
-      </div>
-      <hr class="line">
-      <section class="movies-section" id="latest-movies"></section>
-    </section>
-
-    <section class="movies">
-      <div class="section-header">
-        <h2>Сүүлд нэмэгдсэн цуврал</h2>
-        <button id="show-more-tv" class="show-more-btn">Илүү ихийг</button>
-      </div>
-      <hr class="line">
-      <section class="movies-section" id="latest-tv"></section>
-    </section>
-
-    <section class="movies">
-      <div class="section-header">
-        <h2>Тун удахгүй</h2>
-        <button id="show-more-upcoming" class="show-more-btn">Илүү ихийг</button>
-      </div>
-      <hr class="line">
-      <section class="movies-section" id="upcoming-movies"></section>
-    </section>
-  </main>
-  
+  <main id="app"></main>
   <cinewave-footer></cinewave-footer>
   <script src="./frontend/js/movie-card-component.js"></script>
   <script src="./frontend/js/footer-component.js"></script>
   <script type="module" src="./frontend/js/navbar-component.js"></script>
-  <script type="module" src="./frontend/js/database.js"></script>
+  <script type="module" src="./frontend/js/auth-service.js"></script>
   <script type="module" src="./frontend/js/tmdb-service.js"></script>
   <script type="module" src="./frontend/js/router.js"></script>
   <script type="module" src="./frontend/js/app.js"></script>
-  <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>

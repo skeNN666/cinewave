@@ -531,7 +531,6 @@
       }
     }
 
-    /* Always show footer without scrolling */
     cinewave-footer {
       opacity: 1;
       animation: fadeInFooter 1s ease-out 0.5s both;
