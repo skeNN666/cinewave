@@ -58,7 +58,7 @@ const views = {
             </section>
 
             <article class="promo-section">
-                <img src="../frontend/promo.png" alt="Promo" class="promo-bg">
+                <img src="../frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
                 <div class="slogan top-left">Дуртай киногоо үз</div>
                 <div class="slogan center">Бодол санаагаа бич</div>
                 <div class="slogan bottom-right">Бусдад түгээ</div>

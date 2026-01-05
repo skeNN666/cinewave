@@ -293,37 +293,39 @@ body {
   transition: all var(--transition-carousel);
 }
 
+/* FIXED: Reduced center card scaling */
 .card.center {
   z-index: var(--z-card-center);
-  transform: scale(1.15) translateZ(0);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+  transform: scale(1.05) translateZ(0);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
 }
 
 .card.center img {
   filter: none;
 }
 
+/* FIXED: Adjusted side card positions */
 .card.left-2 {
   z-index: var(--z-card-back);
-  transform: translateX(-480px) scale(0.8) translateZ(-400px);
+  transform: translateX(-420px) scale(0.8) translateZ(-400px);
   opacity: 0.6;
 }
 
 .card.left-1 {
   z-index: var(--z-card-middle);
-  transform: translateX(-240px) scale(0.9) translateZ(-150px);
+  transform: translateX(-210px) scale(0.9) translateZ(-150px);
   opacity: 0.85;
 }
 
 .card.right-1 {
   z-index: var(--z-card-middle);
-  transform: translateX(240px) scale(0.9) translateZ(-150px);
+  transform: translateX(210px) scale(0.9) translateZ(-150px);
   opacity: 0.85;
 }
 
 .card.right-2 {
   z-index: var(--z-card-back);
-  transform: translateX(480px) scale(0.8) translateZ(-400px);
+  transform: translateX(420px) scale(0.8) translateZ(-400px);
   opacity: 0.6;
 }
 
@@ -331,6 +333,11 @@ body {
   opacity: 0;
   pointer-events: none;
   transform: translateX(0) scale(0.5) translateZ(-600px);
+}
+
+/* FIXED: Reduced hover scale */
+.card.center:hover {
+  transform: scale(1.08) translateZ(0);
 }
 
 .movie-info {
@@ -609,6 +616,14 @@ body {
     height: var(--card-height-xxl);
   }
   
+  .card.center {
+    transform: scale(1.06) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.09) translateZ(0);
+  }
+  
   .card.left-2 {
     transform: translateX(-580px) scale(0.8) translateZ(-400px);
   }
@@ -671,6 +686,14 @@ body {
     height: var(--card-height-xl);
   }
   
+  .card.center {
+    transform: scale(1.06) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.09) translateZ(0);
+  }
+  
   .card.left-2 {
     transform: translateX(-520px) scale(0.8) translateZ(-400px);
   }
@@ -719,6 +742,14 @@ body {
     height: var(--card-height-lg);
   }
   
+  .card.center {
+    transform: scale(1.05) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.08) translateZ(0);
+  }
+  
   .card.left-2 {
     transform: translateX(-450px) scale(0.8) translateZ(-400px);
   }
@@ -756,10 +787,6 @@ body {
     transform: scale(0.95) translateZ(-50px);
     opacity: 0.9;
   }
-  
-  .card.center:hover {
-    transform: scale(1.2) translateZ(0);
-  }
 }
 
 /* Tablet devices (768px - 1023px) */
@@ -771,6 +798,14 @@ body {
   .card {
     width: var(--card-width-md);
     height: var(--card-height-md);
+  }
+  
+  .card.center {
+    transform: scale(1.04) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.06) translateZ(0);
   }
   
   .card.left-2 {
@@ -787,10 +822,6 @@ body {
   
   .card.right-2 {
     transform: translateX(380px) scale(0.75) translateZ(-300px);
-  }
-  
-  .card.center {
-    transform: scale(1.1) translateZ(0);
   }
   
   .movie-name {
@@ -866,6 +897,14 @@ body {
     height: 270px;
   }
   
+  .card.center {
+    transform: scale(1.03) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.05) translateZ(0);
+  }
+  
   .card.left-2 {
     transform: translateX(-280px) scale(0.7) translateZ(-300px);
     opacity: 0.5;
@@ -874,10 +913,6 @@ body {
   .card.left-1 {
     transform: translateX(-140px) scale(0.85) translateZ(-100px);
     opacity: 0.8;
-  }
-  
-  .card.center {
-    transform: scale(1.05) translateZ(0);
   }
   
   .card.right-1 {
@@ -951,6 +986,14 @@ body {
     height: 240px;
   }
   
+  .card.center {
+    transform: scale(1) translateZ(0);
+  }
+  
+  .card.center:hover {
+    transform: scale(1.02) translateZ(0);
+  }
+  
   .card.left-2,
   .card.right-2 {
     opacity: 0;
@@ -961,10 +1004,6 @@ body {
   .card.left-1 {
     transform: translateX(-100px) scale(0.8) translateZ(-50px);
     opacity: 0.7;
-  }
-  
-  .card.center {
-    transform: scale(1) translateZ(0);
   }
   
   .card.right-1 {
@@ -1001,6 +1040,10 @@ body {
   .card {
     width: 140px;
     height: 210px;
+  }
+  
+  .card.center {
+    transform: scale(1) translateZ(0);
   }
   
   .card.left-1 {
