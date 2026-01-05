@@ -58,7 +58,7 @@ const views = {
             </section>
 
             <article class="promo-section">
-                <img src="../frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
+                <img src="../frontend/promo.png" alt="Promo" class="promo-bg">
                 <div class="slogan top-left">Дуртай киногоо үз</div>
                 <div class="slogan center">Бодол санаагаа бич</div>
                 <div class="slogan bottom-right">Бусдад түгээ</div>
@@ -153,6 +153,24 @@ const views = {
                 </div>
             </section>
         `;
+    },
+
+    search: async () => {
+        const main = document.querySelector('main');
+        const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
+        const query = urlParams.get('q') || '';
+        
+        main.innerHTML = `
+            <section>
+                <h1 class="page-title">Хайлтын үр дүн</h1>
+                <p class="page-subtitle" id="search-subtitle">${query ? `"${query}" гэж хайж байна` : 'Хайлтын үг оруулна уу'}</p>
+                <div class="movies-grid" id="search-results-container">
+                    <div class="loading">Хайж байна...</div>
+                </div>
+            </section>
+        `;
+        
+        await initSearchPage(query);
     },
 
     login: async () => {
@@ -1091,6 +1109,187 @@ class MoviesPageController {
     }
 }
 
+// ============================================
+// SEARCH PAGE FUNCTIONALITY
+// ============================================
+
+class SearchPageController {
+    constructor(query) {
+        this.query = query;
+        this.searchResults = [];
+        this.isLoading = false;
+    }
+
+    async init() {
+        if (!this.query || !this.query.trim()) {
+            this.showEmptyState();
+            return;
+        }
+
+        await this.performSearch();
+    }
+
+    async performSearch() {
+        if (this.isLoading) return;
+        
+        this.isLoading = true;
+        this.showLoading();
+        
+        try {
+            if (typeof tmdbService === 'undefined') {
+                throw new Error('TMDB Service not available');
+            }
+            
+            console.log(`🔍 Searching TMDB for: "${this.query}"`);
+            const results = await tmdbService.search(this.query, 1);
+            
+            this.searchResults = results;
+            console.log(`✅ Found ${results.length} results`);
+            
+            this.renderResults();
+            
+        } catch (error) {
+            console.error('❌ Error searching:', error);
+            this.showError();
+        } finally {
+            this.isLoading = false;
+            this.hideLoading();
+        }
+    }
+
+    renderResults() {
+        const container = document.getElementById('search-results-container');
+        if (!container) return;
+        
+        if (this.searchResults.length === 0) {
+            container.innerHTML = `
+                <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-search" style="font-size: 64px; color: #666; margin-bottom: 20px;"></i>
+                    <h3 style="color: white; margin-bottom: 10px;">Үр дүн олдсонгүй</h3>
+                    <p style="color: #999;">"${this.query}" гэсэн хайлтад тохирох кино, цуврал олдсонгүй.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        this.searchResults.forEach((item) => {
+            const movieCard = document.createElement('movie-card');
+            
+            let yearOrSeason = '';
+            if (item.year) {
+                yearOrSeason = item.year;
+                if (item.rating) yearOrSeason += ` • ${item.rating}/10`;
+            } else if (item.release_date) {
+                const year = item.release_date.split('-')[0];
+                yearOrSeason = year;
+                if (item.rating) yearOrSeason += ` • ${item.rating}/10`;
+            } else if (item.first_air_date) {
+                const year = item.first_air_date.split('-')[0];
+                yearOrSeason = year;
+                if (item.rating) yearOrSeason += ` • ${item.rating}/10`;
+            }
+            
+            movieCard.setAttribute('name', item.name || 'Unknown');
+            movieCard.setAttribute('image', item.image || '');
+            movieCard.setAttribute('year-or-season', yearOrSeason);
+            movieCard.setAttribute('category', item.category || item.media_type || 'movies');
+            movieCard.setAttribute('rating', item.rating_value || item.rating || '0.0');
+            movieCard.setAttribute('data-tmdb-id', item.tmdb_id || item.id || '');
+            movieCard.setAttribute('data-media-type', item.media_type || item.category || 'movie');
+            
+            if (item.description) {
+                movieCard.setAttribute('description', item.description);
+            }
+            
+            container.appendChild(movieCard);
+        });
+    }
+
+    showLoading() {
+        const container = document.getElementById('search-results-container');
+        if (container) {
+            container.innerHTML = '<div class="loading" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #999;">Хайж байна...</div>';
+        }
+    }
+
+    hideLoading() {
+        // Loading is hidden when results are rendered
+    }
+
+    showError() {
+        const container = document.getElementById('search-results-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 64px; color: #f44336; margin-bottom: 20px;"></i>
+                    <h3 style="color: white; margin-bottom: 10px;">Алдаа гарлаа</h3>
+                    <p style="color: #999;">Хайлт хийхэд алдаа гарлаа. Дахин оролдоно уу.</p>
+                    <button class="retry-btn" style="margin-top: 20px; padding: 10px 20px; background: #00ffff; color: #000; border: none; border-radius: 5px; cursor: pointer;">Дахин оролдох</button>
+                </div>
+            `;
+            
+            container.querySelector('.retry-btn')?.addEventListener('click', () => {
+                this.performSearch();
+            });
+        }
+    }
+
+    showEmptyState() {
+        const container = document.getElementById('search-results-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-search" style="font-size: 64px; color: #666; margin-bottom: 20px;"></i>
+                    <h3 style="color: white; margin-bottom: 10px;">Хайлтын үг оруулна уу</h3>
+                    <p style="color: #999;">Дээд хэсгийн хайлтын талбар ашиглан кино, цуврал хайна уу.</p>
+                </div>
+            `;
+        }
+    }
+}
+
+let searchPageInstance = null;
+
+async function initSearchPage(query) {
+    console.log('🔍 initSearchPage called with query:', query);
+    
+    if (searchPageInstance) {
+        searchPageInstance = null;
+    }
+    
+    if (typeof tmdbService === 'undefined') {
+        console.error('❌ TMDB Service not found!');
+        const container = document.getElementById('search-results-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <h3 style="color: white;">TMDB Service байхгүй байна</h3>
+                    <p style="color: #999;">tmdb-service.js файл ачаалагдаагүй байна.</p>
+                </div>
+            `;
+        }
+        return;
+    }
+    
+    try {
+        searchPageInstance = new SearchPageController(query);
+        await searchPageInstance.init();
+    } catch (error) {
+        console.error('❌ Error in initSearchPage:', error);
+        const container = document.getElementById('search-results-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <h3 style="color: white;">Алдаа гарлаа</h3>
+                    <p style="color: #999;">Хайлт хийхэд алдаа гарлаа.</p>
+                </div>
+            `;
+        }
+    }
+}
+
 // Global instance
 let moviesPageInstance = null;
 
@@ -1378,6 +1577,7 @@ router.addRoute('/profile', views.profile);
 router.addRoute('/customlist', views.customlist);
 router.addRoute('/reviews', views.reviews);
 router.addRoute('/login', views.login);
+router.addRoute('/search', views.search);
 
 // Initialize app and start router
 initializeApp().then(() => {
@@ -1386,9 +1586,11 @@ initializeApp().then(() => {
 
 // Handle search from navbar
 document.addEventListener('search', (e) => {
-    const { category } = e.detail;
-    selectedCategory = category === 'all' ? 'all' : category;
-    applyFilters();
+    const { query } = e.detail;
+    if (query && query.trim()) {
+        // Navigate to search page with query parameter
+        window.location.hash = `/search?q=${encodeURIComponent(query.trim())}`;
+    }
 });
 
 // Add styles

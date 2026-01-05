@@ -131,6 +131,36 @@ export class TMDBService {
         }
     }
 
+    // Search for movies and TV shows
+    async search(query, page = 1) {
+        try {
+            if (!query || !query.trim()) {
+                return [];
+            }
+
+            const data = await this.fetchFromTMDB('/search/multi', {
+                query: query.trim(),
+                page
+            });
+
+            console.log(`🔍 Search results for "${query}": ${data.results.length} items`);
+
+            // Map results based on media_type
+            return data.results
+                .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+                .map(item => {
+                    if (item.media_type === 'movie') {
+                        return this.mapMovieData(item);
+                    } else {
+                        return this.mapTVData(item);
+                    }
+                });
+        } catch (error) {
+            console.error('❌ Error searching TMDB:', error);
+            return [];
+        }
+    }
+
     async getMovieDetails(movieId) {
         const data = await this.fetchFromTMDB(`/movie/${movieId}`, {
             append_to_response: 'credits,videos,release_dates'

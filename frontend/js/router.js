@@ -33,7 +33,11 @@ class Router {
   // Handle current route
   async handleRoute() {
     // Get path from hash, default to '/'
-    let path = window.location.hash.slice(1) || '/';
+    let fullPath = window.location.hash.slice(1) || '/';
+    
+    // Separate path from query parameters
+    const pathParts = fullPath.split('?');
+    let path = pathParts[0];
     
     // Remove trailing slash except for root
     if (path !== '/' && path.endsWith('/')) {
