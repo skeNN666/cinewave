@@ -189,7 +189,7 @@ class MovieCard extends HTMLElement {
         .poster-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             position: sticky;
             top: 80px;
             align-self: start;

@@ -17,7 +17,6 @@ let sectionState = {
     "upcoming-movies": 1
 };
 
-// Store section-specific data for TMDB
 let sectionData = {
     "latest-movies": [],
     "latest-tv": [],
@@ -59,7 +58,7 @@ const views = {
             </section>
 
             <article class="promo-section">
-                <img src="./frontend/images/promo-bg.jpg" alt="Promo" class="promo-bg">
+                <img src="../frontend/promo.png" alt="Promo" class="promo-bg">
                 <div class="slogan top-left">Дуртай киногоо үз</div>
                 <div class="slogan center">Бодол санаагаа бич</div>
                 <div class="slogan bottom-right">Бусдад түгээ</div>
@@ -286,6 +285,7 @@ async function initializeHomePage() {
     initializeFilters();
     applyFilters();
     await setupSections();
+    setupPromoButton();
 }
 
 async function setupSections() {
@@ -362,6 +362,14 @@ async function loadTMDBDataForSections() {
     } catch (error) {
         console.error('❌ Error loading TMDB data:', error);
         renderFallbackSections();
+    }
+}
+function setupPromoButton() {
+    const joinBtn = document.querySelector('.join-btn');
+    if (joinBtn) {
+        joinBtn.addEventListener('click', () => {
+            window.location.hash = '#/login';
+        });
     }
 }
 
