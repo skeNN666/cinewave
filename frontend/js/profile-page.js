@@ -139,7 +139,6 @@ export function renderProfilePage() {
                     </div>
 
                     <div class="settings-section danger-zone">
-                        <h3>Аюултай бүс</h3>
                         <p>Бүртгэлээ устгах нь таны бүх мэдээлэл, үнэлгээ, шүүмжийг бүрмөсөн устгана.</p>
                         <button class="delete-account-btn" id="delete-account-btn">
                             <i class="fas fa-trash"></i> Бүртгэл устгах
@@ -177,6 +176,155 @@ export function renderProfilePage() {
                 </form>
             </div>
         </div>
+
+        <!-- Avatar Upload Modal -->
+        <div class="modal" id="avatar-upload-modal">
+            <div class="modal-content avatar-modal">
+                <button class="modal-close" id="close-avatar-modal">&times;</button>
+                <h2>Профайл зураг солих</h2>
+                
+                <div class="avatar-options">
+                    <button class="avatar-option-btn" id="upload-from-device">
+                        <i class="fas fa-upload"></i>
+                        <span>Энэ төхөөрөмжөөс оруулах</span>
+                    </button>
+                    
+                    <button class="avatar-option-btn" id="take-photo">
+                        <i class="fas fa-camera"></i>
+                        <span>Камераар авах</span>
+                    </button>
+                    
+                    <button class="avatar-option-btn" id="enter-url">
+                        <i class="fas fa-link"></i>
+                        <span>URL оруулах</span>
+                    </button>
+                </div>
+
+                <div class="avatar-preview" id="avatar-preview" style="display: none;">
+                    <img id="preview-image" src="" alt="Preview">
+                    <div class="preview-actions">
+                        <button class="btn-secondary" id="cancel-preview">Цуцлах</button>
+                        <button class="btn-primary" id="save-avatar">Хадгалах</button>
+                    </div>
+                </div>
+
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                <input type="file" id="camera-input" accept="image/*" capture="user" style="display: none;">
+            </div>
+        </div>
+
+        <style>
+            .avatar-modal {
+                max-width: 500px;
+            }
+
+            .avatar-options {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .avatar-option-btn {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 20px;
+                background: #2a2a2a;
+                border: 2px solid #333;
+                border-radius: 12px;
+                color: white;
+                font-family: 'Nunito', sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .avatar-option-btn:hover {
+                background: rgba(0, 123, 255, 0.1);
+                border-color: #007bff;
+                transform: translateY(-2px);
+            }
+
+            .avatar-option-btn i {
+                font-size: 24px;
+                color: #00ffff;
+            }
+
+            .avatar-preview {
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            .avatar-preview img {
+                max-width: 100%;
+                max-height: 300px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                object-fit: contain;
+            }
+
+            .preview-actions {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                font-family: 'Nunito', sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+            }
+
+            .btn-secondary {
+                background: #2a2a2a;
+                color: white;
+                border: 2px solid #333;
+            }
+
+            .btn-secondary:hover {
+                border-color: #555;
+            }
+
+            @media (max-width: 600px) {
+                .avatar-modal {
+                    max-width: 90%;
+                }
+
+                .avatar-option-btn {
+                    padding: 15px;
+                    font-size: 14px;
+                }
+
+                .avatar-option-btn i {
+                    font-size: 20px;
+                }
+
+                .preview-actions {
+                    flex-direction: column;
+                }
+
+                .btn-primary, .btn-secondary {
+                    width: 100%;
+                }
+            }
+        </style>
     `;
 }
 
@@ -196,6 +344,7 @@ export async function initProfilePage(authService) {
     setupPasswordForm(authService);
     setupQuickEditForm(authService);
     setupButtons(authService);
+    setupAvatarUpload(authService);
 
     console.log('✅ Profile page initialized');
 }
@@ -359,6 +508,126 @@ function setupQuickEditForm(authService) {
     });
 }
 
+function setupAvatarUpload(authService) {
+    const modal = document.getElementById('avatar-upload-modal');
+    const closeBtn = document.getElementById('close-avatar-modal');
+    const changeAvatarBtn = document.getElementById('change-avatar-btn');
+    const avatarOptions = document.querySelector('.avatar-options');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const previewImage = document.getElementById('preview-image');
+    
+    const fileInput = document.getElementById('file-input');
+    const cameraInput = document.getElementById('camera-input');
+    
+    let currentImageData = null;
+
+    // Open modal
+    changeAvatarBtn.addEventListener('click', () => {
+        modal.classList.add('show');
+        avatarOptions.style.display = 'flex';
+        avatarPreview.style.display = 'none';
+        currentImageData = null;
+    });
+
+    // Close modal
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('show');
+        resetModal();
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+            resetModal();
+        }
+    });
+
+    // Upload from device
+    document.getElementById('upload-from-device').addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        handleFileSelect(e.target.files[0]);
+    });
+
+    // Take photo with camera
+    document.getElementById('take-photo').addEventListener('click', () => {
+        cameraInput.click();
+    });
+
+    cameraInput.addEventListener('change', (e) => {
+        handleFileSelect(e.target.files[0]);
+    });
+
+    // Enter URL
+    document.getElementById('enter-url').addEventListener('click', () => {
+        const avatarUrl = prompt('Зургийн URL оруулна уу:');
+        if (avatarUrl) {
+            previewImage.src = avatarUrl;
+            currentImageData = avatarUrl;
+            showPreview();
+        }
+    });
+
+    // Cancel preview
+    document.getElementById('cancel-preview').addEventListener('click', () => {
+        resetModal();
+    });
+
+    // Save avatar
+    document.getElementById('save-avatar').addEventListener('click', async () => {
+        if (!currentImageData) return;
+
+        try {
+            await authService.updateProfile({ avatar: currentImageData });
+            document.getElementById('profile-avatar').src = currentImageData;
+            showNotification('Зураг амжилттай солигдлоо!', 'success');
+            modal.classList.remove('show');
+            resetModal();
+        } catch (error) {
+            showNotification('Зураг хадгалахад алдаа гарлаа', 'error');
+        }
+    });
+
+    function handleFileSelect(file) {
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showNotification('Зөвхөн зураг файл оруулна уу', 'error');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Файлын хэмжээ 5MB-аас бага байх ёстой', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            currentImageData = e.target.result;
+            previewImage.src = currentImageData;
+            showPreview();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function showPreview() {
+        avatarOptions.style.display = 'none';
+        avatarPreview.style.display = 'block';
+    }
+
+    function resetModal() {
+        avatarOptions.style.display = 'flex';
+        avatarPreview.style.display = 'none';
+        currentImageData = null;
+        fileInput.value = '';
+        cameraInput.value = '';
+    }
+}
+
 function setupButtons(authService) {
     const logoutBtn = document.getElementById('logout-btn');
     logoutBtn.addEventListener('click', () => {
@@ -366,6 +635,7 @@ function setupButtons(authService) {
             authService.logout();
         }
     });
+
     const deleteBtn = document.getElementById('delete-account-btn');
     deleteBtn.addEventListener('click', () => {
         const confirmed = confirm('Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй!');
@@ -375,17 +645,6 @@ function setupButtons(authService) {
                 authService.logout();
                 showNotification('Бүртгэл амжилттай устлаа', 'success');
             }
-        }
-    });
-
-    // Change avatar button
-    const changeAvatarBtn = document.getElementById('change-avatar-btn');
-    changeAvatarBtn.addEventListener('click', () => {
-        const avatarUrl = prompt('Зургийн URL оруулна уу:');
-        if (avatarUrl) {
-            authService.updateProfile({ avatar: avatarUrl });
-            document.getElementById('profile-avatar').src = avatarUrl;
-            showNotification('Зураг амжилттай солигдлоо!', 'success');
         }
     });
 }
