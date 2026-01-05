@@ -604,6 +604,9 @@ body {
   .nav-arrow.right {
     right: var(--spacing-lg);
   }
+  .movies-section {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* Mobile devices (landscape & large phones) */
@@ -778,6 +781,9 @@ body {
     font-size: var(--font-size-md);
     padding: var(--spacing-md) var(--spacing-3xl);
   }
+  .movies-section {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Extra small devices */
@@ -823,5 +829,8 @@ body {
     font-size: var(--font-size-xs);
     padding: var(--spacing-xs) var(--spacing-lg);
     bottom: var(--spacing-xs);
+  }
+  .movies-section {
+    grid-template-columns: 1fr;
   }
 }
