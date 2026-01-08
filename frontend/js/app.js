@@ -58,7 +58,7 @@ const views = {
             </section>
 
             <article class="promo-section">
-                <img src="../frontend/promo.png" alt="Promo" class="promo-bg">
+                <img src="../frontend/images/promo.png" alt="Promo" class="promo-bg">
                 <div class="slogan top-left">Дуртай киногоо үз</div>
                 <div class="slogan center">Бодол санаагаа бич</div>
                 <div class="slogan bottom-right">Бусдад түгээ</div>
@@ -163,7 +163,6 @@ const views = {
         main.innerHTML = `
             <section>
                 <h1 class="page-title">Хайлтын үр дүн</h1>
-                <p class="page-subtitle" id="search-subtitle">${query ? `"${query}" гэж хайж байна` : 'Хайлтын үг оруулна уу'}</p>
                 <div class="movies-grid" id="search-results-container">
                     <div class="loading">Хайж байна...</div>
                 </div>
