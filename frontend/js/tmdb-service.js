@@ -52,49 +52,47 @@ export class TMDBService {
     }
 
     // Get RECENT TV shows (currently airing and recently aired)
+    // Includes all TV shows (reality, scripted, etc.)
     async getAiringTodayTV(page = 1) {
-        const today = new Date();
-        const twoMonthsAgo = new Date(today);
-        twoMonthsAgo.setMonth(today.getMonth() - 2);
+        // Use /tv/on_the_air endpoint which returns shows currently on the air (latest)
+        const data = await this.fetchFromTMDB('/tv/on_the_air', { page });
         
-        const oneMonthFromNow = new Date(today);
-        oneMonthFromNow.setMonth(today.getMonth() + 1);
+        console.log(`📺 Found ${data.results.length} TV shows from /tv/on_the_air endpoint`);
         
-        // Use air_date (episode air dates) instead of first_air_date (series premiere)
-        const data = await this.fetchFromTMDB('/discover/tv', {
-            page,
-            'air_date.gte': twoMonthsAgo.toISOString().split('T')[0],
-            'air_date.lte': oneMonthFromNow.toISOString().split('T')[0],
-            sort_by: 'popularity.desc',  // Popular shows currently airing
-            'vote_count.gte': 20,
-            with_status: '0|2',  // 0 = Үргэлжлэх, 2 = Одоо гарч байгаа
-            with_type: '0|2|3'   // 0 = Documentary, 2 = Scripted, 3 = Miniseries
+        // Sort by first_air_date descending to get newest first
+        const sortedResults = [...data.results].sort((a, b) => {
+            const dateA = a.first_air_date ? new Date(a.first_air_date) : new Date(0);
+            const dateB = b.first_air_date ? new Date(b.first_air_date) : new Date(0);
+            return dateB - dateA; // Descending (newest first)
         });
         
-        console.log(`📅 Latest TV date range (air_date): ${twoMonthsAgo.toISOString().split('T')[0]} to ${oneMonthFromNow.toISOString().split('T')[0]}`);
-        console.log(`Found ${data.results.length} TV shows`);
+        console.log(`✅ Returning ${sortedResults.length} latest TV shows (all types included)`);
         
         // Log sample results
-        if (data.results.length > 0) {
-            console.log('Sample TV shows:', data.results.slice(0, 3).map(tv => ({
+        if (sortedResults.length > 0) {
+            console.log('Sample latest TV shows:', sortedResults.slice(0, 5).map(tv => ({
                 name: tv.name,
                 first_air_date: tv.first_air_date,
                 popularity: tv.popularity
             })));
         }
         
-        return data.results.map(tv => this.mapTVData(tv));
+        return sortedResults.map(tv => this.mapTVData(tv));
     }
 
     async getOnTheAirTV(page = 1) {
         const data = await this.fetchFromTMDB('/tv/on_the_air', { page });
-        console.log(`📺 On The Air TV shows: ${data.results.length}`);
+        
+        console.log(`📺 On The Air TV shows: ${data.results.length} (all types included)`);
         return data.results.map(tv => this.mapTVData(tv));
     }
 
     // Get popular TV shows (backup method)
+    // Includes all TV shows (reality, scripted, etc.)
     async getPopularTVShows(page = 1) {
         const data = await this.fetchFromTMDB('/tv/popular', { page });
+        
+        console.log(`📺 Popular TV shows: ${data.results.length} (all types included)`);
         return data.results.map(tv => this.mapTVData(tv));
     }
 
@@ -127,6 +125,68 @@ export class TMDBService {
             
         } catch (error) {
             console.error('❌ Error fetching upcoming movies:', error);
+            return [];
+        }
+    }
+
+    // Discover movies by genre
+    async discoverMoviesByGenre(genreId, page = 1) {
+        try {
+            // Ensure genreId is a number
+            const genreIdNum = parseInt(genreId);
+            if (isNaN(genreIdNum)) {
+                console.error(`❌ Invalid genre ID for movies: ${genreId}`);
+                return [];
+            }
+            
+            console.log(`🔍 Discovering movies with genre ID: ${genreIdNum} (page ${page})`);
+            const data = await this.fetchFromTMDB('/discover/movie', {
+                page: page,
+                with_genres: genreIdNum,
+                sort_by: 'popularity.desc',
+                'vote_count.gte': 50
+            });
+            
+            if (!data || !data.results) {
+                console.warn(`⚠️ No results in response for genre ID ${genreIdNum}`);
+                return [];
+            }
+            
+            console.log(`✅ Discovered ${data.results.length} movies for genre ID ${genreIdNum}`);
+            return data.results.map(movie => this.mapMovieData(movie));
+        } catch (error) {
+            console.error(`❌ Error discovering movies by genre ${genreId}:`, error);
+            return [];
+        }
+    }
+
+    // Discover TV shows by genre
+    async discoverTVByGenre(genreId, page = 1) {
+        try {
+            // Ensure genreId is a number
+            const genreIdNum = parseInt(genreId);
+            if (isNaN(genreIdNum)) {
+                console.error(`❌ Invalid genre ID for TV: ${genreId}`);
+                return [];
+            }
+            
+            console.log(`🔍 Discovering TV shows with genre ID: ${genreIdNum} (page ${page})`);
+            const data = await this.fetchFromTMDB('/discover/tv', {
+                page: page,
+                with_genres: genreIdNum,
+                sort_by: 'popularity.desc',
+                'vote_count.gte': 50
+            });
+            
+            if (!data || !data.results) {
+                console.warn(`⚠️ No results in response for genre ID ${genreIdNum}`);
+                return [];
+            }
+            
+            console.log(`✅ Discovered ${data.results.length} TV shows for genre ID ${genreIdNum}`);
+            return data.results.map(tv => this.mapTVData(tv));
+        } catch (error) {
+            console.error(`❌ Error discovering TV shows by genre ${genreId}:`, error);
             return [];
         }
     }
@@ -329,3 +389,8 @@ export class TMDBService {
 
 // Create a singleton instance
 export const tmdbService = new TMDBService();
+
+// Also expose globally for non-module scripts
+if (typeof window !== 'undefined') {
+    window.tmdbService = tmdbService;
+}

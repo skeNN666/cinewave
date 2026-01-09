@@ -107,8 +107,30 @@ const views = {
                     <button class="category-btn" data-category="tv">TV Цуврал</button>
                 </div>
                 
-                <div class="genre-filters">
+                <div class="filter-section">
+                    <button type="button" class="filter-toggle-btn" id="filter-toggle-btn">
+                        <i class="fas fa-filter"></i>
+                        Шүүх
+                        <span class="selected-count" id="selected-count" style="display: none;">0</span>
+                    </button>
+                    <div class="filter-dropdown" id="filter-dropdown">
+                        <div class="filter-header">
+                            <h3>Төрөл сонгох</h3>
+                            <button class="clear-all" id="clear-all-filters">Бүгдийг арилгах</button>
+                        </div>
+                        <div class="genres-grid" id="genres-grid">
+                        </div>
+                        <div class="filter-actions">
+                            <button class="cancel-btn" id="cancel-filter">Цуцлах</button>
+                            <button class="apply-btn" id="apply-filter">Хэрэглэх</button>
+                        </div>
+                    </div>
+                    <div class="overlay" id="filter-overlay"></div>
                 </div>
+                
+                <div class="active-filters" id="active-filters">
+                </div>
+                
                 <div class="movies-grid" id="movies-container">
                 </div>
             </section>
@@ -720,7 +742,7 @@ function applyFilters() {
 class MoviesPageController {
     constructor() {
         this.currentCategory = 'all';
-        this.currentGenre = 'all';
+        this.selectedGenres = []; // Changed to support multiple genres
         this.currentPage = 1;
         this.totalPages = 1;
         this.isLoading = false;
@@ -729,25 +751,44 @@ class MoviesPageController {
             movies: [],
             tv: []
         };
+        this.tempSelectedGenres = []; // For dropdown selection
     }
 
     async init() {
         console.log('🎬 Movies page initializing...');
         console.log('Step 1: Fetching genres...');
         
-        await this.fetchGenres();
-        console.log('Step 2: Genres fetched, rendering filters...');
+        try {
+            await this.fetchGenres();
+            console.log('Step 2: Genres fetched, rendering filters...');
+            
+            this.renderGenreFilters();
+            this.renderActiveFilters();
+            console.log('Step 3: Filters rendered, loading movies...');
+            
+            await this.loadMovies();
+            console.log('Step 4: Movies loaded');
+        } catch (error) {
+            console.error('❌ Error in init steps:', error);
+        }
         
-        this.renderGenreFilters();
-        console.log('Step 3: Filters rendered, loading movies...');
+        // Always set up event listeners, even if previous steps failed
+        console.log('Step 5: Setting up listeners...');
+        try {
+            this.setupEventListeners();
+            console.log('✅ Listeners set up');
+        } catch (error) {
+            console.error('❌ Error setting up event listeners:', error);
+        }
         
-        await this.loadMovies();
-        console.log('Step 4: Movies loaded, setting up listeners...');
+        console.log('Step 6: Setting up scroll...');
+        try {
+            this.setupInfiniteScroll();
+            console.log('✅ Scroll set up');
+        } catch (error) {
+            console.error('❌ Error setting up scroll:', error);
+        }
         
-        this.setupEventListeners();
-        console.log('Step 5: Listeners set up, setting up scroll...');
-        
-        this.setupInfiniteScroll();
         console.log('✅ Movies page initialized successfully!');
     }
 
@@ -800,67 +841,205 @@ class MoviesPageController {
     }
 
     renderGenreFilters() {
-        const genreContainer = document.querySelector('.genre-filters');
-        if (!genreContainer) return;
+        const genresGrid = document.getElementById('genres-grid');
+        if (!genresGrid) return;
         
-        genreContainer.innerHTML = '';
+        genresGrid.innerHTML = '';
         
-        const allGenresBtn = document.createElement('button');
-        allGenresBtn.className = 'genre-btn active';
-        allGenresBtn.textContent = 'Бүх төрөл';
-        allGenresBtn.dataset.genre = 'all';
-        genreContainer.appendChild(allGenresBtn);
+        let currentGenres = [];
         
-        this.renderCurrentCategoryGenres();
-    }
-
-    renderCurrentCategoryGenres() {
-        const genreContainer = document.querySelector('.genre-filters');
-        if (!genreContainer) return;
-        
-        const existingGenreBtns = genreContainer.querySelectorAll('.genre-btn:not([data-genre="all"])');
-        existingGenreBtns.forEach(btn => btn.remove());
-        
-        const currentGenres = this.currentCategory === 'tv' ? this.genres.tv : this.genres.movies;
+        if (this.currentCategory === 'all') {
+            // For 'all', show both movie and TV genres, but merge common ones
+            const allGenresMap = new Map();
+            
+            // Add movie genres
+            this.genres.movies.forEach(genre => {
+                allGenresMap.set(genre.id, {
+                    id: genre.id,
+                    name: genre.name,
+                    type: 'movie',
+                    displayName: this.translateGenre(genre.name)
+                });
+            });
+            
+            // Add TV genres (may have different IDs)
+            this.genres.tv.forEach(genre => {
+                if (!allGenresMap.has(genre.id)) {
+                    allGenresMap.set(genre.id, {
+                        id: genre.id,
+                        name: genre.name,
+                        type: 'tv',
+                        displayName: this.translateGenre(genre.name)
+                    });
+                }
+            });
+            
+            currentGenres = Array.from(allGenresMap.values()).sort((a, b) => 
+                a.displayName.localeCompare(b.displayName)
+            );
+        } else if (this.currentCategory === 'tv') {
+            currentGenres = this.genres.tv.map(g => ({
+                id: g.id,
+                name: g.name,
+                type: 'tv',
+                displayName: this.translateGenre(g.name)
+            }));
+        } else {
+            currentGenres = this.genres.movies.map(g => ({
+                id: g.id,
+                name: g.name,
+                type: 'movie',
+                displayName: this.translateGenre(g.name)
+            }));
+        }
         
         currentGenres.forEach(genre => {
-            const genreBtn = document.createElement('button');
-            genreBtn.className = 'genre-btn';
-            genreBtn.textContent = this.translateGenre(genre.name);
-            genreBtn.dataset.genre = genre.id;
-            genreContainer.appendChild(genreBtn);
+            const genreOption = document.createElement('div');
+            genreOption.className = 'genre-option';
+            genreOption.textContent = genre.displayName;
+            genreOption.dataset.genreId = genre.id;
+            genreOption.dataset.genreName = genre.displayName;
+            genreOption.dataset.genreType = genre.type;
+            
+            // Check if this genre is already selected
+            if (this.tempSelectedGenres.includes(genre.id.toString())) {
+                genreOption.classList.add('selected');
+            }
+            
+            genreOption.addEventListener('click', () => {
+                genreOption.classList.toggle('selected');
+                const genreId = genreOption.dataset.genreId;
+                const genreType = genreOption.dataset.genreType || this.currentCategory;
+                
+                console.log('🎯 Genre clicked:', { genreId, genreType, isSelected: genreOption.classList.contains('selected') });
+                
+                if (genreOption.classList.contains('selected')) {
+                    if (!this.tempSelectedGenres.includes(genreId)) {
+                        this.tempSelectedGenres.push(genreId);
+                        console.log('✅ Added genre to selection:', genreId, 'Total:', this.tempSelectedGenres.length);
+                    }
+                } else {
+                    this.tempSelectedGenres = this.tempSelectedGenres.filter(id => id !== genreId);
+                    console.log('❌ Removed genre from selection:', genreId, 'Total:', this.tempSelectedGenres.length);
+                }
+                this.updateSelectedCount();
+            });
+            
+            genresGrid.appendChild(genreOption);
         });
+        
+        this.updateSelectedCount();
+    }
+    
+    updateSelectedCount() {
+        const countEl = document.getElementById('selected-count');
+        if (countEl) {
+            if (this.tempSelectedGenres.length > 0) {
+                countEl.textContent = this.tempSelectedGenres.length;
+                countEl.style.display = 'flex';
+            } else {
+                countEl.style.display = 'none';
+            }
+        }
     }
 
     translateGenre(genreName) {
         const translations = {
-            'Action': 'Экшн', 'Adventure': 'Адал явдалт', 'Animation': 'Анимейшн',
+            'Action': 'Тулаант', 'Adventure': 'Адал явдалт', 'Animation': 'Анимейшн',
             'Comedy': 'Инээдмийн', 'Crime': 'Гэмт хэрэг', 'Documentary': 'Баримтат',
-            'Drama': 'Драма', 'Family': 'Гэр бүл', 'Fantasy': 'Фэнтези',
+            'Drama': 'Драма', 'Family': 'Гэр бүл', 'Fantasy': 'Зөгнөлт',
             'History': 'Түүхэн', 'Horror': 'Аймшгийн', 'Music': 'Хөгжмийн',
-            'Mystery': 'Нууцлаг', 'Romance': 'Урлаг', 'Science Fiction': 'Шинжлэх ухааны',
+            'Mystery': 'Нууцлаг', 'Romance': 'Романтик', 'Science Fiction': 'Шинжлэх ухаант',
             'Thriller': 'Сэтгэл хөдөлгөм', 'War': 'Дайны', 'Western': 'Барууны',
-            'Action & Adventure': 'Экшн ба адал явдалт', 'Sci-Fi & Fantasy': 'Шинжлэх ухаан ба фэнтези'
+            'Action & Adventure': 'Тулаант ба адал явдалт', 'Sci-Fi & Fantasy': 'Шинжлэх ухаан ба Зөгнөлт'
         };
         return translations[genreName] || genreName;
     }
-
     async loadMovies() {
-        if (this.isLoading) return;
+    if (this.isLoading) return;
+    
+    this.isLoading = true;
+    this.showLoading();
+    
+    console.log(`🎬 Loading ${this.currentCategory} page ${this.currentPage}...`);
+    console.log(`🎯 Selected genres:`, this.selectedGenres);
+    
+    try {
+        // Check if tmdbService exists
+        if (typeof tmdbService === 'undefined') {
+            throw new Error('TMDB Service not available');
+        }
         
-        this.isLoading = true;
-        this.showLoading();
+        let data = [];
         
-        console.log(`🎬 Loading ${this.currentCategory} page ${this.currentPage}...`);
-        
-        try {
-            // Check if tmdbService exists
-            if (typeof tmdbService === 'undefined') {
-                throw new Error('TMDB Service not available');
+        // If genres are selected, use genre-based discovery
+        if (this.selectedGenres.length > 0) {
+            console.log(`🎭 Loading by genres:`, this.selectedGenres);
+            console.log(`📋 Current category: ${this.currentCategory}`);
+            
+            // Convert genre IDs to integers for API call
+            const genreIds = this.selectedGenres.map(id => parseInt(id)).filter(id => !isNaN(id));
+            console.log(`🔢 Converted genre IDs:`, genreIds);
+            
+            if (genreIds.length === 0) {
+                console.warn('⚠️ No valid genre IDs after conversion');
+                data = [];
+            } else if (this.currentCategory === 'all') {
+                // For 'all', discover both movies and TV for each genre AND page
+                const promises = [];
+                genreIds.forEach(genreId => {
+                    console.log(`🔍 Discovering movies for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    promises.push(
+                        tmdbService.discoverMoviesByGenre(genreId, this.currentPage)
+                            .catch(err => {
+                                console.log(`Genre ${genreId} not found for movies, skipping:`, err);
+                                return [];
+                            })
+                    );
+                    console.log(`🔍 Discovering TV shows for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    promises.push(
+                        tmdbService.discoverTVByGenre(genreId, this.currentPage)
+                            .catch(err => {
+                                console.log(`Genre ${genreId} not found for TV, skipping:`, err);
+                                return [];
+                            })
+                    );
+                });
+                const results = await Promise.all(promises);
+                console.log(`📊 Results from all promises (page ${this.currentPage}):`, results.map(r => r.length));
+                data = results.flat();
+                console.log(`✅ Total items from page ${this.currentPage}: ${data.length}`);
+            } else if (this.currentCategory === 'movies') {
+                // Get movies for all selected genres for current page
+                const promises = genreIds.map(genreId => {
+                    console.log(`🔍 Discovering movies for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    return tmdbService.discoverMoviesByGenre(genreId, this.currentPage)
+                        .catch(err => {
+                            console.error(`Error discovering movies for genre ${genreId}:`, err);
+                            return [];
+                        });
+                });
+                const results = await Promise.all(promises);
+                console.log(`📊 Results from movie promises (page ${this.currentPage}):`, results.map(r => r.length));
+                data = results.flat();
+                console.log(`✅ Total movies from page ${this.currentPage}: ${data.length}`);
+            } else if (this.currentCategory === 'tv') {
+                // Get TV shows for all selected genres for current page
+                const promises = genreIds.map(genreId => {
+                    console.log(`🔍 Discovering TV shows for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    return tmdbService.discoverTVByGenre(genreId, this.currentPage)
+                        .catch(err => {
+                            console.error(`Error discovering TV shows for genre ${genreId}:`, err);
+                            return [];
+                        });
+                });
+                const results = await Promise.all(promises);
+                console.log(`📊 Results from TV promises (page ${this.currentPage}):`, results.map(r => r.length));
+                data = results.flat();
+                console.log(`✅ Total TV shows from page ${this.currentPage}: ${data.length}`);
             }
-            
-            let data = [];
-            
+        } else {
+            // No genre filter - load normally
             if (this.currentCategory === 'all') {
                 const [movies, tvShows] = await Promise.all([
                     tmdbService.getNowPlayingMovies(this.currentPage),
@@ -879,41 +1058,39 @@ class MoviesPageController {
             } else if (this.currentCategory === 'tv') {
                 data = await tmdbService.getAiringTodayTV(this.currentPage);
             }
-            
-            console.log(`✅ Loaded ${data.length} items`);
-            
-            if (this.currentGenre !== 'all') {
-                const genreId = parseInt(this.currentGenre);
-                data = data.filter(item => 
-                    item.genre_ids && item.genre_ids.includes(genreId)
-                );
-            }
-            
-            const uniqueIds = new Set();
-            data = data.filter(item => {
-                if (uniqueIds.has(item.id)) return false;
-                uniqueIds.add(item.id);
-                return true;
-            });
-            
-            if (this.currentPage === 1) {
-                this.allMovies = data;
-            } else {
-                this.allMovies = [...this.allMovies, ...data];
-            }
-            
-            console.log(`✅ Total movies: ${this.allMovies.length}`);
-            this.renderMovies();
-            
-        } catch (error) {
-            console.error('❌ Error loading movies:', error);
-            this.showError();
-        } finally {
-            this.isLoading = false;
-            this.hideLoading();
         }
+        
+        // Remove duplicates based on ID (important when fetching multiple genres)
+        const uniqueIds = new Set();
+        // Also track existing IDs from previous pages
+        this.allMovies.forEach(movie => uniqueIds.add(movie.id));
+        
+        // Filter out duplicates from new data
+        const newUniqueData = data.filter(item => {
+            if (uniqueIds.has(item.id)) return false;
+            uniqueIds.add(item.id);
+            return true;
+        });
+        
+        console.log(`🔄 New unique items from page ${this.currentPage}: ${newUniqueData.length} (filtered from ${data.length})`);
+        
+        if (this.currentPage === 1) {
+            this.allMovies = newUniqueData;
+        } else {
+            this.allMovies = [...this.allMovies, ...newUniqueData];
+        }
+        
+        console.log(`✅ Total accumulated movies: ${this.allMovies.length}`);
+        this.renderMovies();
+        
+    } catch (error) {
+        console.error('❌ Error loading movies:', error);
+        this.showError();
+    } finally {
+        this.isLoading = false;
+        this.hideLoading();
     }
-
+}
     renderMovies() {
         const container = document.getElementById('movies-container');
         if (!container) return;
@@ -996,15 +1173,197 @@ class MoviesPageController {
             });
         });
         
-        const genreContainer = document.querySelector('.genre-filters');
-        if (genreContainer) {
-            genreContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('genre-btn')) {
-                    const genre = e.target.dataset.genre;
-                    this.changeGenre(genre);
-                }
+        // Filter toggle button
+        const filterToggleBtn = document.getElementById('filter-toggle-btn');
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const filterOverlay = document.getElementById('filter-overlay');
+        
+        console.log('🔍 Setting up filter button:', {
+            filterToggleBtn: !!filterToggleBtn,
+            filterDropdown: !!filterDropdown,
+            filterOverlay: !!filterOverlay
+        });
+        
+        if (filterToggleBtn && filterDropdown) {
+            // Handle clicks on the button itself or any of its children
+            filterToggleBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Filter button clicked!', e.target, e.currentTarget);
+                this.toggleFilterDropdown();
+                return false;
+            };
+            
+            // Close dropdown when clicking overlay
+            if (filterOverlay) {
+                filterOverlay.addEventListener('click', () => {
+                    console.log('🖱️ Overlay clicked, closing dropdown');
+                    this.closeFilterDropdown();
+                });
+            }
+        } else {
+            console.error('❌ Filter button or dropdown not found!', {
+                filterToggleBtn,
+                filterDropdown
             });
         }
+        
+        // Apply filter button
+        const applyBtn = document.getElementById('apply-filter');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                this.applyFilters();
+            });
+        }
+        
+        // Cancel filter button
+        const cancelBtn = document.getElementById('cancel-filter');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.cancelFilters();
+            });
+        }
+        
+        // Clear all filters button
+        const clearAllBtn = document.getElementById('clear-all-filters');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', () => {
+                this.clearAllFilters();
+            });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (filterDropdown && !filterDropdown.contains(e.target) && 
+                filterToggleBtn && !filterToggleBtn.contains(e.target)) {
+                this.closeFilterDropdown();
+            }
+        });
+    }
+    
+   toggleFilterDropdown() {
+    try {
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const filterOverlay = document.getElementById('filter-overlay');
+        const applyBtn = document.getElementById('apply-filter');
+        
+        console.log('🔍 Dropdown elements check:', {
+            filterDropdown: !!filterDropdown,
+            filterOverlay: !!filterOverlay,
+            applyBtn: !!applyBtn,
+            dropdownHTML: filterDropdown?.innerHTML.substring(0, 200)
+        });
+        
+        if (!filterDropdown || !filterOverlay) {
+            console.error('❌ Cannot toggle dropdown - elements not found');
+            return;
+        }
+        
+        const isActive = filterDropdown.classList.contains('active');
+        console.log('📋 Dropdown is currently:', isActive ? 'active' : 'inactive');
+        
+        if (isActive) {
+            this.closeFilterDropdown();
+        } else {
+            // Sync temp selection with current selection
+            this.tempSelectedGenres = [...this.selectedGenres];
+            
+            this.renderGenreFilters();
+            
+            filterDropdown.classList.add('active');
+            filterOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Check if apply button exists after rendering
+            setTimeout(() => {
+                const applyBtnAfter = document.getElementById('apply-filter');
+                console.log('✅ Apply button after render:', !!applyBtnAfter);
+                if (!applyBtnAfter) {
+                    console.error('❌ Apply button not found in DOM!');
+                }
+            }, 100);
+            
+            console.log('✅ Dropdown opened');
+        }
+    } catch (error) {
+        console.error('❌ Error in toggleFilterDropdown:', error);
+    }
+}
+    closeFilterDropdown() {
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const filterOverlay = document.getElementById('filter-overlay');
+        
+        if (filterDropdown && filterOverlay) {
+            filterDropdown.classList.remove('active');
+            filterOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    applyFilters() {
+        console.log('🔧 Applying filters, tempSelectedGenres:', this.tempSelectedGenres);
+        this.selectedGenres = [...this.tempSelectedGenres];
+        console.log('✅ Selected genres set:', this.selectedGenres);
+        this.closeFilterDropdown();
+        this.currentPage = 1;
+        this.allMovies = [];
+        this.renderActiveFilters();
+        this.loadMovies();
+    }
+    
+    cancelFilters() {
+        // Reset temp selection to current selection
+        this.tempSelectedGenres = [...this.selectedGenres];
+        this.renderGenreFilters();
+        this.closeFilterDropdown();
+    }
+    
+    clearAllFilters() {
+        this.tempSelectedGenres = [];
+        this.renderGenreFilters();
+        
+        // Remove all selected states
+        document.querySelectorAll('.genre-option.selected').forEach(el => {
+            el.classList.remove('selected');
+        });
+    }
+    
+    renderActiveFilters() {
+        const activeFiltersContainer = document.getElementById('active-filters');
+        if (!activeFiltersContainer) return;
+        
+        activeFiltersContainer.innerHTML = '';
+        
+        if (this.selectedGenres.length === 0) {
+            return;
+        }
+        
+        // Get all genres (movies and TV) for lookup
+        const allGenresMap = new Map();
+        this.genres.movies.forEach(g => allGenresMap.set(g.id.toString(), g));
+        this.genres.tv.forEach(g => allGenresMap.set(g.id.toString(), g));
+        
+        this.selectedGenres.forEach(genreId => {
+            const genre = allGenresMap.get(genreId.toString());
+            if (genre) {
+                const pill = document.createElement('div');
+                pill.className = 'filter-pill';
+                pill.innerHTML = `
+                    ${this.translateGenre(genre.name)}
+                    <span class="remove" data-genre-id="${genreId}">×</span>
+                `;
+                
+                pill.querySelector('.remove').addEventListener('click', () => {
+                    this.selectedGenres = this.selectedGenres.filter(id => id !== genreId.toString());
+                    this.renderActiveFilters();
+                    this.currentPage = 1;
+                    this.allMovies = [];
+                    this.loadMovies();
+                });
+                
+                activeFiltersContainer.appendChild(pill);
+            }
+        });
     }
 
     changeCategory(category) {
@@ -1015,28 +1374,12 @@ class MoviesPageController {
         });
         
         this.currentCategory = category;
-        this.renderCurrentCategoryGenres();
-        this.currentGenre = 'all';
-        this.currentPage = 1;
         
-        const allGenresBtn = document.querySelector('.genre-btn[data-genre="all"]');
-        if (allGenresBtn) {
-            document.querySelectorAll('.genre-btn').forEach(btn => btn.classList.remove('active'));
-            allGenresBtn.classList.add('active');
-        }
-        
-        this.allMovies = [];
-        this.loadMovies();
-    }
-
-    changeGenre(genre) {
-        if (this.currentGenre === genre) return;
-        
-        document.querySelectorAll('.genre-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.genre === genre);
-        });
-        
-        this.currentGenre = genre;
+        // Clear selected genres when category changes
+        this.selectedGenres = [];
+        this.tempSelectedGenres = [];
+        this.renderActiveFilters();
+        this.renderGenreFilters();
         this.currentPage = 1;
         this.allMovies = [];
         this.loadMovies();

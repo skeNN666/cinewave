@@ -674,6 +674,16 @@ class MovieCard extends HTMLElement {
         this.addClickHandler();
         this.setupModal();
         this.checkAuthStatus();
+        
+        // Ensure body overflow is reset when navigating away
+        window.addEventListener('hashchange', () => {
+            document.body.style.overflow = 'auto';
+            // Close modal if open when navigating
+            const modal = this.shadowRoot.querySelector('.movie-modal');
+            if (modal && modal.style.display === 'flex') {
+                this.closeModal(modal);
+            }
+        });
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -815,11 +825,24 @@ class MovieCard extends HTMLElement {
         const shadow = this.shadowRoot;
         
         try {
+            // Access tmdbService from window (for non-module scripts) or use imported version
+            const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
+            
+            if (!service) {
+                throw new Error('TMDB Service is not available');
+            }
+            
             const details = mediaType === 'movie' 
-                ? await tmdbService.getMovieDetails(tmdbId)
-                : await tmdbService.getTVDetails(tmdbId);
+                ? await service.getMovieDetails(tmdbId)
+                : await service.getTVDetails(tmdbId);
             
             if (!details) throw new Error('TMDB-аас мэдээлэл ирээгүй');
+            
+            // Debug: Log cast data
+            console.log('📋 Cast data received:', details.cast?.length || 0, 'actors');
+            if (details.cast && details.cast.length > 0) {
+                console.log('Sample cast:', details.cast.slice(0, 3).map(a => ({ name: a.name, character: a.character, hasImage: !!a.profile_path })));
+            }
             
             this.populateQuickPreview(details);
             
@@ -834,21 +857,39 @@ class MovieCard extends HTMLElement {
         
         // Header
         shadow.querySelector('.modal-title').textContent = details.name;
-        shadow.querySelector('.modal-backdrop').src = details.image;
+        // Use backdrop image if available, otherwise fall back to poster
+        const backdropImage = details.backdrop || details.image;
+        shadow.querySelector('.modal-backdrop').src = backdropImage;
+        shadow.querySelector('.modal-backdrop').alt = details.name;
         shadow.querySelector('.modal-type').textContent = details.category === 'movies' ? 'Кино' : 'Цуврал';
         
         // Meta info
         shadow.querySelector('#modal-year').textContent = details.year || 'N/A';
         
         const durationEl = shadow.querySelector('#modal-duration');
-        if (details.duration && details.duration !== 'Тодорхойгүй') {
-            durationEl.textContent = details.duration;
-        } else if (details.runtime) {
-            const hours = Math.floor(details.runtime / 60);
-            const minutes = details.runtime % 60;
-            durationEl.textContent = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
+        // For TV series, show seasons/episodes; for movies, show runtime
+        if (details.category === 'tv') {
+            // TV Series: Show seasons and episodes in format "S3/EP24"
+            if (details.seasons && details.episodes) {
+                durationEl.textContent = `S${details.seasons}/EP${details.episodes}`;
+            } else if (details.episodes) {
+                durationEl.textContent = `EP${details.episodes}`;
+            } else if (details.seasons) {
+                durationEl.textContent = `S${details.seasons}`;
+            } else {
+                durationEl.textContent = 'N/A';
+            }
         } else {
-            durationEl.textContent = 'N/A';
+            // Movies: Show runtime/duration
+            if (details.duration && details.duration !== 'Тодорхойгүй') {
+                durationEl.textContent = details.duration;
+            } else if (details.runtime) {
+                const hours = Math.floor(details.runtime / 60);
+                const minutes = details.runtime % 60;
+                durationEl.textContent = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
+            } else {
+                durationEl.textContent = 'N/A';
+            }
         }
         
         // Rating
@@ -873,13 +914,20 @@ class MovieCard extends HTMLElement {
         shadow.querySelector('.movie-description').textContent = 
             details.description || 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
         
-        // Top 3 cast members
+        // All cast members
         this.displayTopCast(details.cast || []);
         
         // Trailer
         const trailerBtn = shadow.querySelector('#trailer-btn');
         if (details.trailer) {
-            trailerBtn.dataset.trailerUrl = tmdbService.getTrailerUrl(details.trailer);
+            const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
+            if (service) {
+                trailerBtn.dataset.trailerUrl = service.getTrailerUrl(details.trailer);
+            } else {
+                trailerBtn.dataset.trailerUrl = details.trailer.startsWith('http') 
+                    ? details.trailer 
+                    : `https://www.youtube.com/watch?v=${details.trailer}`;
+            }
             trailerBtn.disabled = false;
         } else {
             trailerBtn.disabled = true;
@@ -894,20 +942,25 @@ class MovieCard extends HTMLElement {
         castList.innerHTML = '';
         
         if (!cast || cast.length === 0) {
+            console.warn('⚠️ No cast data available');
             castList.innerHTML = '<p style="color: #999; font-size: 0.9rem;">Жүжигчдийн мэдээлэл олдсонгүй</p>';
             return;
         }
         
-        // Show only top 3 cast members
-        const topCast = cast.slice(0, 3);
+        // Show all cast members
+        console.log(`🎭 Displaying ${cast.length} cast members`);
         
-        topCast.forEach(actor => {
+        cast.forEach((actor, index) => {
             const castDiv = document.createElement('div');
             castDiv.className = 'cast-member';
             
             let avatarHTML = '';
             if (actor.profile_path) {
-                avatarHTML = `<img src="${actor.profile_path}" alt="${actor.name}">`;
+                // Ensure profile_path is a valid URL
+                const imageUrl = actor.profile_path.startsWith('http') 
+                    ? actor.profile_path 
+                    : `https://image.tmdb.org/t/p/w185${actor.profile_path}`;
+                avatarHTML = `<img src="${imageUrl}" alt="${actor.name}" onerror="this.parentElement.textContent='${actor.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}'">`;
             } else {
                 const nameParts = actor.name.split(' ');
                 const initials = nameParts.length >= 2 
@@ -918,7 +971,7 @@ class MovieCard extends HTMLElement {
             
             castDiv.innerHTML = `
                 <div class="cast-avatar">${avatarHTML}</div>
-                <div class="cast-name">${actor.name}</div>
+                <div class="cast-name">${actor.name || 'Unknown'}</div>
                 <div class="cast-role">${(actor.character || 'Дүр').substring(0, 15)}</div>
             `;
             castList.appendChild(castDiv);
@@ -944,9 +997,26 @@ class MovieCard extends HTMLElement {
         const yearMatch = yearOrSeason.match(/\d{4}/);
         shadow.querySelector('#modal-year').textContent = yearMatch ? yearMatch[0] : 'N/A';
         
-        // Duration
-        const duration = this.getAttribute('duration');
-        shadow.querySelector('#modal-duration').textContent = duration || 'N/A';
+        // Duration/Episodes - Show seasons/episodes for TV series, duration for movies
+        const durationEl = shadow.querySelector('#modal-duration');
+        if (category === 'tv') {
+            // TV Series: Try to get seasons and episodes from attributes
+            const seasons = this.getAttribute('seasons');
+            const episodes = this.getAttribute('episodes');
+            if (seasons && episodes) {
+                durationEl.textContent = `S${seasons}/EP${episodes}`;
+            } else if (episodes) {
+                durationEl.textContent = `EP${episodes}`;
+            } else if (seasons) {
+                durationEl.textContent = `S${seasons}`;
+            } else {
+                durationEl.textContent = 'N/A';
+            }
+        } else {
+            // Movies: Show duration
+            const duration = this.getAttribute('duration');
+            durationEl.textContent = duration || 'N/A';
+        }
         
         // Rating
         if (rating) {
@@ -1071,30 +1141,30 @@ class MovieCard extends HTMLElement {
     }
 
     goToDetailsPage() {
+        // Close the modal first
+        const modal = this.shadowRoot.querySelector('.movie-modal');
+        if (modal) {
+            this.closeModal(modal);
+        }
+        
         const movieId = this.getAttribute('data-tmdb-id') || this.getAttribute('name');
         const category = this.getAttribute('category') || 'movies';
         
         // Navigate to movie details page
-        // You'll need to create this page
+        // Note: You'll need to create the movie-details route and component
         window.location.hash = `#/movie-details/${category}/${movieId}`;
     }
 
     goToLoginPage() {
-        const currentPath = window.location.pathname;
-        
-        if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('.html') === false) {
-            window.location.href = 'html/login.html';
-        } 
-        else if (currentPath.includes('/html/')) {
-            window.location.href = 'login.html';
-        }
-        else {
-            window.location.href = '../html/login.html';
-        }
+        // Use hash-based routing to navigate to login page
+        window.location.hash = '#/login';
     }
 
     closeModal(modal) {
-        modal.style.display = 'none';
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        // Always ensure body overflow is reset
         document.body.style.overflow = 'auto';
     }
 }

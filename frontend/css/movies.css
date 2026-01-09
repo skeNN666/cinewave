@@ -20,39 +20,6 @@ main {
     min-height: 40px; 
 }
 
-.genre-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
-    padding: 0.5rem 1.25rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 500;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.genre-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
-}
-
-.genre-btn.active {
-    background: #1e90ff;
-    border-color: #1e90ff;
-    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
-}
-
-/* When no genre is selected */
-.genre-filters:empty::after {
-    content: "Ангилал сонгоно уу";
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-    padding: 1rem;
-}
-
 /* 6 MOVIES PER ROW GRID */
 .movies-grid {
     display: grid;
@@ -195,6 +162,7 @@ movie-card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 100;
 }
 
 .filter-toggle-btn {
@@ -212,6 +180,9 @@ movie-card {
     gap: 0.5rem;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 127, 255, 0.3);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .filter-toggle-btn:hover {
@@ -230,6 +201,49 @@ movie-card {
     justify-content: center;
     font-size: 0.8rem;
     font-weight: 700;
+}
+
+/* Add to your existing styles */
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.filter-actions button {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-actions button:active {
+    transform: scale(0.95);
+}
+
+#apply-filter {
+    background: #00ffff;
+    color: #000;
+    border: none;
+}
+
+#apply-filter:hover {
+    background: #00e0e0;
+}
+
+#cancel-filter {
+    background: transparent;
+    color: #999;
+    border: 1px solid #333;
+}
+
+#cancel-filter:hover {
+    background: #333;
+    color: white;
 }
 
 .filter-dropdown {
@@ -303,6 +317,24 @@ movie-card {
     overflow-y: auto;
     padding: 0.5rem;
     margin-bottom: 1.5rem;
+}
+
+.genres-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.genres-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.genres-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.genres-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .genre-option {
@@ -599,35 +631,6 @@ movie-card {
     box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
 }
 
-.genre-filters {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-}
-
-.genre-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
-    padding: 0.5rem 1.25rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 500;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.genre-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
-}
-
-.genre-btn.active {
-    background: #1e90ff;
-    border-color: #1e90ff;
-    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
-}
 
 .active-filters {
     display: flex;

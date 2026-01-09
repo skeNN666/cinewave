@@ -68,6 +68,9 @@ class Router {
       this.routes['/404']?.() || this.show404();
     }
 
+    // Ensure body overflow is reset (in case modal was left open)
+    document.body.style.overflow = 'auto';
+    
     // Scroll to top on route change
     window.scrollTo(0, 0);
   }
