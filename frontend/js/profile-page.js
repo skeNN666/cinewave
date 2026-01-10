@@ -337,7 +337,14 @@ export async function initProfilePage(authService) {
         return;
     }
 
-    loadUserData(user);
+    // Try to refresh user data from server, but use cached data if it fails
+    try {
+        const freshUser = await authService.getProfile();
+        loadUserData(freshUser);
+    } catch (error) {
+        console.warn('⚠️ Could not fetch fresh profile, using cached data:', error);
+        loadUserData(user);
+    }
 
     setupTabs();
     setupProfileForm(authService);
@@ -351,19 +358,28 @@ export async function initProfilePage(authService) {
 
 function loadUserData(user) {
     // Header info
-    document.getElementById('profile-avatar').src = user.avatar;
+    const avatarImg = document.getElementById('profile-avatar');
+    if (user.avatar) {
+        avatarImg.src = user.avatar;
+    } else {
+        // Use a default avatar or placeholder
+        avatarImg.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23007bff"/%3E%3Ctext x="50" y="60" font-size="40" text-anchor="middle" fill="white"%3E' + (user.firstName?.[0] || 'U') + '%3C/text%3E%3C/svg%3E';
+    }
     document.getElementById('profile-name').textContent = `${user.firstName} ${user.lastName}`;
     document.getElementById('profile-email').textContent = user.email;
     
-    const joinDate = new Date(user.joinDate);
+    // Use createdAt from backend (MongoDB timestamps)
+    const joinDate = user.createdAt ? new Date(user.createdAt) : new Date();
     document.getElementById('member-since').textContent = 
         `Нэгдсэн: ${joinDate.toLocaleDateString('mn-MN', { year: 'numeric', month: 'long', day: 'numeric' })}`;
 
     // Stats
     document.getElementById('watchlist-count').textContent = user.watchlist?.length || 0;
     document.getElementById('favorites-count').textContent = user.favorites?.length || 0;
-    document.getElementById('ratings-count').textContent = Object.keys(user.ratings || {}).length;
-    document.getElementById('reviews-count').textContent = user.reviews?.length || 0;
+    // Ratings is an array in backend, not an object
+    document.getElementById('ratings-count').textContent = user.ratings?.length || 0;
+    // Reviews not in backend model yet, set to 0
+    document.getElementById('reviews-count').textContent = 0;
 
     // Settings form
     document.getElementById('edit-firstName').value = user.firstName;
