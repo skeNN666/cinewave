@@ -1,5 +1,32 @@
 // auth-service.js - Complete Authentication Service with MongoDB Backend
-const API_BASE_URL = 'http://localhost:3000/api/auth';
+// Auto-detect API URL: use localhost on desktop, or detect IP for mobile
+function getApiBaseUrl() {
+    // Check if we're on localhost/127.0.0.1 (desktop)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000/api/auth';
+    }
+    
+    // For mobile/network access, try to use the same hostname as the frontend
+    // This assumes frontend and backend are on the same machine
+    // You can also manually set this in localStorage: localStorage.setItem('api_url', 'http://YOUR_IP:3000/api/auth')
+    const customUrl = localStorage.getItem('api_url');
+    if (customUrl) {
+        return customUrl;
+    }
+    
+    // Fallback: try to construct URL from current hostname
+    const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+    const hostname = window.location.hostname;
+    // If accessing via IP, use that IP for backend
+    if (hostname.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+        return `${protocol}//${hostname}:3000/api/auth`;
+    }
+    
+    // Default fallback
+    return 'http://localhost:3000/api/auth';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 class AuthService {
     constructor() {
@@ -50,6 +77,17 @@ class AuthService {
                 this.token = token;
             }
             this.currentUser = user;
+            
+            // Trigger storage event for navbar update
+            window.dispatchEvent(new Event('storage'));
+            
+            // Update navbar immediately
+            setTimeout(() => {
+                const navbar = document.querySelector('cinewave-navbar');
+                if (navbar) {
+                    navbar.updateNavForAuth();
+                }
+            }, 100);
         } catch (error) {
             console.error('❌ Error saving user:', error);
         }
@@ -146,6 +184,15 @@ class AuthService {
         localStorage.removeItem('cinewave_all_users'); // Clean up old localStorage data
         this.currentUser = null;
         this.token = null;
+        
+        // Trigger storage event for navbar update
+        window.dispatchEvent(new Event('storage'));
+        
+        // Update navbar immediately
+        const navbar = document.querySelector('cinewave-navbar');
+        if (navbar) {
+            navbar.updateNavForAuth();
+        }
         
         // Redirect to home
         window.location.hash = '#/';
@@ -346,6 +393,92 @@ class AuthService {
         } catch (error) {
             console.error('❌ Rate movie error:', error);
             throw error;
+        }
+    }
+
+    // Get base URL for API calls (reused for reviews)
+    getBaseUrl() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        }
+        
+        const customUrl = localStorage.getItem('api_url');
+        if (customUrl) {
+            return customUrl.replace('/api/auth', '');
+        }
+        
+        const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+        const hostname = window.location.hostname;
+        if (hostname.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+            return `${protocol}//${hostname}:3000`;
+        }
+        
+        return 'http://localhost:3000';
+    }
+
+    // Submit a review
+    async submitReview(movieId, category, rating, text) {
+        if (!this.isAuthenticated()) {
+            throw new Error('Нэвтрэх шаардлагатай');
+        }
+
+        try {
+            // Use reviews API endpoint
+            const baseUrl = this.getBaseUrl();
+            const url = `${baseUrl}/api/reviews`;
+            
+            console.log('📝 Submitting review to:', url);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({ movieId: parseInt(movieId), category, rating, text })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Review submission failed');
+            }
+
+            console.log('✅ Review submitted successfully:', data);
+            return { success: true, review: data.review };
+        } catch (error) {
+            console.error('❌ Submit review error:', error);
+            throw error;
+        }
+    }
+
+    // Get reviews for a movie
+    async getMovieReviews(movieId, category) {
+        try {
+            const baseUrl = this.getBaseUrl();
+            const url = `${baseUrl}/api/reviews/movie/${category}/${movieId}`;
+            
+            console.log('📖 Fetching reviews from:', url);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Reviews fetched:', data.reviews?.length || 0, 'reviews');
+
+            return data.reviews || [];
+        } catch (error) {
+            console.error('❌ Get reviews error:', error);
+            // Return empty array on error instead of throwing
+            return [];
         }
     }
 

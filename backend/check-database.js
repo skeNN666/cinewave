@@ -45,6 +45,30 @@ async function checkDatabase() {
       console.log('   Try registering a user through the frontend or API.');
     }
 
+    // Check reviews collection
+    const Review = mongoose.model('Review', new mongoose.Schema({}, { strict: false }), 'reviews');
+    const reviews = await Review.find({});
+    
+    console.log(`\n💬 Total reviews in database: ${reviews.length}\n`);
+    
+    if (reviews.length > 0) {
+      console.log('📝 Review details:');
+      console.log('─'.repeat(80));
+      reviews.forEach((review, index) => {
+        console.log(`\nReview ${index + 1}:`);
+        console.log(`  ID: ${review._id}`);
+        console.log(`  User ID: ${review.userId}`);
+        console.log(`  Movie ID: ${review.movieId} (${review.category})`);
+        console.log(`  Username: ${review.username || 'N/A'}`);
+        console.log(`  Rating: ${review.rating}/10`);
+        console.log(`  Text: ${review.text?.substring(0, 50)}...`);
+        console.log(`  Created: ${review.createdAt}`);
+      });
+    } else {
+      console.log('⚠️  No reviews found in database yet.');
+      console.log('   Try writing a review through the frontend.');
+    }
+
     await mongoose.disconnect();
     console.log('\n✅ Disconnected from MongoDB');
   } catch (error) {

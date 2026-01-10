@@ -1879,6 +1879,12 @@ function initLoginPage() {
                     await authService.login(email, password);
                     showNotification('Амжилттай нэвтэрлээ!', 'success');
                     
+                    // Update navbar immediately
+                    const navbar = document.querySelector('cinewave-navbar');
+                    if (navbar) {
+                        navbar.updateNavForAuth();
+                    }
+                    
                     // Redirect to profile
                     setTimeout(() => {
                         window.location.hash = '#/profile';
@@ -1916,6 +1922,12 @@ function initLoginPage() {
                     
                     await authService.register(userData);
                     showNotification('Амжилттай бүртгэгдлээ!', 'success');
+                    
+                    // Update navbar immediately
+                    const navbar = document.querySelector('cinewave-navbar');
+                    if (navbar) {
+                        navbar.updateNavForAuth();
+                    }
                     
                     // Redirect to profile
                     setTimeout(() => {

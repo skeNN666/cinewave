@@ -20,9 +20,12 @@ class MovieReviewsPage extends HTMLElement {
                 this.category = newValue;
             }
             if (this.movieId && this.category) {
+                console.log('🔄 MovieReviewsPage attributes changed:', { movieId: this.movieId, category: this.category });
                 this.render();
-                this.loadReviews();
-                this.loadMovieInfo();
+                setTimeout(() => {
+                    this.loadReviews(); // Async, will handle loading state
+                    this.loadMovieInfo();
+                }, 100);
             }
         }
     }
@@ -32,11 +35,18 @@ class MovieReviewsPage extends HTMLElement {
         const movieId = this.getAttribute('movie-id') || this.movieId;
         const category = this.getAttribute('category') || this.category;
         
+        console.log('🎬 MovieReviewsPage connectedCallback:', { movieId, category });
+        
         if (movieId && category) {
             this.movieId = movieId;
             this.category = category;
-            this.loadReviews();
-            this.loadMovieInfo();
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(() => {
+                this.loadReviews(); // Async, will handle loading state
+                this.loadMovieInfo();
+            }, 100);
+        } else {
+            console.warn('⚠️ MovieReviewsPage: Missing movieId or category', { movieId, category });
         }
     }
 
@@ -310,27 +320,53 @@ class MovieReviewsPage extends HTMLElement {
         }
     }
 
-    loadReviews() {
+    async loadReviews() {
         const shadow = this.shadowRoot;
         const loading = shadow.getElementById('loading');
         const content = shadow.getElementById('content');
         const reviewsList = shadow.getElementById('reviews-list');
         const reviewsCount = shadow.getElementById('reviews-count');
 
-        if (!reviewsList || !loading || !content) return;
+        if (!reviewsList || !loading || !content) {
+            console.error('❌ Missing DOM elements in reviews page');
+            return;
+        }
 
         const movieId = this.movieId;
         const category = this.category;
-        const storageKey = `reviews_${category}_${movieId}`;
+        
+        if (!movieId || !category) {
+            console.error('❌ Missing movieId or category:', { movieId, category });
+            loading.style.display = 'none';
+            content.style.display = 'block';
+            reviewsList.innerHTML = '<div class="no-reviews"><h3>Алдаа: Киноны мэдээлэл дутуу байна</h3></div>';
+            return;
+        }
         
         try {
-            const storedReviews = localStorage.getItem(storageKey);
-            const reviews = storedReviews ? JSON.parse(storedReviews) : [];
+            // Try to load from backend API first
+            const { authService } = await import('./auth-service.js');
+            let reviews = [];
+            
+            console.log(`📖 Loading reviews for movieId: ${movieId}, category: ${category}`);
+            
+            try {
+                reviews = await authService.getMovieReviews(movieId, category);
+                console.log(`✅ Loaded ${reviews.length} reviews from backend:`, reviews);
+            } catch (error) {
+                console.warn('⚠️ Could not load reviews from backend, trying localStorage:', error);
+                // Fallback to localStorage for backward compatibility
+                const storageKey = `reviews_${category}_${movieId}`;
+                const storedReviews = localStorage.getItem(storageKey);
+                reviews = storedReviews ? JSON.parse(storedReviews) : [];
+                console.log(`📦 Loaded ${reviews.length} reviews from localStorage`);
+            }
             
             loading.style.display = 'none';
             content.style.display = 'block';
             
-            if (reviews.length === 0) {
+            if (!reviews || reviews.length === 0) {
+                console.log('⚠️ No reviews found for this movie');
                 reviewsList.innerHTML = `
                     <div class="no-reviews">
                         <i class="fas fa-comments"></i>
@@ -350,17 +386,24 @@ class MovieReviewsPage extends HTMLElement {
             }
 
             // Render all reviews using review-card component
+            console.log('🎨 Rendering reviews:', reviews);
             reviewsList.innerHTML = reviews.map(review => {
+                // Check if current user owns this review
+                const userData = JSON.parse(localStorage.getItem('cinewave_user') || '{}');
+                const currentUserId = userData.id || userData._id || userData.email;
+                const reviewUserId = review.userId?.toString() || review.userId;
+                const isCurrentUser = reviewUserId === currentUserId?.toString();
                 const isAdmin = review.isAdmin || false;
+                
                 return `
                     <review-card
-                        username="${this.escapeHtmlAttribute(review.username)}"
-                        rating="${review.rating}"
-                        text="${this.escapeHtmlAttribute(review.text)}"
-                        date="${review.date}"
+                        username="${this.escapeHtmlAttribute(review.username || 'Хэрэглэгч')}"
+                        rating="${review.rating || 0}"
+                        text="${this.escapeHtmlAttribute(review.text || '')}"
+                        date="${review.date || review.createdAt || new Date().toISOString()}"
                         avatar="${review.avatar || ''}"
                         is-admin="${isAdmin}"
-                        user-id="${review.userId || ''}">
+                        user-id="${this.escapeHtmlAttribute(reviewUserId || '')}">
                     </review-card>
                 `;
             }).join('');
@@ -373,6 +416,7 @@ class MovieReviewsPage extends HTMLElement {
                 <div class="no-reviews">
                     <i class="fas fa-exclamation-triangle"></i>
                     <h3>Сэтгэгдэл ачаалахад алдаа гарлаа</h3>
+                    <p>${error.message || ''}</p>
                 </div>
             `;
         }

@@ -612,7 +612,23 @@ class CineWaveNavbar extends HTMLElement {
 
     // Update active link on route change
     this.updateActiveLink();
-    window.addEventListener('hashchange', () => this.updateActiveLink());
+    window.addEventListener('hashchange', () => {
+      this.updateActiveLink();
+      // Update auth state when route changes (in case user just logged in)
+      this.updateNavForAuth();
+    });
+
+    // Listen for auth state changes
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'cinewave_user' || e.key === 'cinewave_token') {
+        this.updateNavForAuth();
+      }
+    });
+
+    // Also check auth state periodically (for same-tab updates)
+    setInterval(() => {
+      this.updateNavForAuth();
+    }, 1000);
 
     // Close mobile search when clicking outside
     document.addEventListener('click', (e) => {
@@ -650,25 +666,47 @@ class CineWaveNavbar extends HTMLElement {
 
   updateNavForAuth() {
     import('./auth-service.js').then(({ authService }) => {
+      const signInBtn = this.shadowRoot.querySelector('.sign-in');
+      
       if (authService.isAuthenticated()) {
         const user = authService.getCurrentUser();
-        const signInBtn = this.shadowRoot.querySelector('.sign-in');
+        
+        // Create avatar with fallback
+        const avatarUrl = user.avatar || this.getDefaultAvatar(user);
         
         // Replace sign-in button with user avatar
         signInBtn.innerHTML = `
-          <img src="${user.avatar}" 
+          <img src="${avatarUrl}" 
                alt="Profile" 
-               style="width: 32px; height: 32px; border-radius: 50%; cursor: pointer; object-fit: cover;">
+               style="width: 36px; height: 36px; border-radius: 50%; cursor: pointer; object-fit: cover; border: 2px solid #00ffff;">
         `;
-        signInBtn.style.padding = '0';
-        signInBtn.style.background = 'none';
+        signInBtn.style.padding = '4px';
+        signInBtn.style.background = 'rgba(0, 255, 255, 0.1)';
+        signInBtn.style.border = 'none';
+        signInBtn.style.borderRadius = '50%';
         signInBtn.onclick = () => {
           window.location.hash = '#/profile';
+        };
+      } else {
+        // Reset to login button
+        signInBtn.innerHTML = 'Нэвтрэх';
+        signInBtn.style.padding = '10px 20px';
+        signInBtn.style.background = '#00ffff';
+        signInBtn.style.borderRadius = '6px';
+        signInBtn.style.border = 'none';
+        signInBtn.onclick = () => {
+          this.navigate('/login');
         };
       }
     }).catch(() => {
       // Auth service not available yet
     });
+  }
+
+  getDefaultAvatar(user) {
+    // Generate SVG avatar with user's initial
+    const initial = (user.firstName?.[0] || user.email?.[0] || 'U').toUpperCase();
+    return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23007bff"/%3E%3Ctext x="50" y="65" font-size="50" text-anchor="middle" fill="white" font-weight="bold"%3E${initial}%3C/text%3E%3C/svg%3E`;
   }
 }
 

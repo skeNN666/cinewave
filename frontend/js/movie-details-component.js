@@ -52,6 +52,16 @@ class MovieDetailsComponent extends HTMLElement {
                 this.loadMovieDetails();
             }
         }
+        
+        // Listen for auth state changes
+        window.addEventListener('storage', () => {
+            this.updateAuthUI();
+        });
+        
+        // Also check auth state on hash change (in case user just logged in)
+        window.addEventListener('hashchange', () => {
+            setTimeout(() => this.updateAuthUI(), 500);
+        });
     }
 
     render() {
@@ -1477,6 +1487,11 @@ class MovieDetailsComponent extends HTMLElement {
 
             if (loadingEl) loadingEl.style.display = 'none';
             this.renderContent(details);
+            
+            // Update auth UI after content is rendered (with small delay to ensure DOM is ready)
+            setTimeout(() => {
+                this.updateAuthUI();
+            }, 100);
 
         } catch (error) {
             console.error('Error loading movie details:', error);
@@ -2067,7 +2082,10 @@ class MovieDetailsComponent extends HTMLElement {
 
             // Setup watchlist and watched buttons
             this.setupActionButtons();
-            this.updateAuthUI();
+            // Update auth UI after buttons are set up
+            setTimeout(() => {
+                this.updateAuthUI();
+            }, 100);
             
             // Setup reviews section
             this.setupReviewsSection();
@@ -2128,7 +2146,7 @@ class MovieDetailsComponent extends HTMLElement {
         }
 
         // Load existing reviews
-        this.loadReviews();
+        this.loadReviews(); // Async, no need to await here
 
         // Setup submit button
         if (submitBtn) {
@@ -2138,18 +2156,28 @@ class MovieDetailsComponent extends HTMLElement {
         }
     }
 
-    loadReviews() {
+    async loadReviews() {
         const shadow = this.shadowRoot;
         const reviewsList = shadow.getElementById('reviews-list');
         if (!reviewsList) return;
 
         const movieId = this.movieId;
         const category = this.category;
-        const storageKey = `reviews_${category}_${movieId}`;
         
         try {
-            const storedReviews = localStorage.getItem(storageKey);
-            const reviews = storedReviews ? JSON.parse(storedReviews) : [];
+            // Try to load from backend API first
+            const { authService } = await import('./auth-service.js');
+            let reviews = [];
+            
+            try {
+                reviews = await authService.getMovieReviews(movieId, category);
+            } catch (error) {
+                console.warn('Could not load reviews from backend, trying localStorage:', error);
+                // Fallback to localStorage for backward compatibility
+                const storageKey = `reviews_${category}_${movieId}`;
+                const storedReviews = localStorage.getItem(storageKey);
+                reviews = storedReviews ? JSON.parse(storedReviews) : [];
+            }
             
             if (reviews.length === 0) {
                 reviewsList.innerHTML = '<div class="no-reviews">Одоогоор сэтгэгдэл байхгүй байна. Анхны сэтгэгдэл үлдээнэ үү!</div>';
@@ -2256,7 +2284,7 @@ class MovieDetailsComponent extends HTMLElement {
         return div.innerHTML;
     }
 
-    submitReview(rating, text) {
+    async submitReview(rating, text) {
         if (!rating || rating === 0) {
             alert('Үнэлгээ сонгоно уу!');
             return;
@@ -2267,49 +2295,38 @@ class MovieDetailsComponent extends HTMLElement {
             return;
         }
 
-        // Check if user is logged in (using consistent localStorage keys)
-        const token = localStorage.getItem('cinewave_token');
-        const userData = localStorage.getItem('cinewave_user');
-        
-        if (!token || !userData) {
-            alert('Сэтгэгдэл үлдээхийн тулд нэвтрэх шаардлагатай');
-            this.goToLoginPage();
-            return;
-        }
+        const shadow = this.shadowRoot;
+        const submitBtn = shadow.querySelector('#submit-review-btn');
+        const originalText = submitBtn?.textContent;
 
-        const user = JSON.parse(userData);
-        const movieId = this.movieId;
-        const category = this.category;
-        const storageKey = `reviews_${category}_${movieId}`;
-
-        // Create review object
-        const review = {
-            id: Date.now().toString(),
-            userId: user.id || user._id || user.email,
-            username: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email?.split('@')[0] || 'Хэрэглэгч',
-            avatar: user.avatar || null,
-            isAdmin: user.role === 'admin' || false,
-            rating: rating,
-            text: text.trim(),
-            date: new Date().toISOString()
-        };
-
-        // Get existing reviews
         try {
-            const storedReviews = localStorage.getItem(storageKey);
-            const reviews = storedReviews ? JSON.parse(storedReviews) : [];
+            // Check if user is logged in
+            const isLoggedIn = await this.checkAuthStatus();
+            if (!isLoggedIn) {
+                alert('Сэтгэгдэл үлдээхийн тулд нэвтрэх шаардлагатай');
+                this.goToLoginPage();
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Хадгалж байна...';
+            }
+
+            // Import auth service and submit review to backend
+            const { authService } = await import('./auth-service.js');
+            const movieId = this.movieId;
+            const category = this.category;
+
+            const result = await authService.submitReview(movieId, category, rating, text);
             
-            // Add new review
-            reviews.unshift(review);
+            // Show success message
+            alert('Сэтгэгдэл амжилттай үлдээгдлээ!');
             
-            // Save back to localStorage
-            localStorage.setItem(storageKey, JSON.stringify(reviews));
-            
-            // Reload reviews display
-            this.loadReviews();
+            // Reload reviews from backend
+            await this.loadReviews();
             
             // Reset form
-            const shadow = this.shadowRoot;
             const reviewText = shadow.getElementById('review-text');
             const ratingDisplay = shadow.getElementById('rating-display');
             const stars = shadow.querySelectorAll('.star-icon');
@@ -2330,17 +2347,39 @@ class MovieDetailsComponent extends HTMLElement {
             
         } catch (error) {
             console.error('Error saving review:', error);
-            alert('Сэтгэгдэл хадгалахад алдаа гарлаа');
+            alert(error.message || 'Сэтгэгдэл хадгалахад алдаа гарлаа');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText || 'Илгээх';
+            }
         }
     }
 
-    checkAuthStatus() {
-        const token = localStorage.getItem('cinewave-token');
-        const userData = localStorage.getItem('cinewave-user');
+    async checkAuthStatus() {
+        // Try to use auth service first (more reliable)
+        try {
+            const { authService } = await import('./auth-service.js');
+            if (authService && authService.isAuthenticated()) {
+                this.userData = authService.getCurrentUser();
+                return true;
+            }
+        } catch (e) {
+            // Fallback to localStorage check
+        }
+        
+        // Fallback: Use the same keys as auth-service.js (with underscores, not hyphens)
+        const token = localStorage.getItem('cinewave_token');
+        const userData = localStorage.getItem('cinewave_user');
         
         if (token && userData) {
-            this.userData = JSON.parse(userData);
-            return true;
+            try {
+                this.userData = JSON.parse(userData);
+                return true;
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                return false;
+            }
         }
         return false;
     }
@@ -2385,24 +2424,33 @@ class MovieDetailsComponent extends HTMLElement {
         }
     }
 
-    updateAuthUI() {
+    async updateAuthUI() {
         const shadow = this.shadowRoot;
-        const isLoggedIn = this.checkAuthStatus();
         const loginPrompt = shadow.getElementById('login-prompt');
         
+        if (!loginPrompt) return;
+        
+        const isLoggedIn = await this.checkAuthStatus();
+        
         if (!isLoggedIn) {
-            if (loginPrompt) {
-                loginPrompt.style.display = 'block';
-            }
+            loginPrompt.style.display = 'block';
         } else {
-            if (loginPrompt) {
-                loginPrompt.style.display = 'none';
-            }
+            loginPrompt.style.display = 'none';
+        }
+        
+        // Also update periodically while component is visible
+        if (!this.authCheckInterval) {
+            this.authCheckInterval = setInterval(async () => {
+                const currentIsLoggedIn = await this.checkAuthStatus();
+                if (loginPrompt) {
+                    loginPrompt.style.display = currentIsLoggedIn ? 'none' : 'block';
+                }
+            }, 1000);
         }
     }
 
-    handleUserAction(action) {
-        const isLoggedIn = this.checkAuthStatus();
+    async handleUserAction(action) {
+        const isLoggedIn = await this.checkAuthStatus();
         const movieName = this.movieData?.name || 'Unknown';
         
         if (!isLoggedIn) {

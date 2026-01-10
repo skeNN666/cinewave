@@ -889,7 +889,17 @@ class MovieCard extends HTMLElement {
             this.loadLocalData();
         }
         
+        // Update auth UI when modal opens
         this.updateAuthUI();
+        
+        // Also listen for auth changes while modal is open
+        const checkAuthInterval = setInterval(() => {
+            if (modal.style.display === 'flex') {
+                this.updateAuthUI();
+            } else {
+                clearInterval(checkAuthInterval);
+            }
+        }, 500);
     }
 
     async loadTMDBData(tmdbId, mediaType) {
