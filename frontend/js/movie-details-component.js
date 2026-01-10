@@ -14,13 +14,21 @@ class MovieDetailsComponent extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
+            // Ensure render has been called first
+            if (!this.shadowRoot.querySelector('.movie-details-container')) {
+                this.render();
+            }
+            
             if (name === 'movie-id') {
                 this.movieId = newValue;
             } else if (name === 'category') {
                 this.category = newValue;
             }
             if (this.movieId && this.category) {
-                this.loadMovieDetails();
+                // Use setTimeout to ensure DOM is ready
+                setTimeout(() => {
+                    this.loadMovieDetails();
+                }, 0);
             }
         }
     }
@@ -907,6 +915,45 @@ class MovieDetailsComponent extends HTMLElement {
                     gap: 20px;
                 }
 
+                .view-all-reviews-container {
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .view-all-reviews-btn {
+                    background: linear-gradient(135deg, #4da3ff, #667eea);
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 12px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    box-shadow: 0 4px 15px rgba(77, 163, 255, 0.3);
+                }
+
+                .view-all-reviews-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(77, 163, 255, 0.4);
+                }
+
+                .view-all-reviews-btn i {
+                    font-size: 1.1rem;
+                }
+
+                .view-all-reviews-btn i.fa-arrow-right {
+                    transition: transform 0.3s ease;
+                }
+
+                .view-all-reviews-btn:hover i.fa-arrow-right {
+                    transform: translateX(5px);
+                }
+
                 .review-card {
                     background: rgba(255, 255, 255, 0.05);
                     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1289,10 +1336,21 @@ class MovieDetailsComponent extends HTMLElement {
     }
 
     async loadMovieDetails() {
+        // Ensure render has been called first
+        if (!this.shadowRoot.querySelector('.movie-details-container')) {
+            this.render();
+        }
+
         const loadingEl = this.shadowRoot.querySelector('#loading');
         const errorEl = this.shadowRoot.querySelector('#error');
         const contentEl = this.shadowRoot.querySelector('#content');
         const errorMsgEl = this.shadowRoot.querySelector('#error-message');
+
+        // Check if elements exist before accessing
+        if (!loadingEl || !errorEl || !contentEl || !errorMsgEl) {
+            console.error('Required elements not found in shadow DOM');
+            return;
+        }
 
         try {
             loadingEl.style.display = 'flex';
@@ -1417,14 +1475,14 @@ class MovieDetailsComponent extends HTMLElement {
             // Add images to details
             details.images = images;
 
-            loadingEl.style.display = 'none';
+            if (loadingEl) loadingEl.style.display = 'none';
             this.renderContent(details);
 
         } catch (error) {
             console.error('Error loading movie details:', error);
-            loadingEl.style.display = 'none';
-            errorEl.style.display = 'block';
-            errorMsgEl.textContent = error.message || 'Мэдээлэл ачаалахад алдаа гарлаа';
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'block';
+            if (errorMsgEl) errorMsgEl.textContent = error.message || 'Мэдээлэл ачаалахад алдаа гарлаа';
         }
     }
 
@@ -2098,16 +2156,42 @@ class MovieDetailsComponent extends HTMLElement {
                 return;
             }
 
-            reviewsList.innerHTML = reviews.map(review => this.renderReviewCard(review)).join('');
+            // Show only latest 3 reviews
+            const latestReviews = reviews.slice(0, 3);
+            
+            let html = latestReviews.map(review => this.renderReviewCardHTML(review)).join('');
+            
+            // Add "View All Reviews" button if there are more than 3 reviews
+            if (reviews.length > 3) {
+                html += `
+                    <div class="view-all-reviews-container">
+                        <button class="view-all-reviews-btn" id="view-all-reviews-btn">
+                            <i class="fas fa-comments"></i>
+                            <span>Бүх сэтгэгдэл үзэх (${reviews.length})</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            
+            reviewsList.innerHTML = html;
+            
+            // Add event listener to "View All Reviews" button
+            const viewAllBtn = shadow.getElementById('view-all-reviews-btn');
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', () => {
+                    window.location.hash = `#/movie-reviews/${category}/${movieId}`;
+                });
+            }
         } catch (error) {
             console.error('Error loading reviews:', error);
             reviewsList.innerHTML = '<div class="no-reviews">Сэтгэгдэл ачаалахад алдаа гарлаа</div>';
         }
     }
 
-    renderReviewCard(review) {
-        const userData = JSON.parse(localStorage.getItem('cinewave-user') || '{}');
-        const isCurrentUser = review.userId === userData.id;
+    renderReviewCardHTML(review) {
+        const userData = JSON.parse(localStorage.getItem('cinewave_user') || '{}');
+        const isCurrentUser = review.userId === (userData.id || userData._id || userData.email);
         const isAdmin = review.isAdmin || false;
         
         // Format date
@@ -2145,30 +2229,25 @@ class MovieDetailsComponent extends HTMLElement {
         }
 
         return `
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="review-author">
-                        <div class="review-author-avatar">
-                            ${review.avatar || initials}
-                        </div>
-                        <div class="review-author-info">
-                            <div class="review-author-name">${review.username}</div>
-                            ${isAdmin ? '<span class="review-author-badge">Админ</span>' : ''}
-                        </div>
-                    </div>
-                    <div class="review-meta">
-                        <div class="review-rating">
-                            <div class="review-rating-stars">${starsHTML}</div>
-                            <span class="review-rating-value">${review.rating}/5</span>
-                        </div>
-                        <div class="review-date">
-                            <i class="far fa-clock"></i> ${formattedDate}
-                        </div>
-                    </div>
-                </div>
-                <div class="review-content">${this.escapeHtml(review.text)}</div>
-            </div>
+            <review-card
+                username="${this.escapeHtmlAttribute(review.username)}"
+                rating="${review.rating}"
+                text="${this.escapeHtmlAttribute(review.text)}"
+                date="${review.date}"
+                avatar="${review.avatar || ''}"
+                is-admin="${isAdmin}"
+                user-id="${review.userId || ''}">
+            </review-card>
         `;
+    }
+    
+    escapeHtmlAttribute(text) {
+        return String(text || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     }
 
     escapeHtml(text) {
@@ -2188,9 +2267,9 @@ class MovieDetailsComponent extends HTMLElement {
             return;
         }
 
-        // Check if user is logged in
-        const token = localStorage.getItem('cinewave-token');
-        const userData = localStorage.getItem('cinewave-user');
+        // Check if user is logged in (using consistent localStorage keys)
+        const token = localStorage.getItem('cinewave_token');
+        const userData = localStorage.getItem('cinewave_user');
         
         if (!token || !userData) {
             alert('Сэтгэгдэл үлдээхийн тулд нэвтрэх шаардлагатай');
@@ -2206,8 +2285,8 @@ class MovieDetailsComponent extends HTMLElement {
         // Create review object
         const review = {
             id: Date.now().toString(),
-            userId: user.id || user.email,
-            username: user.username || user.name || user.email?.split('@')[0] || 'Хэрэглэгч',
+            userId: user.id || user._id || user.email,
+            username: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email?.split('@')[0] || 'Хэрэглэгч',
             avatar: user.avatar || null,
             isAdmin: user.role === 'admin' || false,
             rating: rating,

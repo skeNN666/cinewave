@@ -1,31 +1,91 @@
-// auth-service.js - Complete Authentication Service
+// auth-service.js - Complete Authentication Service with MongoDB Backend
+const API_BASE_URL = 'http://localhost:3000/api/auth';
+
 class AuthService {
     constructor() {
         this.currentUser = null;
+        this.token = null;
         this.loadUserFromStorage();
     }
 
-    // Load user from localStorage
+    // Load user and token from localStorage
     loadUserFromStorage() {
         try {
             const userData = localStorage.getItem('cinewave_user');
-            if (userData) {
+            const tokenData = localStorage.getItem('cinewave_token');
+            
+            if (userData && tokenData) {
                 this.currentUser = JSON.parse(userData);
+                this.token = tokenData;
                 console.log('✅ User loaded from storage:', this.currentUser.email);
+                
+                // Optionally verify token is still valid (non-blocking)
+                // If token is invalid, user will be logged out on next API call
+                this.getProfile().catch(() => {
+                    // Token invalid, clear storage silently
+                    console.warn('⚠️ Token invalid, clearing storage');
+                    localStorage.removeItem('cinewave_user');
+                    localStorage.removeItem('cinewave_token');
+                    this.currentUser = null;
+                    this.token = null;
+                }).catch(() => {
+                    // Silently handle any errors during verification
+                });
             }
         } catch (error) {
             console.error('❌ Error loading user:', error);
             localStorage.removeItem('cinewave_user');
+            localStorage.removeItem('cinewave_token');
+            this.currentUser = null;
+            this.token = null;
         }
     }
 
-    // Save user to localStorage
-    saveUserToStorage(user) {
+    // Save user and token to localStorage
+    saveUserToStorage(user, token) {
         try {
             localStorage.setItem('cinewave_user', JSON.stringify(user));
+            if (token) {
+                localStorage.setItem('cinewave_token', token);
+                this.token = token;
+            }
             this.currentUser = user;
         } catch (error) {
             console.error('❌ Error saving user:', error);
+        }
+    }
+
+    // Get authorization header for API requests
+    getAuthHeaders() {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+        return headers;
+    }
+
+    // Make API request helper
+    async apiRequest(endpoint, options = {}) {
+        const url = `${API_BASE_URL}${endpoint}`;
+        const config = {
+            headers: this.getAuthHeaders(),
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'API request failed');
+            }
+
+            return data;
+        } catch (error) {
+            console.error('API request error:', error);
+            throw error;
         }
     }
 
@@ -33,237 +93,264 @@ class AuthService {
     async register(userData) {
         console.log('📝 Registering new user:', userData.email);
         
-        // Simulate API delay
-        await this.delay(1000);
-        
-        // Check if user already exists
-        const existingUsers = this.getAllUsers();
-        const userExists = existingUsers.some(u => u.email === userData.email);
-        
-        if (userExists) {
-            throw new Error('Энэ имэйл хаягаар бүртгэлтэй хэрэглэгч байна');
+        try {
+            const response = await this.apiRequest('/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    phone: userData.phone || '',
+                    password: userData.password,
+                    confirmPassword: userData.confirmPassword
+                })
+            });
+
+            // Save user and token (auto-login after registration)
+            this.saveUserToStorage(response.user, response.token);
+
+            console.log('✅ User registered successfully');
+            return { success: true, user: response.user, token: response.token };
+        } catch (error) {
+            console.error('❌ Registration error:', error);
+            throw error;
         }
-
-        // Create new user
-        const newUser = {
-            id: this.generateUserId(),
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            email: userData.email,
-            phone: userData.phone,
-            password: this.hashPassword(userData.password), // In production, hash on server
-            avatar: `https://ui-avatars.com/api/?name=${userData.firstName}+${userData.lastName}&background=007bff&color=fff&size=200`,
-            joinDate: new Date().toISOString(),
-            watchlist: [],
-            favorites: [],
-            ratings: {},
-            reviews: []
-        };
-
-        // Save to all users list
-        existingUsers.push(newUser);
-        localStorage.setItem('cinewave_all_users', JSON.stringify(existingUsers));
-
-        // Set as current user (auto-login after registration)
-        this.saveUserToStorage(newUser);
-
-        console.log('✅ User registered successfully');
-        return { success: true, user: this.sanitizeUser(newUser) };
     }
 
     // Login user
     async login(email, password) {
         console.log('🔐 Attempting login:', email);
         
-        // Simulate API delay
-        await this.delay(800);
-        
-        const users = this.getAllUsers();
-        const user = users.find(u => u.email === email);
-        
-        if (!user) {
-            throw new Error('Имэйл хаяг эсвэл нууц үг буруу байна');
+        try {
+            const response = await this.apiRequest('/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            // Save user and token
+            this.saveUserToStorage(response.user, response.token);
+
+            console.log('✅ Login successful');
+            return { success: true, user: response.user, token: response.token };
+        } catch (error) {
+            console.error('❌ Login error:', error);
+            throw error;
         }
-
-        // Check password
-        if (!this.verifyPassword(password, user.password)) {
-            throw new Error('Имэйл хаяг эсвэл нууц үг буруу байна');
-        }
-
-        // Save as current user
-        this.saveUserToStorage(user);
-
-        console.log('✅ Login successful');
-        return { success: true, user: this.sanitizeUser(user) };
     }
 
     // Logout user
     logout() {
         console.log('👋 Logging out user:', this.currentUser?.email);
         localStorage.removeItem('cinewave_user');
+        localStorage.removeItem('cinewave_token');
+        localStorage.removeItem('cinewave_all_users'); // Clean up old localStorage data
         this.currentUser = null;
+        this.token = null;
         
         // Redirect to home
         window.location.hash = '#/';
     }
 
-    // Get current user
+    // Get current user profile from server
+    async getProfile() {
+        try {
+            const response = await this.apiRequest('/profile', {
+                method: 'GET'
+            });
+
+            // Update current user
+            this.saveUserToStorage(response.user, this.token);
+            return response.user;
+        } catch (error) {
+            console.error('❌ Get profile error:', error);
+            throw error;
+        }
+    }
+
+    // Get current user (from memory)
     getCurrentUser() {
-        return this.currentUser ? this.sanitizeUser(this.currentUser) : null;
+        return this.currentUser || null;
     }
 
     // Check if user is logged in
     isAuthenticated() {
-        return this.currentUser !== null;
+        return this.currentUser !== null && this.token !== null;
     }
 
     // Update user profile
     async updateProfile(updates) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
         console.log('📝 Updating profile:', updates);
-        await this.delay(800);
 
-        // Update current user
-        this.currentUser = { ...this.currentUser, ...updates };
+        try {
+            const response = await this.apiRequest('/profile', {
+                method: 'PUT',
+                body: JSON.stringify(updates)
+            });
 
-        // Update in all users list
-        const users = this.getAllUsers();
-        const userIndex = users.findIndex(u => u.id === this.currentUser.id);
-        if (userIndex !== -1) {
-            users[userIndex] = this.currentUser;
-            localStorage.setItem('cinewave_all_users', JSON.stringify(users));
+            // Update current user
+            this.saveUserToStorage(response.user, this.token);
+
+            console.log('✅ Profile updated successfully');
+            return { success: true, user: response.user };
+        } catch (error) {
+            console.error('❌ Update profile error:', error);
+            throw error;
         }
-
-        // Save to storage
-        this.saveUserToStorage(this.currentUser);
-
-        console.log('✅ Profile updated successfully');
-        return { success: true, user: this.sanitizeUser(this.currentUser) };
     }
 
     // Change password
     async changePassword(oldPassword, newPassword) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
         console.log('🔒 Changing password');
-        
-        // Simulate API delay
-        await this.delay(800);
 
-        // Verify old password
-        if (!this.verifyPassword(oldPassword, this.currentUser.password)) {
-            throw new Error('Хуучин нууц үг буруу байна');
+        try {
+            const response = await this.apiRequest('/change-password', {
+                method: 'PUT',
+                body: JSON.stringify({ oldPassword, newPassword })
+            });
+
+            console.log('✅ Password changed successfully');
+            return { success: true };
+        } catch (error) {
+            console.error('❌ Change password error:', error);
+            throw error;
         }
-
-        // Update password
-        this.currentUser.password = this.hashPassword(newPassword);
-
-        // Update in all users list
-        const users = this.getAllUsers();
-        const userIndex = users.findIndex(u => u.id === this.currentUser.id);
-        if (userIndex !== -1) {
-            users[userIndex] = this.currentUser;
-            localStorage.setItem('cinewave_all_users', JSON.stringify(users));
-        }
-
-        // Save to storage
-        this.saveUserToStorage(this.currentUser);
-
-        console.log('✅ Password changed successfully');
-        return { success: true };
     }
 
     // Add to watchlist
     async addToWatchlist(movieId) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
-        if (!this.currentUser.watchlist.includes(movieId)) {
-            this.currentUser.watchlist.push(movieId);
-            await this.updateProfile({ watchlist: this.currentUser.watchlist });
+        try {
+            const response = await this.apiRequest('/watchlist', {
+                method: 'POST',
+                body: JSON.stringify({ movieId, action: 'add' })
+            });
+
+            // Update current user
+            if (this.currentUser) {
+                this.currentUser.watchlist = response.watchlist;
+                this.saveUserToStorage(this.currentUser, this.token);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('❌ Add to watchlist error:', error);
+            throw error;
         }
     }
 
     // Remove from watchlist
     async removeFromWatchlist(movieId) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
-        this.currentUser.watchlist = this.currentUser.watchlist.filter(id => id !== movieId);
-        await this.updateProfile({ watchlist: this.currentUser.watchlist });
+        try {
+            const response = await this.apiRequest('/watchlist', {
+                method: 'POST',
+                body: JSON.stringify({ movieId, action: 'remove' })
+            });
+
+            // Update current user
+            if (this.currentUser) {
+                this.currentUser.watchlist = response.watchlist;
+                this.saveUserToStorage(this.currentUser, this.token);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('❌ Remove from watchlist error:', error);
+            throw error;
+        }
     }
 
     // Add to favorites
     async addToFavorites(movieId) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
-        if (!this.currentUser.favorites.includes(movieId)) {
-            this.currentUser.favorites.push(movieId);
-            await this.updateProfile({ favorites: this.currentUser.favorites });
+        try {
+            const response = await this.apiRequest('/favorites', {
+                method: 'POST',
+                body: JSON.stringify({ movieId, action: 'add' })
+            });
+
+            // Update current user
+            if (this.currentUser) {
+                this.currentUser.favorites = response.favorites;
+                this.saveUserToStorage(this.currentUser, this.token);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('❌ Add to favorites error:', error);
+            throw error;
         }
     }
 
     // Remove from favorites
     async removeFromFavorites(movieId) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
-        this.currentUser.favorites = this.currentUser.favorites.filter(id => id !== movieId);
-        await this.updateProfile({ favorites: this.currentUser.favorites });
+        try {
+            const response = await this.apiRequest('/favorites', {
+                method: 'POST',
+                body: JSON.stringify({ movieId, action: 'remove' })
+            });
+
+            // Update current user
+            if (this.currentUser) {
+                this.currentUser.favorites = response.favorites;
+                this.saveUserToStorage(this.currentUser, this.token);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('❌ Remove from favorites error:', error);
+            throw error;
+        }
     }
 
     // Rate movie
     async rateMovie(movieId, rating) {
-        if (!this.currentUser) {
+        if (!this.isAuthenticated()) {
             throw new Error('Нэвтрээгүй байна');
         }
 
-        this.currentUser.ratings[movieId] = rating;
-        await this.updateProfile({ ratings: this.currentUser.ratings });
-    }
-
-    // Helper methods
-    getAllUsers() {
         try {
-            const users = localStorage.getItem('cinewave_all_users');
-            return users ? JSON.parse(users) : [];
+            const response = await this.apiRequest('/rating', {
+                method: 'POST',
+                body: JSON.stringify({ movieId, rating })
+            });
+
+            // Update current user
+            if (this.currentUser) {
+                this.currentUser.ratings = response.ratings;
+                this.saveUserToStorage(this.currentUser, this.token);
+            }
+
+            return response;
         } catch (error) {
-            console.error('❌ Error loading users:', error);
-            return [];
+            console.error('❌ Rate movie error:', error);
+            throw error;
         }
     }
 
-    generateUserId() {
-        return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    }
-
-    hashPassword(password) {
-        // Simple hash for demo - in production, use bcrypt on server
-        return btoa(password + 'cinewave_salt');
-    }
-
-    verifyPassword(password, hash) {
-        return this.hashPassword(password) === hash;
-    }
-
-    sanitizeUser(user) {
-        const { password, ...safeUser } = user;
-        return safeUser;
-    }
-
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // Helper methods - Legacy methods removed (no longer needed with MongoDB)
+    // Password hashing and verification now handled by backend
 }
 
 // Export singleton instance

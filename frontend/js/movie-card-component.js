@@ -798,8 +798,8 @@ class MovieCard extends HTMLElement {
     }
 
     checkAuthStatus() {
-        const token = localStorage.getItem('cinewave-token');
-        const userData = localStorage.getItem('cinewave-user');
+        const token = localStorage.getItem('cinewave_token');
+        const userData = localStorage.getItem('cinewave_user');
         
         if (token && userData) {
             this.userData = JSON.parse(userData);

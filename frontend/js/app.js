@@ -161,20 +161,54 @@ const views = {
         `;
     },
 
-    reviews: () => {
+    reviews: async () => {
         const main = document.querySelector('main');
         main.innerHTML = `
-            <section class="page-content" style="padding-top: 100px;">
+            <section class="page-content" style="padding-top: 120px; min-height: 100vh; background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);">
                 <div style="max-width: 1400px; margin: 0 auto; padding: 20px;">
-                    <h1 style="color: white; margin-bottom: 30px; font-size: 36px;">Шүүмж</h1>
-                    <div class="reviews-container">
-                        <p style="color: #999; text-align: center; padding: 60px 20px; font-size: 18px;">
-                            Шүүмжүүд удахгүй нэмэгдэнэ
-                        </p>
+                    <div style="margin-bottom: 40px;">
+                        <h1 style="color: white; margin-bottom: 10px; font-size: 36px; font-weight: 900;">
+                            <i class="fas fa-comments" style="color: #4da3ff; margin-right: 15px;"></i>
+                            Бүх сэтгэгдэл
+                        </h1>
+                        <p style="color: #999; font-size: 1.1rem;">Бүх киноны хамгийн сүүлийн сэтгэгдлүүд</p>
+                    </div>
+                    
+                    <div id="reviews-loading" style="text-align: center; padding: 60px 20px; color: #999;">
+                        <div style="width: 50px; height: 50px; border: 4px solid rgba(77, 163, 255, 0.3); border-top-color: #4da3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                        <p>Сэтгэгдлүүдийг ачаалж байна...</p>
+                    </div>
+                    
+                    <div id="reviews-container" style="display: none;">
+                        <div id="reviews-stats" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 30px; display: flex; gap: 30px; flex-wrap: wrap;">
+                            <div style="color: #fff;">
+                                <div style="font-size: 0.9rem; color: #999; margin-bottom: 5px;">Нийт сэтгэгдэл</div>
+                                <div id="total-reviews" style="font-size: 1.5rem; font-weight: 700; color: #4da3ff;">0</div>
+                            </div>
+                            <div style="color: #fff;">
+                                <div style="font-size: 0.9rem; color: #999; margin-bottom: 5px;">Нийт кино</div>
+                                <div id="total-movies" style="font-size: 1.5rem; font-weight: 700; color: #4da3ff;">0</div>
+                            </div>
+                        </div>
+                        
+                        <div id="reviews-list" style="display: flex; flex-direction: column; gap: 25px;"></div>
+                        
+                        <div id="no-reviews" style="display: none; text-align: center; padding: 80px 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                            <i class="fas fa-comments" style="font-size: 4rem; color: #666; margin-bottom: 20px; display: block;"></i>
+                            <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.5rem;">Одоогоор сэтгэгдэл байхгүй</h3>
+                            <p style="color: #999; font-size: 1.1rem;">Киноны мэдээлэл хуудаснаас сэтгэгдэл үлдээнэ үү</p>
+                        </div>
                     </div>
                 </div>
             </section>
+            <style>
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
         `;
+        
+        await initAllReviewsPage();
     },
 
     search: async () => {
@@ -342,6 +376,34 @@ const views = {
         
         main.innerHTML = `
             <movie-details-component movie-id="${movieId}" category="${category}"></movie-details-component>
+        `;
+    },
+
+    'movie-reviews': async () => {
+        const main = document.querySelector('main');
+        
+        // Extract category and ID from hash
+        const hash = window.location.hash;
+        const match = hash.match(/#\/movie-reviews\/(movies|tv)\/(\d+)/);
+        
+        if (!match) {
+            main.innerHTML = `
+                <div style="text-align: center; padding: 100px 20px; color: white;">
+                    <h1>Алдаа</h1>
+                    <p>Киноны сэтгэгдэл олдсонгүй</p>
+                    <a href="#/" data-link style="color: #4da3ff; text-decoration: none; margin-top: 20px; display: inline-block;">
+                        Нүүр хуудас руу буцах
+                    </a>
+                </div>
+            `;
+            return;
+        }
+        
+        const category = match[1];
+        const movieId = match[2];
+        
+        main.innerHTML = `
+            <movie-reviews-page movie-id="${movieId}" category="${category}"></movie-reviews-page>
         `;
     }
 };
@@ -1926,6 +1988,209 @@ function handleFormSubmit(form) {
     }, 1500);
 }
 
+// ============================================
+// ALL REVIEWS PAGE FUNCTIONALITY
+// ============================================
+
+function escapeHtmlAttribute(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+async function initAllReviewsPage() {
+    console.log('📝 Initializing all reviews page...');
+    
+    const loading = document.getElementById('reviews-loading');
+    const container = document.getElementById('reviews-container');
+    const reviewsList = document.getElementById('reviews-list');
+    const noReviews = document.getElementById('no-reviews');
+    const totalReviewsEl = document.getElementById('total-reviews');
+    const totalMoviesEl = document.getElementById('total-movies');
+    
+    try {
+        // Load all reviews from localStorage
+        const allReviews = [];
+        const movieMap = new Map(); // Track unique movies
+        
+        // Iterate through all localStorage keys
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            
+            // Check if key matches review pattern: reviews_category_movieId
+            if (key && key.startsWith('reviews_')) {
+                try {
+                    const parts = key.split('_');
+                    if (parts.length >= 3) {
+                        const category = parts[1]; // movies or tv
+                        const movieId = parts.slice(2).join('_'); // Handle IDs with underscores
+                        
+                        const storedReviews = localStorage.getItem(key);
+                        const reviews = storedReviews ? JSON.parse(storedReviews) : [];
+                        
+                        // Add movie info to each review
+                        reviews.forEach(review => {
+                            allReviews.push({
+                                ...review,
+                                movieId: movieId,
+                                category: category,
+                                storageKey: key
+                            });
+                            
+                            // Track unique movies
+                            const movieKey = `${category}_${movieId}`;
+                            if (!movieMap.has(movieKey)) {
+                                movieMap.set(movieKey, { category, movieId, reviewCount: 0 });
+                            }
+                            movieMap.get(movieKey).reviewCount++;
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error parsing reviews from key ${key}:`, error);
+                }
+            }
+        }
+        
+        // Sort by date (latest first)
+        allReviews.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB - dateA; // Latest first
+        });
+        
+        // Update stats
+        if (totalReviewsEl) {
+            totalReviewsEl.textContent = allReviews.length;
+        }
+        if (totalMoviesEl) {
+            totalMoviesEl.textContent = movieMap.size;
+        }
+        
+        // Hide loading
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        if (allReviews.length === 0) {
+            if (container) container.style.display = 'block';
+            if (noReviews) noReviews.style.display = 'block';
+            if (reviewsList) reviewsList.style.display = 'none';
+            return;
+        }
+        
+        if (container) container.style.display = 'block';
+        if (noReviews) noReviews.style.display = 'none';
+        if (reviewsList) reviewsList.style.display = 'flex';
+        
+        // Fetch movie info for all unique movies
+        const movieInfoMap = new Map();
+        const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
+        
+        if (service) {
+            const uniqueMovies = Array.from(movieMap.keys());
+            const movieInfoPromises = uniqueMovies.map(async (movieKey) => {
+                const { category, movieId } = movieMap.get(movieKey);
+                try {
+                    const details = category === 'movies' 
+                        ? await service.getMovieDetails(movieId)
+                        : await service.getTVDetails(movieId);
+                    
+                    if (details) {
+                        movieInfoMap.set(movieKey, {
+                            name: details.name || 'Unknown',
+                            image: details.image || details.poster_path || '',
+                            category: category
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Error loading movie info for ${movieKey}:`, error);
+                    movieInfoMap.set(movieKey, {
+                        name: 'Unknown Movie',
+                        image: '',
+                        category: category
+                    });
+                }
+            });
+            
+            // Wait for all movie info to load (with timeout)
+            await Promise.allSettled(movieInfoPromises);
+        }
+        
+        // Render reviews
+        if (reviewsList) {
+            reviewsList.innerHTML = allReviews.map(review => {
+                const movieKey = `${review.category}_${review.movieId}`;
+                const movieInfo = movieInfoMap.get(movieKey) || {
+                    name: 'Unknown Movie',
+                    image: '',
+                    category: review.category
+                };
+                
+                const isAdmin = review.isAdmin || false;
+                
+                return `
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 25px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(77, 163, 255, 0.3)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            ${movieInfo.image ? `
+                                <img src="${movieInfo.image}" alt="${escapeHtmlAttribute(movieInfo.name)}" style="width: 80px; height: 120px; border-radius: 8px; object-fit: cover; cursor: pointer; transition: transform 0.3s ease;" onclick="window.location.hash = '#/movie-details/${movieInfo.category}/${review.movieId}'" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            ` : `
+                                <div style="width: 80px; height: 120px; border-radius: 8px; background: linear-gradient(135deg, #4da3ff, #667eea); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                    <i class="fas fa-${movieInfo.category === 'movies' ? 'film' : 'tv'}"></i>
+                                </div>
+                            `}
+                            <div style="flex: 1;">
+                                <h3 style="color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; cursor: pointer; transition: color 0.3s ease;" onclick="window.location.hash = '#/movie-details/${movieInfo.category}/${review.movieId}'" onmouseover="this.style.color='#4da3ff'" onmouseout="this.style.color='#fff'">${escapeHtmlAttribute(movieInfo.name)}</h3>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <span style="color: #999; font-size: 0.9rem;">
+                                        <i class="fas fa-${movieInfo.category === 'movies' ? 'film' : 'tv'}" style="color: #4da3ff; margin-right: 5px;"></i>
+                                        ${movieInfo.category === 'movies' ? 'Кино' : 'Цуврал'}
+                                    </span>
+                                    <span style="color: #999; font-size: 0.9rem;">•</span>
+                                    <a href="#/movie-details/${movieInfo.category}/${review.movieId}" style="color: #4da3ff; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#4da3ff'">
+                                        Киноны мэдээлэл <i class="fas fa-arrow-right" style="font-size: 0.8rem; transition: transform 0.3s ease;"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <review-card
+                            username="${escapeHtmlAttribute(review.username)}"
+                            rating="${review.rating}"
+                            text="${escapeHtmlAttribute(review.text)}"
+                            date="${review.date}"
+                            avatar="${review.avatar || ''}"
+                            is-admin="${isAdmin}"
+                            user-id="${review.userId || ''}">
+                        </review-card>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        console.log(`✅ Loaded ${allReviews.length} reviews from ${movieMap.size} movies`);
+        
+    } catch (error) {
+        console.error('❌ Error loading all reviews:', error);
+        
+        if (loading) loading.style.display = 'none';
+        if (container) container.style.display = 'block';
+        if (reviewsList) {
+            reviewsList.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.3); border-radius: 15px; grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff4757; margin-bottom: 20px;"></i>
+                    <h3 style="color: #fff; margin-bottom: 10px;">Алдаа гарлаа</h3>
+                    <p style="color: #999;">Сэтгэгдлүүдийг ачаалахад алдаа гарлаа. Дахин оролдоно уу.</p>
+                    <button onclick="window.location.hash = '#/reviews'" style="margin-top: 20px; padding: 10px 24px; background: #4da3ff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Дахин оролдох
+                    </button>
+                </div>
+            `;
+        }
+    }
+}
+
 function showNotification(message, type) {
     const notification = document.createElement('div');
     notification.textContent = message;
@@ -1966,6 +2231,7 @@ router.addRoute('/reviews', views.reviews);
 router.addRoute('/login', views.login);
 router.addRoute('/search', views.search);
 router.addRoute('/movie-details/:category/:id', views['movie-details']);
+router.addRoute('/movie-reviews/:category/:id', views['movie-reviews']);
 
 // Initialize app and start router
 initializeApp().then(() => {

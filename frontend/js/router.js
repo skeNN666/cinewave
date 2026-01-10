@@ -70,6 +70,14 @@ class Router {
       }
     }
 
+    // Special handling for movie-reviews route
+    if (!handler && path.startsWith('/movie-reviews/')) {
+      const movieReviewsMatch = path.match(/^\/movie-reviews\/(movies|tv)\/(\d+)$/);
+      if (movieReviewsMatch && this.routes['/movie-reviews/:category/:id']) {
+        handler = this.routes['/movie-reviews/:category/:id'];
+      }
+    }
+
     // Execute handler or show 404
     if (handler) {
       await handler();
