@@ -6,14 +6,22 @@ class MovieCard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         
         this.shadowRoot.innerHTML = `
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css');
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
         .movie-card {
-            background-color: #fff;
-            border-radius: 10px;
+            background: #333;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
             text-align: center;
             height: 400px;
             width: 100%;
@@ -49,16 +57,15 @@ class MovieCard extends HTMLElement {
         }
 
         .movie-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(77, 163, 255, 0.3);
+            border-color: #4da3ff;
         }
 
         .movie-card img {
             width: 100%;
             height: 300px;
             object-fit: cover;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
             display: block;
             position: absolute;
             top: 0;
@@ -87,6 +94,7 @@ class MovieCard extends HTMLElement {
             line-height: 1.2;
             padding: 0;
             display: block;
+            color: #fff;
         }
 
         .neg-yum {
@@ -94,9 +102,9 @@ class MovieCard extends HTMLElement {
             justify-content: space-between;
             align-items: center;
             font-size: 0.8rem;
-            color: black;
+            color: #ccc;
             padding: 1rem;
-            height: 30px;
+            height: 55px;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -108,12 +116,14 @@ class MovieCard extends HTMLElement {
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
+            color: #ccc;
         }
 
         .type {
             font-weight: bold;
             flex-shrink: 0;
             margin-left: 10px;
+            color: #4da3ff;
         }
         
         /* Quick Preview Modal styles */
@@ -194,33 +204,90 @@ class MovieCard extends HTMLElement {
         .modal-meta {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
 
-        .meta-item {
+        .meta-badge {
             display: flex;
             align-items: center;
-            gap: 5px;
-            color: #ccc;
-            font-size: 0.9rem;
+            gap: 10px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .meta-item i {
+        .meta-badge:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            border-color: rgba(77, 163, 255, 0.3);
+        }
+
+        .meta-badge i {
             color: #4da3ff;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            filter: drop-shadow(0 2px 4px rgba(77, 163, 255, 0.3));
+        }
+
+        /* Special icon colors for different badge types */
+        .meta-badge.badge-year i {
+            color: #ff6b9d;
+        }
+
+        .meta-badge.badge-duration i {
+            color: #00d9ff;
+        }
+
+        .meta-badge.badge-certification i {
+            color: #ffd700;
+        }
+
+        .meta-badge.badge-seasons i {
+            color: #9d4edd;
+        }
+
+        .meta-badge.badge-episodes i {
+            color: #06ffa5;
+        }
+
+        .meta-badge.badge-type-movie i {
+            color: #ff6b35;
+        }
+
+        .meta-badge.badge-type-tv i {
+            color: #4ecdc4;
         }
 
         .rating-badge {
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
             font-weight: 700;
-            font-size: 0.95rem;
+            padding: 12px 22px;
+            border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .rating-badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .rating-badge i {
+            color: #ff8c00;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
         
         .close-modal {
@@ -559,8 +626,24 @@ class MovieCard extends HTMLElement {
                 gap: 10px;
             }
 
-            .meta-item {
+            .meta-badge {
                 font-size: 0.85rem;
+                padding: 8px 14px;
+                gap: 8px;
+            }
+
+            .meta-badge i {
+                font-size: 1rem;
+                width: 18px;
+            }
+
+            .rating-badge {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .rating-badge i {
+                font-size: 1.1rem;
             }
 
             .cast-list {
@@ -598,18 +681,6 @@ class MovieCard extends HTMLElement {
                 <div class="modal-header-content">
                     <h2 class="modal-title"></h2>
                     <div class="modal-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-calendar"></i>
-                            <span id="modal-year"></span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-clock"></i>
-                            <span id="modal-duration"></span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-film"></i>
-                            <span class="modal-type"></span>
-                        </div>
                         <div class="rating-badge">
                             <i class="fas fa-star"></i>
                             <span id="modal-rating">0.0</span>
@@ -861,36 +932,103 @@ class MovieCard extends HTMLElement {
         const backdropImage = details.backdrop || details.image;
         shadow.querySelector('.modal-backdrop').src = backdropImage;
         shadow.querySelector('.modal-backdrop').alt = details.name;
-        shadow.querySelector('.modal-type').textContent = details.category === 'movies' ? 'Кино' : 'Цуврал';
         
-        // Meta info
-        shadow.querySelector('#modal-year').textContent = details.year || 'N/A';
+        // Meta info - dynamically build badges
+        const modalMeta = shadow.querySelector('.modal-meta');
+        const isMovie = details.category === 'movies';
         
-        const durationEl = shadow.querySelector('#modal-duration');
-        // For TV series, show seasons/episodes; for movies, show runtime
-        if (details.category === 'tv') {
-            // TV Series: Show seasons and episodes in format "S3/EP24"
-            if (details.seasons && details.episodes) {
-                durationEl.textContent = `S${details.seasons}/EP${details.episodes}`;
-            } else if (details.episodes) {
-                durationEl.textContent = `EP${details.episodes}`;
-            } else if (details.seasons) {
-                durationEl.textContent = `S${details.seasons}`;
-            } else {
-                durationEl.textContent = 'N/A';
-            }
-        } else {
-            // Movies: Show runtime/duration
-            if (details.duration && details.duration !== 'Тодорхойгүй') {
-                durationEl.textContent = details.duration;
-            } else if (details.runtime) {
-                const hours = Math.floor(details.runtime / 60);
-                const minutes = details.runtime % 60;
-                durationEl.textContent = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
-            } else {
-                durationEl.textContent = 'N/A';
-            }
+        // Clear existing badges (except rating badge which should stay first)
+        const ratingBadge = modalMeta.querySelector('.rating-badge');
+        modalMeta.innerHTML = '';
+        if (ratingBadge) {
+            modalMeta.appendChild(ratingBadge);
         }
+        
+        // Rating badge
+        if (!ratingBadge) {
+            const ratingBadgeEl = document.createElement('div');
+            ratingBadgeEl.className = 'rating-badge';
+            ratingBadgeEl.innerHTML = `
+                <i class="fas fa-star"></i>
+                <span id="modal-rating">${details.rating ? parseFloat(details.rating).toFixed(1) : '0.0'}</span>
+            `;
+            modalMeta.appendChild(ratingBadgeEl);
+        } else {
+            shadow.querySelector('#modal-rating').textContent = details.rating ? parseFloat(details.rating).toFixed(1) : '0.0';
+        }
+        
+        // Year badge
+        const yearBadge = document.createElement('div');
+        yearBadge.className = 'meta-badge badge-year';
+        yearBadge.innerHTML = `
+            <i class="fas fa-calendar"></i>
+            <span>${details.year || 'N/A'}</span>
+        `;
+        modalMeta.appendChild(yearBadge);
+        
+        // Duration badge (for movies)
+        if (isMovie && details.duration && details.duration !== 'Тодорхойгүй') {
+            const durationBadge = document.createElement('div');
+            durationBadge.className = 'meta-badge badge-duration';
+            durationBadge.innerHTML = `
+                <i class="fas fa-clock"></i>
+                <span>${details.duration}</span>
+            `;
+            modalMeta.appendChild(durationBadge);
+        } else if (isMovie && details.runtime) {
+            const hours = Math.floor(details.runtime / 60);
+            const minutes = details.runtime % 60;
+            const durationText = hours > 0 ? `${hours}ц ${minutes}м` : `${minutes}м`;
+            const durationBadge = document.createElement('div');
+            durationBadge.className = 'meta-badge badge-duration';
+            durationBadge.innerHTML = `
+                <i class="fas fa-clock"></i>
+                <span>${durationText}</span>
+            `;
+            modalMeta.appendChild(durationBadge);
+        }
+        
+        // Certification badge (for movies)
+        if (isMovie && details.certification && details.certification !== 'Тодорхойгүй') {
+            const certBadge = document.createElement('div');
+            certBadge.className = 'meta-badge badge-certification';
+            certBadge.innerHTML = `
+                <i class="fas fa-certificate"></i>
+                <span>${details.certification}</span>
+            `;
+            modalMeta.appendChild(certBadge);
+        }
+        
+        // Seasons badge (for TV)
+        if (!isMovie && details.seasons) {
+            const seasonsBadge = document.createElement('div');
+            seasonsBadge.className = 'meta-badge badge-seasons';
+            seasonsBadge.innerHTML = `
+                <i class="fas fa-tv"></i>
+                <span>${details.seasons} улирал</span>
+            `;
+            modalMeta.appendChild(seasonsBadge);
+        }
+        
+        // Episodes badge (for TV)
+        if (!isMovie && details.episodes) {
+            const episodesBadge = document.createElement('div');
+            episodesBadge.className = 'meta-badge badge-episodes';
+            episodesBadge.innerHTML = `
+                <i class="fas fa-list"></i>
+                <span>${details.episodes} анги</span>
+            `;
+            modalMeta.appendChild(episodesBadge);
+        }
+        
+        // Type badge
+        const typeBadge = document.createElement('div');
+        typeBadge.className = `meta-badge ${isMovie ? 'badge-type-movie' : 'badge-type-tv'}`;
+        typeBadge.innerHTML = `
+            <i class="${isMovie ? 'fas fa-film' : 'fas fa-tv'}"></i>
+            <span>${isMovie ? 'Кино' : 'Цуврал'}</span>
+        `;
+        modalMeta.appendChild(typeBadge);
         
         // Rating
         if (details.rating) {
@@ -991,37 +1129,86 @@ class MovieCard extends HTMLElement {
         
         shadow.querySelector('.modal-title').textContent = movieName;
         shadow.querySelector('.modal-backdrop').src = shadow.querySelector('img').src;
-        shadow.querySelector('.modal-type').textContent = category === 'movies' ? 'Кино' : 'Цуврал';
         
-        // Year
+        // Meta info - dynamically build badges
+        const modalMeta = shadow.querySelector('.modal-meta');
+        const isMovie = category === 'movies';
+        
+        // Clear existing badges (except rating badge which should stay first)
+        const ratingBadge = modalMeta.querySelector('.rating-badge');
+        modalMeta.innerHTML = '';
+        if (ratingBadge) {
+            modalMeta.appendChild(ratingBadge);
+        }
+        
+        // Rating badge
+        if (!ratingBadge) {
+            const ratingBadgeEl = document.createElement('div');
+            ratingBadgeEl.className = 'rating-badge';
+            const ratingText = rating ? parseFloat(rating).toFixed(1) : '0.0';
+            ratingBadgeEl.innerHTML = `
+                <i class="fas fa-star"></i>
+                <span id="modal-rating">${ratingText}</span>
+            `;
+            modalMeta.appendChild(ratingBadgeEl);
+        } else {
+            shadow.querySelector('#modal-rating').textContent = rating ? parseFloat(rating).toFixed(1) : '0.0';
+        }
+        
+        // Year badge
         const yearMatch = yearOrSeason.match(/\d{4}/);
-        shadow.querySelector('#modal-year').textContent = yearMatch ? yearMatch[0] : 'N/A';
+        const yearBadge = document.createElement('div');
+        yearBadge.className = 'meta-badge badge-year';
+        yearBadge.innerHTML = `
+            <i class="fas fa-calendar"></i>
+            <span>${yearMatch ? yearMatch[0] : 'N/A'}</span>
+        `;
+        modalMeta.appendChild(yearBadge);
         
-        // Duration/Episodes - Show seasons/episodes for TV series, duration for movies
-        const durationEl = shadow.querySelector('#modal-duration');
-        if (category === 'tv') {
-            // TV Series: Try to get seasons and episodes from attributes
-            const seasons = this.getAttribute('seasons');
-            const episodes = this.getAttribute('episodes');
-            if (seasons && episodes) {
-                durationEl.textContent = `S${seasons}/EP${episodes}`;
-            } else if (episodes) {
-                durationEl.textContent = `EP${episodes}`;
-            } else if (seasons) {
-                durationEl.textContent = `S${seasons}`;
-            } else {
-                durationEl.textContent = 'N/A';
+        // Duration badge (for movies)
+        if (isMovie) {
+            const duration = this.getAttribute('duration');
+            if (duration) {
+                const durationBadge = document.createElement('div');
+                durationBadge.className = 'meta-badge badge-duration';
+                durationBadge.innerHTML = `
+                    <i class="fas fa-clock"></i>
+                    <span>${duration}</span>
+                `;
+                modalMeta.appendChild(durationBadge);
             }
         } else {
-            // Movies: Show duration
-            const duration = this.getAttribute('duration');
-            durationEl.textContent = duration || 'N/A';
+            // TV Series: Show seasons and episodes
+            const seasons = this.getAttribute('seasons');
+            const episodes = this.getAttribute('episodes');
+            if (seasons) {
+                const seasonsBadge = document.createElement('div');
+                seasonsBadge.className = 'meta-badge badge-seasons';
+                seasonsBadge.innerHTML = `
+                    <i class="fas fa-tv"></i>
+                    <span>${seasons} улирал</span>
+                `;
+                modalMeta.appendChild(seasonsBadge);
+            }
+            if (episodes) {
+                const episodesBadge = document.createElement('div');
+                episodesBadge.className = 'meta-badge badge-episodes';
+                episodesBadge.innerHTML = `
+                    <i class="fas fa-list"></i>
+                    <span>${episodes} анги</span>
+                `;
+                modalMeta.appendChild(episodesBadge);
+            }
         }
         
-        // Rating
-        if (rating) {
-            shadow.querySelector('#modal-rating').textContent = parseFloat(rating).toFixed(1);
-        }
+        // Type badge
+        const typeBadge = document.createElement('div');
+        typeBadge.className = `meta-badge ${isMovie ? 'badge-type-movie' : 'badge-type-tv'}`;
+        typeBadge.innerHTML = `
+            <i class="${isMovie ? 'fas fa-film' : 'fas fa-tv'}"></i>
+            <span>${isMovie ? 'Кино' : 'Цуврал'}</span>
+        `;
+        modalMeta.appendChild(typeBadge);
         
         // Genres
         const genreContainer = shadow.querySelector('#genre-tags');
@@ -1151,8 +1338,9 @@ class MovieCard extends HTMLElement {
         const category = this.getAttribute('category') || 'movies';
         
         // Navigate to movie details page
-        // Note: You'll need to create the movie-details route and component
-        window.location.hash = `#/movie-details/${category}/${movieId}`;
+        if (movieId) {
+            window.location.hash = `#/movie-details/${category}/${movieId}`;
+        }
     }
 
     goToLoginPage() {

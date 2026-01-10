@@ -315,6 +315,34 @@ const views = {
     `;
         
         await initLoginPage();
+    },
+
+    'movie-details': async () => {
+        const main = document.querySelector('main');
+        
+        // Extract category and ID from hash
+        const hash = window.location.hash;
+        const match = hash.match(/#\/movie-details\/(movies|tv)\/(\d+)/);
+        
+        if (!match) {
+            main.innerHTML = `
+                <div style="text-align: center; padding: 100px 20px; color: white;">
+                    <h1>Алдаа</h1>
+                    <p>Киноны мэдээлэл олдсонгүй</p>
+                    <a href="#/" data-link style="color: #4da3ff; text-decoration: none; margin-top: 20px; display: inline-block;">
+                        Нүүр хуудас руу буцах
+                    </a>
+                </div>
+            `;
+            return;
+        }
+        
+        const category = match[1];
+        const movieId = match[2];
+        
+        main.innerHTML = `
+            <movie-details-component movie-id="${movieId}" category="${category}"></movie-details-component>
+        `;
     }
 };
 
@@ -354,7 +382,14 @@ async function setupSections() {
                 
                 renderPaginatedSection("latest-movies", latestMovies, 1);
                 renderPaginatedSection("latest-tv", latestTV, 1);
-                renderPaginatedSection("upcoming-movies", upcoming, 1);
+                // Always show first grid of upcoming items
+                if (upcoming.length > 0) {
+                    sectionState["upcoming-movies"] = 1;
+                    renderPaginatedSection("upcoming-movies", upcoming, 1);
+                } else {
+                    document.getElementById('upcoming-movies').innerHTML = 
+                        '<div class="no-results">Тун удахгүй гарах кино одоогоор байхгүй байна</div>';
+                }
             }
         }
         
@@ -389,12 +424,16 @@ async function loadTMDBDataForSections() {
         renderPaginatedSection("latest-movies", movies, 1);
         renderPaginatedSection("latest-tv", tvShows, 1);
         
+        // Always render upcoming section - show first grid immediately if items exist
         if (upcoming.length === 0) {
             document.getElementById('upcoming-movies').innerHTML = 
                 '<div class="no-results">Тун удахгүй гарах кино одоогоор байхгүй байна</div>';
             const upcomingBtn = document.getElementById('show-more-upcoming');
             if (upcomingBtn) upcomingBtn.style.display = 'none';
         } else {
+            // Always show at least one grid (first page = 6 items) of upcoming items immediately
+            // Reset section state to ensure first page is shown
+            sectionState["upcoming-movies"] = 1;
             renderPaginatedSection("upcoming-movies", upcoming, 1);
         }
         
@@ -455,7 +494,9 @@ async function loadMoreForSection(sectionId) {
         await loadMoreTMDBData(sectionId, sectionState[sectionId]);
     } else {
         const movies = sectionData[sectionId] || getMoviesBySection(sectionId);
-        renderPaginatedSection(sectionId, movies, sectionState[sectionId]);
+        // Ensure we always render at least the first page if items exist
+        const pageToRender = Math.max(sectionState[sectionId], 1);
+        renderPaginatedSection(sectionId, movies, pageToRender);
     }
 }
 
@@ -471,10 +512,14 @@ async function loadMoreTMDBData(sectionId, page) {
             newData = await tmdbService.getUpcomingMovies(page);
         }
         
+        // Append new data to existing section data
         sectionData[sectionId] = [...sectionData[sectionId], ...newData];
         database = [...database, ...newData];
         
-        renderPaginatedSection(sectionId, sectionData[sectionId], page);
+        // Render all items up to the current page
+        // For upcoming section, ensure we always show at least first page
+        const pageToRender = Math.max(page, 1);
+        renderPaginatedSection(sectionId, sectionData[sectionId], pageToRender);
         
     } catch (error) {
         console.error(`❌ Error loading more TMDB data for ${sectionId}:`, error);
@@ -1920,6 +1965,7 @@ router.addRoute('/customlist', views.customlist);
 router.addRoute('/reviews', views.reviews);
 router.addRoute('/login', views.login);
 router.addRoute('/search', views.search);
+router.addRoute('/movie-details/:category/:id', views['movie-details']);
 
 // Initialize app and start router
 initializeApp().then(() => {

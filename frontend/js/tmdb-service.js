@@ -223,15 +223,79 @@ export class TMDBService {
 
     async getMovieDetails(movieId) {
         const data = await this.fetchFromTMDB(`/movie/${movieId}`, {
-            append_to_response: 'credits,videos,release_dates'
+            append_to_response: 'credits,videos,release_dates,recommendations,similar'
         });
         return this.mapMovieDetails(data);
     }
     async getTVDetails(tvId) {
         const data = await this.fetchFromTMDB(`/tv/${tvId}`, {
-            append_to_response: 'credits,videos,content_ratings'
+            append_to_response: 'credits,videos,content_ratings,recommendations,similar'
         });
         return this.mapTVDetails(data);
+    }
+
+    // Get similar movies (less accurate - based on genres/keywords only)
+    async getSimilarMovies(movieId, page = 1) {
+        try {
+            const data = await this.fetchFromTMDB(`/movie/${movieId}/similar`, { page });
+            return data.results.map(movie => {
+                const mapped = this.mapMovieData(movie);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = movie.genre_ids || [];
+                return mapped;
+            });
+        } catch (error) {
+            console.error(`❌ Error fetching similar movies for ${movieId}:`, error);
+            return [];
+        }
+    }
+
+    // Get recommended movies (more accurate - based on user ratings/viewing patterns)
+    async getRecommendedMovies(movieId, page = 1) {
+        try {
+            const data = await this.fetchFromTMDB(`/movie/${movieId}/recommendations`, { page });
+            return data.results.map(movie => {
+                const mapped = this.mapMovieData(movie);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = movie.genre_ids || [];
+                return mapped;
+            });
+        } catch (error) {
+            console.error(`❌ Error fetching recommended movies for ${movieId}:`, error);
+            return [];
+        }
+    }
+
+    // Get similar TV shows (less accurate - based on genres/keywords only)
+    async getSimilarTVShows(tvId, page = 1) {
+        try {
+            const data = await this.fetchFromTMDB(`/tv/${tvId}/similar`, { page });
+            return data.results.map(tv => {
+                const mapped = this.mapTVData(tv);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = tv.genre_ids || [];
+                return mapped;
+            });
+        } catch (error) {
+            console.error(`❌ Error fetching similar TV shows for ${tvId}:`, error);
+            return [];
+        }
+    }
+
+    // Get recommended TV shows (more accurate - based on user ratings/viewing patterns)
+    async getRecommendedTVShows(tvId, page = 1) {
+        try {
+            const data = await this.fetchFromTMDB(`/tv/${tvId}/recommendations`, { page });
+            return data.results.map(tv => {
+                const mapped = this.mapTVData(tv);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = tv.genre_ids || [];
+                return mapped;
+            });
+        } catch (error) {
+            console.error(`❌ Error fetching recommended TV shows for ${tvId}:`, error);
+            return [];
+        }
     }
     mapMovieData(movie) {
         return {
@@ -316,6 +380,7 @@ export class TMDBService {
                 video.type === 'Trailer' && video.site === 'YouTube'
             )?.key || null,
             genres: details.genres?.map(genre => genre.name) || [],
+            genre_ids: details.genres?.map(genre => genre.id) || details.genre_ids || [],
             budget: details.budget ? `$${details.budget.toLocaleString()}` : 'Тодорхойгүй',
             revenue: details.revenue ? `$${details.revenue.toLocaleString()}` : 'Тодорхойгүй',
             status: this.translateStatus(details.status),
@@ -324,7 +389,19 @@ export class TMDBService {
             spoken_languages: details.spoken_languages?.map(lang => lang.english_name) || [],
             production_countries: details.production_countries?.map(country => country.name) || [],
             homepage: details.homepage,
-            imdb_id: details.imdb_id
+            imdb_id: details.imdb_id,
+            similar: details.similar?.results?.map(movie => {
+                const mapped = this.mapMovieData(movie);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = movie.genre_ids || [];
+                return mapped;
+            }) || [],
+            recommendations: details.recommendations?.results?.map(movie => {
+                const mapped = this.mapMovieData(movie);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = movie.genre_ids || [];
+                return mapped;
+            }) || []
         };
     }
 
@@ -355,6 +432,7 @@ export class TMDBService {
                 video.type === 'Trailer' && video.site === 'YouTube'
             )?.key || null,
             genres: details.genres?.map(genre => genre.name) || [],
+            genre_ids: details.genres?.map(genre => genre.id) || details.genre_ids || [],
             created_by: details.created_by?.map(creator => creator.name) || [],
             networks: details.networks?.map(network => network.name) || [],
             last_air_date: details.last_air_date,
@@ -363,7 +441,19 @@ export class TMDBService {
             type: details.type,
             in_production: details.in_production,
             last_episode_to_air: details.last_episode_to_air,
-            next_episode_to_air: details.next_episode_to_air
+            next_episode_to_air: details.next_episode_to_air,
+            similar: details.similar?.results?.map(tv => {
+                const mapped = this.mapTVData(tv);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = tv.genre_ids || [];
+                return mapped;
+            }) || [],
+            recommendations: details.recommendations?.results?.map(tv => {
+                const mapped = this.mapTVData(tv);
+                // Preserve genre_ids for filtering
+                mapped.genre_ids = tv.genre_ids || [];
+                return mapped;
+            }) || []
         };
     }
 
@@ -384,6 +474,68 @@ export class TMDBService {
     // Get YouTube trailer URL
     getTrailerUrl(trailerKey) {
         return trailerKey ? `https://www.youtube.com/watch?v=${trailerKey}` : null;
+    }
+
+    // Get movie images (backdrops, posters, logos)
+    async getMovieImages(movieId) {
+        try {
+            const data = await this.fetchFromTMDB(`/movie/${movieId}/images`);
+            return {
+                backdrops: data.backdrops?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w1280${img.file_path}`,
+                    width: img.width,
+                    height: img.height,
+                    aspect_ratio: img.aspect_ratio,
+                    vote_average: img.vote_average,
+                    vote_count: img.vote_count
+                })) || [],
+                posters: data.posters?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w500${img.file_path}`,
+                    width: img.width,
+                    height: img.height,
+                    aspect_ratio: img.aspect_ratio
+                })) || [],
+                logos: data.logos?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w500${img.file_path}`,
+                    width: img.width,
+                    height: img.height
+                })) || []
+            };
+        } catch (error) {
+            console.error(`❌ Error fetching movie images for ${movieId}:`, error);
+            return { backdrops: [], posters: [], logos: [] };
+        }
+    }
+
+    // Get TV images (backdrops, posters, logos)
+    async getTVImages(tvId) {
+        try {
+            const data = await this.fetchFromTMDB(`/tv/${tvId}/images`);
+            return {
+                backdrops: data.backdrops?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w1280${img.file_path}`,
+                    width: img.width,
+                    height: img.height,
+                    aspect_ratio: img.aspect_ratio,
+                    vote_average: img.vote_average,
+                    vote_count: img.vote_count
+                })) || [],
+                posters: data.posters?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w500${img.file_path}`,
+                    width: img.width,
+                    height: img.height,
+                    aspect_ratio: img.aspect_ratio
+                })) || [],
+                logos: data.logos?.map(img => ({
+                    file_path: `https://image.tmdb.org/t/p/w500${img.file_path}`,
+                    width: img.width,
+                    height: img.height
+                })) || []
+            };
+        } catch (error) {
+            console.error(`❌ Error fetching TV images for ${tvId}:`, error);
+            return { backdrops: [], posters: [], logos: [] };
+        }
     }
 }
 

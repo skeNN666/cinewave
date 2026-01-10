@@ -52,12 +52,21 @@ class Router {
     // If no exact match, try to find a pattern match
     if (!handler) {
       for (let route in this.routes) {
+        // Convert route pattern to regex (e.g., /movie-details/:category/:id -> /movie-details/([^/]+)/([^/]+))
         const pattern = new RegExp('^' + route.replace(/:\w+/g, '([^/]+)') + '$');
         const match = path.match(pattern);
         if (match) {
           handler = this.routes[route];
           break;
         }
+      }
+    }
+
+    // Special handling for movie-details route
+    if (!handler && path.startsWith('/movie-details/')) {
+      const movieDetailsMatch = path.match(/^\/movie-details\/(movies|tv)\/(\d+)$/);
+      if (movieDetailsMatch && this.routes['/movie-details/:category/:id']) {
+        handler = this.routes['/movie-details/:category/:id'];
       }
     }
 
