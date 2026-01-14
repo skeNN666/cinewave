@@ -7,9 +7,6 @@ class Router {
     // Listen for hash changes
     window.addEventListener('hashchange', () => this.handleRoute());
     
-    // Listen for navigation events
-    window.addEventListener('popstate', () => this.handleRoute());
-    
     // Intercept all link clicks
     document.addEventListener('click', (e) => {
       if (e.target.matches('a[data-link]')) {
@@ -27,7 +24,6 @@ class Router {
   // Navigate to a new route
   navigateTo(path) {
     window.location.hash = path;
-    this.handleRoute();
   }
 
   // Handle current route

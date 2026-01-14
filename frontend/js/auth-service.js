@@ -454,32 +454,33 @@ class AuthService {
 
     // Get reviews for a movie
     async getMovieReviews(movieId, category) {
-        try {
-            const baseUrl = this.getBaseUrl();
-            const url = `${baseUrl}/api/reviews/movie/${category}/${movieId}`;
-            
-            console.log('📖 Fetching reviews from:', url);
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const baseUrl = this.getBaseUrl();
+        const url = `${baseUrl}/api/reviews/movie/${category}/${movieId}`;
+        
+        console.log('📖 Fetching reviews from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
+        });
 
-            const data = await response.json();
-            console.log('✅ Reviews fetched:', data.reviews?.length || 0, 'reviews');
-
-            return data.reviews || [];
-        } catch (error) {
-            console.error('❌ Get reviews error:', error);
-            // Return empty array on error instead of throwing
-            return [];
+        if (!response.ok) {
+            let message = `HTTP error! status: ${response.status}`;
+            try {
+                const maybeJson = await response.json();
+                message = maybeJson?.message || message;
+            } catch (_) {
+                // ignore JSON parse errors
+            }
+            throw new Error(message);
         }
+
+        const data = await response.json();
+        console.log('✅ Reviews fetched:', data.reviews?.length || 0, 'reviews');
+
+        return data.reviews || [];
     }
 
     // Helper methods - Legacy methods removed (no longer needed with MongoDB)

@@ -646,14 +646,14 @@ function setupAvatarUpload(authService) {
 
 function setupButtons(authService) {
     const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn.addEventListener('click', () => {
+    if (logoutBtn) logoutBtn.onclick = () => {
         if (confirm('Та гарахдаа итгэлтэй байна уу?')) {
             authService.logout();
         }
-    });
+    };
 
     const deleteBtn = document.getElementById('delete-account-btn');
-    deleteBtn.addEventListener('click', () => {
+    if (deleteBtn) deleteBtn.onclick = () => {
         const confirmed = confirm('Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй!');
         if (confirmed) {
             const doubleCheck = prompt('Баталгаажуулахын тулд "DELETE" гэж бичнэ үү:');
@@ -662,7 +662,7 @@ function setupButtons(authService) {
                 showNotification('Бүртгэл амжилттай устлаа', 'success');
             }
         }
-    });
+    };
 }
 
 function showNotification(message, type) {

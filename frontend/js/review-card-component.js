@@ -46,21 +46,13 @@ class ReviewCardComponent extends HTMLElement {
             minute: '2-digit'
         });
 
-        // Generate star rating display
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        
-        let starsHTML = '';
-        for (let i = 0; i < fullStars; i++) {
-            starsHTML += '<i class="fas fa-star"></i>';
-        }
-        if (hasHalfStar) {
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        }
-        for (let i = 0; i < emptyStars; i++) {
-            starsHTML += '<i class="far fa-star"></i>';
-        }
+        // Generate 1-10 rating display (IMDb style)
+        const safeRating = Math.max(0, Math.min(10, Math.round(rating)));
+        const boxesHTML = Array.from({ length: 10 }, (_, idx) => {
+            const v = idx + 1;
+            const filled = v <= safeRating;
+            return `<span class="rating-box ${filled ? 'filled' : ''}" aria-hidden="true"></span>`;
+        }).join('');
 
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -159,12 +151,26 @@ class ReviewCardComponent extends HTMLElement {
                 .review-rating {
                     display: flex;
                     align-items: center;
-                    gap: 5px;
+                    gap: 10px;
                 }
 
-                .review-rating-stars {
-                    color: #ffd700;
-                    font-size: 1rem;
+                .review-rating-boxes {
+                    display: grid;
+                    grid-template-columns: repeat(10, 10px);
+                    gap: 4px;
+                }
+
+                .rating-box {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 3px;
+                    background: rgba(255, 255, 255, 0.12);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
+                }
+
+                .rating-box.filled {
+                    background: rgba(77, 163, 255, 0.85);
+                    border-color: rgba(77, 163, 255, 0.9);
                 }
 
                 .review-rating-value {
@@ -229,8 +235,8 @@ class ReviewCardComponent extends HTMLElement {
                     </div>
                     <div class="review-meta">
                         <div class="review-rating">
-                            <div class="review-rating-stars">${starsHTML}</div>
-                            <span class="review-rating-value">${rating}/5</span>
+                            <div class="review-rating-boxes" title="${safeRating}/10">${boxesHTML}</div>
+                            <span class="review-rating-value">${safeRating}/10</span>
                         </div>
                         <div class="review-date">
                             <i class="far fa-clock"></i>

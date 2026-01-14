@@ -834,38 +834,156 @@ class MovieDetailsComponent extends HTMLElement {
                     font-weight: 600;
                 }
 
-                .star-rating {
-                    display: flex;
-                    gap: 8px;
+                .rating-controls {
+                    display: grid;
+                    grid-template-columns: 1fr 110px;
+                    gap: 12px;
                     align-items: center;
+                    width: 100%;
+                    max-width: 560px;
                 }
 
-                .star-rating-input {
-                    display: none;
+                .rating-slider {
+                    width: 100%;
                 }
 
-                .star-icon {
-                    font-size: 2rem;
-                    color: #444;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
+                .rating-number {
+                    width: 110px;
+                    padding: 10px 12px;
+                    border-radius: 10px;
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    background: rgba(0, 0, 0, 0.25);
+                    color: #fff;
+                    font-weight: 800;
+                    outline: none;
                 }
 
-                .star-icon:hover,
-                .star-icon.active {
-                    color: #ffd700;
-                    transform: scale(1.1);
-                }
-
-                .star-icon.filled {
-                    color: #ffd700;
+                .rating-number:focus {
+                    border-color: rgba(77, 163, 255, 0.8);
+                    box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.15);
                 }
 
                 .rating-value-display {
-                    margin-left: 15px;
+                    margin-left: 12px;
+                    font-weight: 800;
                     color: #4da3ff;
+                    min-width: 70px;
+                }
+
+                .ratings-summary {
+                    display: grid;
+                    grid-template-columns: 1.1fr 2fr;
+                    gap: 22px;
+                    margin: 0 0 20px;
+                    padding: 18px;
+                    border-radius: 16px;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                .summary-left {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    justify-content: center;
+                }
+
+                .avg-score {
+                    font-size: 2.8rem;
+                    font-weight: 900;
+                    line-height: 1;
+                }
+
+                .avg-score span {
+                    font-size: 1.05rem;
+                    font-weight: 800;
+                    color: #999;
+                    margin-left: 8px;
+                }
+
+                .summary-subtext {
+                    color: #bbb;
+                    font-size: 0.95rem;
+                }
+
+                .histogram {
+                    display: grid;
+                    grid-template-columns: repeat(10, 1fr);
+                    grid-template-rows: 150px 20px;
+                    gap: 4px;
+                    align-items: end;
+                    width: 100%;
+                    height: 170px;
+                }
+
+                .hist-bar-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    height: 100%;
+                    justify-content: flex-end;
+                }
+
+                .hist-bar {
+                    width: 100%;
+                    max-width: 20px;
+                    background: rgba(255, 255, 255, 0.10);
+                    border-radius: 4px 4px 0 0;
+                    overflow: hidden;
+                    position: relative;
+                    transition: height 0.3s ease;
+                }
+
+                .hist-bar > div {
+                    width: 100%;
+                    background: linear-gradient(to top, rgba(77, 163, 255, 0.9), rgba(102, 126, 234, 0.85));
+                    border-radius: 4px 4px 0 0;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                }
+
+                .hist-label {
+                    margin-top: 4px;
+                    font-size: 0.75rem;
+                    color: #ccc;
+                    text-align: center;
                     font-weight: 600;
-                    font-size: 1.1rem;
+                }
+
+                .hist-value {
+                    font-size: 0.7rem;
+                    color: #999;
+                    text-align: center;
+                    margin-top: 2px;
+                }
+
+                @media (max-width: 900px) {
+                    .ratings-summary {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .histogram {
+                        grid-template-columns: repeat(5, 1fr);
+                        grid-template-rows: 120px 20px 120px 20px;
+                        height: auto;
+                        margin-top: 10px;
+                    }
+                    
+                    .hist-bar-container:nth-child(n+6) {
+                        grid-row: 3;
+                    }
+                    
+                    .hist-bar-container:nth-child(1) { order: 10; }
+                    .hist-bar-container:nth-child(2) { order: 9; }
+                    .hist-bar-container:nth-child(3) { order: 8; }
+                    .hist-bar-container:nth-child(4) { order: 7; }
+                    .hist-bar-container:nth-child(5) { order: 6; }
+                    .hist-bar-container:nth-child(6) { order: 5; }
+                    .hist-bar-container:nth-child(7) { order: 4; }
+                    .hist-bar-container:nth-child(8) { order: 3; }
+                    .hist-bar-container:nth-child(9) { order: 2; }
+                    .hist-bar-container:nth-child(10) { order: 1; }
                 }
 
                 .review-textarea {
@@ -1876,15 +1994,13 @@ class MovieDetailsComponent extends HTMLElement {
                                     Сэтгэгдэл үлдээх
                                 </div>
                                 <div class="rating-input-group">
-                                    <label class="rating-label">Үнэлгээ</label>
-                                    <div class="star-rating" id="star-rating">
-                                        ${[1, 2, 3, 4, 5].map(i => `
-                                            <input type="radio" name="rating" id="star-${i}" value="${i}" class="star-rating-input">
-                                            <label for="star-${i}" class="star-icon" data-rating="${i}">
-                                                <i class="fas fa-star"></i>
-                                            </label>
-                                        `).join('')}
-                                        <span class="rating-value-display" id="rating-display"></span>
+                                    <label class="rating-label">Үнэлгээ (1-10)</label>
+                                    <div class="rating-controls">
+                                        <input class="rating-slider" id="rating-slider" type="range" min="1" max="10" step="0.1" value="7.0">
+                                        <input class="rating-number" id="rating-number" type="number" min="1" max="10" step="0.1" value="7.0">
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <span class="rating-value-display" id="rating-display">7.0/10</span>
                                     </div>
                                 </div>
                                 <textarea 
@@ -1897,6 +2013,13 @@ class MovieDetailsComponent extends HTMLElement {
                                     <i class="fas fa-paper-plane"></i>
                                     <span>Илгээх</span>
                                 </button>
+                            </div>
+                            <div class="ratings-summary" id="ratings-summary" style="display:none;">
+                                <div class="summary-left">
+                                    <div class="avg-score" id="avg-score">0.0 <span>/ 10</span></div>
+                                    <div class="summary-subtext" id="summary-subtext">0 үнэлгээ</div>
+                                </div>
+                                <div class="histogram" id="histogram"></div>
                             </div>
                             <div class="reviews-list" id="reviews-list"></div>
                         </div>
@@ -2094,56 +2217,43 @@ class MovieDetailsComponent extends HTMLElement {
 
     setupReviewsSection() {
         const shadow = this.shadowRoot;
-        const starRating = shadow.getElementById('star-rating');
+        const ratingSlider = shadow.getElementById('rating-slider');
+        const ratingNumber = shadow.getElementById('rating-number');
         const ratingDisplay = shadow.getElementById('rating-display');
         const submitBtn = shadow.getElementById('submit-review-btn');
         const reviewText = shadow.getElementById('review-text');
         const reviewsList = shadow.getElementById('reviews-list');
 
-        let selectedRating = 0;
+        let selectedRating = 7.0;
 
-        // Setup star rating hover and click
-        if (starRating) {
-            const stars = starRating.querySelectorAll('.star-icon');
-            
-            stars.forEach((star, index) => {
-                const rating = index + 1;
-                
-                star.addEventListener('mouseenter', () => {
-                    stars.forEach((s, i) => {
-                        if (i <= index) {
-                            s.classList.add('active');
-                        } else {
-                            s.classList.remove('active');
-                        }
-                    });
-                });
+        const clampRating = (v) => {
+            const n = Number(v);
+            if (Number.isNaN(n)) return 0;
+            return Math.min(10, Math.max(1, n));
+        };
 
-                star.addEventListener('click', () => {
-                    selectedRating = rating;
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.classList.add('filled');
-                            s.classList.remove('active');
-                        } else {
-                            s.classList.remove('filled', 'active');
-                        }
-                    });
-                    if (ratingDisplay) {
-                        ratingDisplay.textContent = `${rating}/5`;
-                    }
-                });
-            });
+        const formatRating = (v) => {
+            const n = clampRating(v);
+            return `${n.toFixed(1)}/10`;
+        };
 
-            starRating.addEventListener('mouseleave', () => {
-                stars.forEach((star, index) => {
-                    star.classList.remove('active');
-                    if (index < selectedRating) {
-                        star.classList.add('filled');
-                    }
-                });
-            });
+        const setRatingUI = (v) => {
+            const n = clampRating(v);
+            selectedRating = n;
+            if (ratingSlider) ratingSlider.value = n.toFixed(1);
+            if (ratingNumber) ratingNumber.value = n.toFixed(1);
+            if (ratingDisplay) ratingDisplay.textContent = formatRating(n);
+        };
+
+        if (ratingSlider) {
+            ratingSlider.addEventListener('input', () => setRatingUI(ratingSlider.value));
         }
+        if (ratingNumber) {
+            ratingNumber.addEventListener('input', () => setRatingUI(ratingNumber.value));
+        }
+
+        // Initialize UI
+        setRatingUI(selectedRating);
 
         // Load existing reviews
         this.loadReviews(); // Async, no need to await here
@@ -2160,9 +2270,13 @@ class MovieDetailsComponent extends HTMLElement {
         const shadow = this.shadowRoot;
         const reviewsList = shadow.getElementById('reviews-list');
         if (!reviewsList) return;
-
+    
         const movieId = this.movieId;
         const category = this.category;
+        const ratingsSummary = shadow.getElementById('ratings-summary');
+        const avgScoreEl = shadow.getElementById('avg-score');
+        const summarySubtextEl = shadow.getElementById('summary-subtext');
+        const histogramEl = shadow.getElementById('histogram');
         
         try {
             // Try to load from backend API first
@@ -2181,9 +2295,56 @@ class MovieDetailsComponent extends HTMLElement {
             
             if (reviews.length === 0) {
                 reviewsList.innerHTML = '<div class="no-reviews">Одоогоор сэтгэгдэл байхгүй байна. Анхны сэтгэгдэл үлдээнэ үү!</div>';
+                if (ratingsSummary) ratingsSummary.style.display = 'none';
                 return;
             }
-
+    
+            // Movie/TV rating summary histogram (1-10) — show only on details page
+            try {
+                const counts = Array.from({ length: 10 }, () => 0);
+                const ratings = reviews
+                    .map(r => Number(r.rating))
+                    .filter(v => !Number.isNaN(v) && v >= 1 && v <= 10);
+    
+                // Bucket by rounded integer (IMDb-like distribution)
+                ratings.forEach(v => {
+                    const bucket = Math.min(10, Math.max(1, Math.round(v)));
+                    counts[bucket - 1]++;
+                });
+    
+                const total = ratings.length;
+                const avg = total ? (ratings.reduce((a, b) => a + b, 0) / total) : 0;
+    
+                if (ratingsSummary && avgScoreEl && summarySubtextEl && histogramEl) {
+                    ratingsSummary.style.display = 'grid';
+                    avgScoreEl.innerHTML = `${avg.toFixed(1)} <span>/ 10</span>`;
+                    summarySubtextEl.textContent = `${total} үнэлгээ • ${reviews.length} сэтгэгдэл`;
+    
+                    const maxCount = Math.max(...counts, 1);
+                    
+                    // Create vertical histogram bars for scores 1-10
+                    histogramEl.innerHTML = counts
+                        .map((c, idx) => {
+                            const score = idx + 1; // 1 to 10
+                            const heightPct = total ? Math.round((c / maxCount) * 100) : 0;
+                            const pct = total ? Math.round((c / total) * 100) : 0;
+                            
+                            return `
+                                <div class="hist-bar-container">
+                                    <div class="hist-bar" style="height: ${heightPct}%;">
+                                        <div style="height: 100%;"></div>
+                                    </div>
+                                    <div class="hist-label">${score}</div>
+                                    <div class="hist-value">${pct}%</div>
+                                </div>
+                            `;
+                        })
+                        .join('');
+                }
+            } catch (e) {
+                if (ratingsSummary) ratingsSummary.style.display = 'none';
+            }
+    
             // Show only latest 3 reviews
             const latestReviews = reviews.slice(0, 3);
             
@@ -2329,13 +2490,13 @@ class MovieDetailsComponent extends HTMLElement {
             // Reset form
             const reviewText = shadow.getElementById('review-text');
             const ratingDisplay = shadow.getElementById('rating-display');
-            const stars = shadow.querySelectorAll('.star-icon');
+            const ratingSlider = shadow.getElementById('rating-slider');
+            const ratingNumber = shadow.getElementById('rating-number');
             
             if (reviewText) reviewText.value = '';
-            if (ratingDisplay) ratingDisplay.textContent = '';
-            stars.forEach(star => {
-                star.classList.remove('filled', 'active');
-            });
+            if (ratingSlider) ratingSlider.value = '7.0';
+            if (ratingNumber) ratingNumber.value = '7.0';
+            if (ratingDisplay) ratingDisplay.textContent = '7.0/10';
             
             // Scroll to new review
             setTimeout(() => {
