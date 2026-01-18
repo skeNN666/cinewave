@@ -2588,6 +2588,7 @@ class MovieDetailsComponent extends HTMLElement {
     async updateAuthUI() {
         const shadow = this.shadowRoot;
         const loginPrompt = shadow.getElementById('login-prompt');
+        const watchlistBtn = shadow.getElementById('watchlist-btn');
         
         if (!loginPrompt) return;
         
@@ -2595,8 +2596,47 @@ class MovieDetailsComponent extends HTMLElement {
         
         if (!isLoggedIn) {
             loginPrompt.style.display = 'block';
+            if (watchlistBtn) {
+                watchlistBtn.classList.remove('active');
+                const icon = watchlistBtn.querySelector('i');
+                const span = watchlistBtn.querySelector('span');
+                if (icon && span) {
+                    icon.className = 'far fa-bookmark';
+                    span.textContent = 'Watchlist';
+                }
+            }
         } else {
             loginPrompt.style.display = 'none';
+            
+            // Check watchlist status
+            if (watchlistBtn && this.movieId) {
+                try {
+                    const { authService } = await import('./auth-service.js');
+                    const user = authService.getCurrentUser();
+                    const movieId = parseInt(this.movieId);
+                    const isInWatchlist = user?.watchlist?.includes(movieId) || false;
+                    
+                    if (isInWatchlist) {
+                        watchlistBtn.classList.add('active');
+                        const icon = watchlistBtn.querySelector('i');
+                        const span = watchlistBtn.querySelector('span');
+                        if (icon && span) {
+                            icon.className = 'fas fa-bookmark';
+                            span.textContent = 'Нэмсэн';
+                        }
+                    } else {
+                        watchlistBtn.classList.remove('active');
+                        const icon = watchlistBtn.querySelector('i');
+                        const span = watchlistBtn.querySelector('span');
+                        if (icon && span) {
+                            icon.className = 'far fa-bookmark';
+                            span.textContent = 'Watchlist';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking watchlist status:', error);
+                }
+            }
         }
         
         // Also update periodically while component is visible
@@ -2621,19 +2661,58 @@ class MovieDetailsComponent extends HTMLElement {
         }
         
         const shadow = this.shadowRoot;
+        const movieId = parseInt(this.movieId);
         
         switch(action) {
             case 'watchlist':
-                alert(`"${movieName}" кино watchlist-д нэмэгдлээ!`);
-                const watchlistBtn = shadow.getElementById('watchlist-btn');
-                if (watchlistBtn) {
-                    watchlistBtn.classList.add('active');
-                    const icon = watchlistBtn.querySelector('i');
-                    const span = watchlistBtn.querySelector('span');
-                    if (icon && span) {
-                        icon.className = 'fas fa-bookmark';
-                        span.textContent = 'Нэмсэн';
+                try {
+                    const { authService } = await import('./auth-service.js');
+                    const watchlistBtn = shadow.getElementById('watchlist-btn');
+                    
+                    // Check if already in watchlist
+                    const user = authService.getCurrentUser();
+                    const isInWatchlist = user?.watchlist?.includes(movieId) || false;
+                    
+                    if (isInWatchlist) {
+                        // Remove from watchlist
+                        await authService.removeFromWatchlist(movieId);
+                        if (watchlistBtn) {
+                            watchlistBtn.classList.remove('active');
+                            const icon = watchlistBtn.querySelector('i');
+                            const span = watchlistBtn.querySelector('span');
+                            if (icon && span) {
+                                icon.className = 'far fa-bookmark';
+                                span.textContent = 'Watchlist';
+                            }
+                        }
+                        // Show notification
+                        const notification = document.createElement('div');
+                        notification.textContent = `"${movieName}" watchlist-аас хаслаа`;
+                        notification.style.cssText = 'position: fixed; top: 100px; right: 20px; background: #4da3ff; color: white; padding: 15px 25px; border-radius: 8px; z-index: 10000;';
+                        document.body.appendChild(notification);
+                        setTimeout(() => notification.remove(), 3000);
+                    } else {
+                        // Add to watchlist
+                        await authService.addToWatchlist(movieId);
+                        if (watchlistBtn) {
+                            watchlistBtn.classList.add('active');
+                            const icon = watchlistBtn.querySelector('i');
+                            const span = watchlistBtn.querySelector('span');
+                            if (icon && span) {
+                                icon.className = 'fas fa-bookmark';
+                                span.textContent = 'Нэмсэн';
+                            }
+                        }
+                        // Show notification
+                        const notification = document.createElement('div');
+                        notification.textContent = `"${movieName}" watchlist-д нэмэгдлээ!`;
+                        notification.style.cssText = 'position: fixed; top: 100px; right: 20px; background: #4da3ff; color: white; padding: 15px 25px; border-radius: 8px; z-index: 10000;';
+                        document.body.appendChild(notification);
+                        setTimeout(() => notification.remove(), 3000);
                     }
+                } catch (error) {
+                    console.error('Watchlist error:', error);
+                    alert(error.message || 'Watchlist шинэчлэхэд алдаа гарлаа');
                 }
                 break;
             case 'watched':

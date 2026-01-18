@@ -466,14 +466,12 @@ class CineWaveNavbar extends HTMLElement {
         <button class="sign-in">Нэвтрэх</button>
       </nav>
 
-      <!-- Mobile Search (toggleable) -->
       <div class="mobile-search-wrapper" id="mobile-search">
         <div class="mobile-search-group">
           <input type="text" placeholder="Хайх..." id="mobile-search-input">
         </div>
       </div>
 
-      <!-- Mobile Bottom Navigation -->
       <nav class="mobile-bottom-nav">
         <div class="mobile-nav-items">
           <a href="/" class="mobile-nav-item" data-mobile-link data-route="home">

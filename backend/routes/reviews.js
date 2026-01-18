@@ -4,6 +4,124 @@ import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Get all reviews (for all reviews page)
+router.get('/', async (req, res) => {
+  try {
+    console.log('📖 Fetching all reviews');
+    
+    const reviews = await Review.find({})
+      .populate('userId', 'firstName lastName email avatar')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    console.log(`✅ Found ${reviews.length} reviews in database`);
+
+    // Format reviews for frontend
+    const formattedReviews = reviews.map(review => {
+      const userIdObj = review.userId;
+      let userId = review.userId?.toString();
+      let username = review.username || 'Хэрэглэгч';
+      let avatar = review.avatar || null;
+
+      if (userIdObj && typeof userIdObj === 'object' && !userIdObj._id) {
+        userId = userIdObj._id?.toString() || userIdObj.toString();
+        if (userIdObj.firstName || userIdObj.lastName) {
+          username = `${userIdObj.firstName || ''} ${userIdObj.lastName || ''}`.trim() || 
+                     userIdObj.email?.split('@')[0] || username;
+        }
+        avatar = avatar || userIdObj.avatar || null;
+      } else if (userIdObj && typeof userIdObj === 'object' && userIdObj._id) {
+        userId = userIdObj._id.toString();
+        username = `${userIdObj.firstName || ''} ${userIdObj.lastName || ''}`.trim() || 
+                   userIdObj.email?.split('@')[0] || username;
+        avatar = avatar || userIdObj.avatar || null;
+      }
+
+      return {
+        id: review._id.toString(),
+        userId: userId,
+        username: username,
+        avatar: avatar,
+        rating: review.rating,
+        text: review.text,
+        movieId: review.movieId,
+        category: review.category,
+        date: review.createdAt ? new Date(review.createdAt).toISOString() : (review.date || new Date().toISOString()),
+        isAdmin: false
+      };
+    });
+
+    console.log(`📤 Sending ${formattedReviews.length} formatted reviews to frontend`);
+    res.json({ reviews: formattedReviews });
+  } catch (error) {
+    console.error('❌ Get all reviews error:', error);
+    res.status(500).json({ 
+      message: 'Сэтгэгдлүүдийг авахад алдаа гарлаа',
+      error: error.message 
+    });
+  }
+});
+
+// Get all reviews for a specific user (for profile page)
+router.get('/user', authenticateToken, async (req, res) => {
+  try {
+    console.log(`📖 Fetching reviews for user: ${req.userId}`);
+    
+    const reviews = await Review.find({ 
+      userId: req.userId 
+    })
+      .populate('userId', 'firstName lastName email avatar')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    console.log(`✅ Found ${reviews.length} reviews for user`);
+
+    // Format reviews for frontend
+    const formattedReviews = reviews.map(review => {
+      const userIdObj = review.userId;
+      let userId = review.userId?.toString();
+      let username = review.username || 'Хэрэглэгч';
+      let avatar = review.avatar || null;
+
+      if (userIdObj && typeof userIdObj === 'object' && !userIdObj._id) {
+        userId = userIdObj._id?.toString() || userIdObj.toString();
+        if (userIdObj.firstName || userIdObj.lastName) {
+          username = `${userIdObj.firstName || ''} ${userIdObj.lastName || ''}`.trim() || 
+                     userIdObj.email?.split('@')[0] || username;
+        }
+        avatar = avatar || userIdObj.avatar || null;
+      } else if (userIdObj && typeof userIdObj === 'object' && userIdObj._id) {
+        userId = userIdObj._id.toString();
+        username = `${userIdObj.firstName || ''} ${userIdObj.lastName || ''}`.trim() || 
+                   userIdObj.email?.split('@')[0] || username;
+        avatar = avatar || userIdObj.avatar || null;
+      }
+
+      return {
+        id: review._id.toString(),
+        userId: userId,
+        username: username,
+        avatar: avatar,
+        rating: review.rating,
+        text: review.text,
+        movieId: review.movieId,
+        category: review.category,
+        date: review.createdAt ? new Date(review.createdAt).toISOString() : (review.date || new Date().toISOString()),
+        isAdmin: false
+      };
+    });
+
+    console.log(`📤 Sending ${formattedReviews.length} formatted reviews to frontend`);
+    res.json({ reviews: formattedReviews });
+  } catch (error) {
+    console.error('❌ Get user reviews error:', error);
+    res.status(500).json({ 
+      message: 'Хэрэглэгчийн сэтгэгдлүүдийг авахад алдаа гарлаа',
+      error: error.message 
+    });
+  }
+});
+
 // Get all reviews for a specific movie
 router.get('/movie/:category/:movieId', async (req, res) => {
   try {

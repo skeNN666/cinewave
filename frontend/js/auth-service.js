@@ -483,6 +483,73 @@ class AuthService {
         return data.reviews || [];
     }
 
+    // Get all reviews (for all reviews page)
+    async getAllReviews() {
+        const baseUrl = this.getBaseUrl();
+        const url = `${baseUrl}/api/reviews`;
+        
+        console.log('📖 Fetching all reviews from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            let message = `HTTP error! status: ${response.status}`;
+            try {
+                const maybeJson = await response.json();
+                message = maybeJson?.message || message;
+            } catch (_) {
+                // ignore JSON parse errors
+            }
+            throw new Error(message);
+        }
+
+        const data = await response.json();
+        console.log('✅ All reviews fetched:', data.reviews?.length || 0, 'reviews');
+
+        return data.reviews || [];
+    }
+
+    // Get current user's reviews (for profile page)
+    async getUserReviews() {
+        if (!this.isAuthenticated()) {
+            throw new Error('Нэвтрэх шаардлагатай');
+        }
+
+        const baseUrl = this.getBaseUrl();
+        const url = `${baseUrl}/api/reviews/user`;
+        
+        console.log('📖 Fetching user reviews from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.token}`
+            }
+        });
+
+        if (!response.ok) {
+            let message = `HTTP error! status: ${response.status}`;
+            try {
+                const maybeJson = await response.json();
+                message = maybeJson?.message || message;
+            } catch (_) {
+                // ignore JSON parse errors
+            }
+            throw new Error(message);
+        }
+
+        const data = await response.json();
+        console.log('✅ User reviews fetched:', data.reviews?.length || 0, 'reviews');
+
+        return data.reviews || [];
+    }
+
     // Helper methods - Legacy methods removed (no longer needed with MongoDB)
     // Password hashing and verification now handled by backend
 }

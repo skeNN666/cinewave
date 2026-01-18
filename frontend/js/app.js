@@ -2024,44 +2024,38 @@ async function initAllReviewsPage() {
     const totalMoviesEl = document.getElementById('total-movies');
     
     try {
-        // Load all reviews from localStorage
-        const allReviews = [];
-        const movieMap = new Map(); // Track unique movies
+        // Load all reviews from backend API
+        const { authService } = await import('./auth-service.js');
+        let allReviews = [];
         
-        // Iterate through all localStorage keys
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            
-            // Check if key matches review pattern: reviews_category_movieId
-            if (key && key.startsWith('reviews_')) {
-                try {
-                    const parts = key.split('_');
-                    if (parts.length >= 3) {
-                        const category = parts[1]; // movies or tv
-                        const movieId = parts.slice(2).join('_'); // Handle IDs with underscores
-                        
-                        const storedReviews = localStorage.getItem(key);
-                        const reviews = storedReviews ? JSON.parse(storedReviews) : [];
-                        
-                        // Add movie info to each review
-                        reviews.forEach(review => {
-                            allReviews.push({
-                                ...review,
-                                movieId: movieId,
-                                category: category,
-                                storageKey: key
+        try {
+            allReviews = await authService.getAllReviews();
+            console.log(`✅ Loaded ${allReviews.length} reviews from backend`);
+        } catch (error) {
+            console.warn('⚠️ Could not load reviews from backend, trying localStorage:', error);
+            // Fallback to localStorage for backward compatibility
+            const movieMap = new Map();
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('reviews_')) {
+                    try {
+                        const parts = key.split('_');
+                        if (parts.length >= 3) {
+                            const category = parts[1];
+                            const movieId = parts.slice(2).join('_');
+                            const storedReviews = localStorage.getItem(key);
+                            const reviews = storedReviews ? JSON.parse(storedReviews) : [];
+                            reviews.forEach(review => {
+                                allReviews.push({
+                                    ...review,
+                                    movieId: movieId,
+                                    category: category
+                                });
                             });
-                            
-                            // Track unique movies
-                            const movieKey = `${category}_${movieId}`;
-                            if (!movieMap.has(movieKey)) {
-                                movieMap.set(movieKey, { category, movieId, reviewCount: 0 });
-                            }
-                            movieMap.get(movieKey).reviewCount++;
-                        });
+                        }
+                    } catch (error) {
+                        console.error(`Error parsing reviews from key ${key}:`, error);
                     }
-                } catch (error) {
-                    console.error(`Error parsing reviews from key ${key}:`, error);
                 }
             }
         }
@@ -2071,6 +2065,16 @@ async function initAllReviewsPage() {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
             return dateB - dateA; // Latest first
+        });
+        
+        // Track unique movies
+        const movieMap = new Map();
+        allReviews.forEach(review => {
+            const movieKey = `${review.category}_${review.movieId}`;
+            if (!movieMap.has(movieKey)) {
+                movieMap.set(movieKey, { category: review.category, movieId: review.movieId, reviewCount: 0 });
+            }
+            movieMap.get(movieKey).reviewCount++;
         });
         
         // Update stats

@@ -1295,7 +1295,7 @@ class MovieCard extends HTMLElement {
         }
     }
 
-    handleUserAction(action) {
+    async handleUserAction(action) {
         const isLoggedIn = this.checkAuthStatus();
         const movieName = this.getAttribute('name');
         
@@ -1306,13 +1306,42 @@ class MovieCard extends HTMLElement {
         }
         
         const shadow = this.shadowRoot;
+        const movieId = parseInt(this.getAttribute('data-tmdb-id'));
+        
+        if (!movieId) {
+            alert('Киноны ID олдсонгүй');
+            return;
+        }
         
         switch(action) {
             case 'watchlist':
-                alert(`"${movieName}" кино watchlist-д нэмэгдлээ!`);
-                const watchlistBtn = shadow.querySelector('#watchlist-btn');
-                watchlistBtn.classList.add('active');
-                watchlistBtn.innerHTML = '<i class="fas fa-bookmark"></i> Нэмсэн';
+                try {
+                    const { authService } = await import('./auth-service.js');
+                    const watchlistBtn = shadow.querySelector('#watchlist-btn');
+                    
+                    // Check if already in watchlist
+                    const user = authService.getCurrentUser();
+                    const isInWatchlist = user?.watchlist?.includes(movieId) || false;
+                    
+                    if (isInWatchlist) {
+                        // Remove from watchlist
+                        await authService.removeFromWatchlist(movieId);
+                        if (watchlistBtn) {
+                            watchlistBtn.classList.remove('active');
+                            watchlistBtn.innerHTML = '<i class="far fa-bookmark"></i> Watchlist';
+                        }
+                    } else {
+                        // Add to watchlist
+                        await authService.addToWatchlist(movieId);
+                        if (watchlistBtn) {
+                            watchlistBtn.classList.add('active');
+                            watchlistBtn.innerHTML = '<i class="fas fa-bookmark"></i> Нэмсэн';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Watchlist error:', error);
+                    alert(error.message || 'Watchlist шинэчлэхэд алдаа гарлаа');
+                }
                 break;
             case 'watched':
                 const rating = prompt('Энэ киног 1-10-аар үнэлнэ үү:', '8');

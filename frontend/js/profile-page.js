@@ -26,7 +26,7 @@ export function renderProfilePage() {
                     <button class="tab-btn active" data-tab="overview">Ерөнхий</button>
                     <button class="tab-btn" data-tab="watchlist">Үзэх жагсаалт</button>
                     <button class="tab-btn" data-tab="favorites">Дуртай</button>
-                    <button class="tab-btn" data-tab="ratings">Үнэлгээ</button>
+                    <button class="tab-btn" data-tab="ratings">Шүүмж</button>
                     <button class="tab-btn" data-tab="settings">Тохиргоо</button>
                 </div>
 
@@ -346,7 +346,13 @@ export async function initProfilePage(authService) {
         loadUserData(user);
     }
 
-    setupTabs();
+    // Load user reviews
+    await loadUserReviews(authService);
+    
+    // Load watchlist
+    await loadWatchlist(authService);
+
+    setupTabs(authService);
     setupProfileForm(authService);
     setupPasswordForm(authService);
     setupQuickEditForm(authService);
@@ -378,8 +384,7 @@ function loadUserData(user) {
     document.getElementById('favorites-count').textContent = user.favorites?.length || 0;
     // Ratings is an array in backend, not an object
     document.getElementById('ratings-count').textContent = user.ratings?.length || 0;
-    // Reviews not in backend model yet, set to 0
-    document.getElementById('reviews-count').textContent = 0;
+    // Reviews count will be updated by loadUserReviews
 
     // Settings form
     document.getElementById('edit-firstName').value = user.firstName;
@@ -388,7 +393,208 @@ function loadUserData(user) {
     document.getElementById('edit-phone').value = user.phone || '';
 }
 
-function setupTabs() {
+async function loadUserReviews(authService) {
+    try {
+        const reviews = await authService.getUserReviews();
+        const reviewsCountEl = document.getElementById('reviews-count');
+        const ratingsContainer = document.getElementById('ratings-container');
+        
+        if (reviewsCountEl) {
+            reviewsCountEl.textContent = reviews.length || 0;
+        }
+        
+        // Display reviews in the ratings container
+        if (ratingsContainer) {
+            if (reviews.length === 0) {
+                ratingsContainer.innerHTML = '<p class="no-data">Сэтгэгдэл бичээгүй байна</p>';
+            } else {
+                // Fetch movie info for each review
+                const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
+                const movieInfoMap = new Map();
+                
+                if (service) {
+                    const uniqueMovies = new Set(reviews.map(r => `${r.category}_${r.movieId}`));
+                    const movieInfoPromises = Array.from(uniqueMovies).map(async (movieKey) => {
+                        const [category, movieId] = movieKey.split('_');
+                        try {
+                            const details = category === 'movies' 
+                                ? await service.getMovieDetails(movieId)
+                                : await service.getTVDetails(movieId);
+                            
+                            if (details) {
+                                movieInfoMap.set(movieKey, {
+                                    name: details.name || 'Unknown',
+                                    image: details.image || details.poster_path || '',
+                                    category: category
+                                });
+                            }
+                        } catch (error) {
+                            console.error(`Error loading movie info for ${movieKey}:`, error);
+                            movieInfoMap.set(movieKey, {
+                                name: 'Unknown Movie',
+                                image: '',
+                                category: category
+                            });
+                        }
+                    });
+                    
+                    await Promise.allSettled(movieInfoPromises);
+                }
+                
+                // Render reviews
+                ratingsContainer.innerHTML = reviews.map(review => {
+                    const movieKey = `${review.category}_${review.movieId}`;
+                    const movieInfo = movieInfoMap.get(movieKey) || {
+                        name: 'Unknown Movie',
+                        image: '',
+                        category: review.category
+                    };
+                    
+                    function escapeHtmlAttribute(text) {
+                        return String(text || '')
+                            .replace(/&/g, '&amp;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;');
+                    }
+                    
+                    return `
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                ${movieInfo.image ? `
+                                    <img src="${movieInfo.image}" alt="${escapeHtmlAttribute(movieInfo.name)}" style="width: 80px; height: 120px; border-radius: 8px; object-fit: cover; cursor: pointer;" onclick="window.location.hash = '#/movie-details/${movieInfo.category}/${review.movieId}'">
+                                ` : `
+                                    <div style="width: 80px; height: 120px; border-radius: 8px; background: linear-gradient(135deg, #4da3ff, #667eea); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                        <i class="fas fa-${movieInfo.category === 'movies' ? 'film' : 'tv'}"></i>
+                                    </div>
+                                `}
+                                <div style="flex: 1;">
+                                    <h3 style="color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; cursor: pointer;" onclick="window.location.hash = '#/movie-details/${movieInfo.category}/${review.movieId}'">${escapeHtmlAttribute(movieInfo.name)}</h3>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="color: #999; font-size: 0.9rem;">
+                                            <i class="fas fa-${movieInfo.category === 'movies' ? 'film' : 'tv'}" style="color: #4da3ff; margin-right: 5px;"></i>
+                                            ${movieInfo.category === 'movies' ? 'Кино' : 'Цуврал'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <review-card
+                                username="${escapeHtmlAttribute(review.username || 'Хэрэглэгч')}"
+                                rating="${review.rating || 0}"
+                                text="${escapeHtmlAttribute(review.text || '')}"
+                                date="${review.date || review.createdAt || new Date().toISOString()}"
+                                avatar="${review.avatar || ''}"
+                                is-admin="false"
+                                user-id="${escapeHtmlAttribute(review.userId || '')}">
+                            </review-card>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        console.log(`✅ Loaded ${reviews.length} user reviews`);
+    } catch (error) {
+        console.error('❌ Error loading user reviews:', error);
+        const reviewsCountEl = document.getElementById('reviews-count');
+        const ratingsContainer = document.getElementById('ratings-container');
+        
+        if (reviewsCountEl) {
+            reviewsCountEl.textContent = '0';
+        }
+        if (ratingsContainer) {
+            ratingsContainer.innerHTML = '<p class="no-data">Сэтгэгдэл ачаалахад алдаа гарлаа</p>';
+        }
+    }
+}
+
+async function loadWatchlist(authService) {
+    try {
+        const user = authService.getCurrentUser();
+        const watchlistIds = user?.watchlist || [];
+        const watchlistContainer = document.getElementById('watchlist-container');
+        
+        if (!watchlistContainer) return;
+        
+        if (watchlistIds.length === 0) {
+            watchlistContainer.innerHTML = '<p class="no-data">Үзэх жагсаалт хоосон байна</p>';
+            return;
+        }
+        
+        // Fetch movie details for each watchlist item
+        const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
+        if (!service) {
+            watchlistContainer.innerHTML = '<p class="no-data">TMDB сервис ашиглах боломжгүй байна</p>';
+            return;
+        }
+        
+        watchlistContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;"><div class="loading-spinner" style="width: 50px; height: 50px; border: 4px solid rgba(77, 163, 255, 0.3); border-top-color: #4da3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div><p>Ачааллаж байна...</p></div>';
+        
+        const moviePromises = watchlistIds.map(async (movieId) => {
+            try {
+                // Try as movie first (since backend stores as "movie ID")
+                const details = await service.getMovieDetails(movieId);
+                return { ...details, category: 'movies', id: movieId };
+            } catch (error) {
+                // If movie fails, try as TV show
+                try {
+                    const details = await service.getTVDetails(movieId);
+                    return { ...details, category: 'tv', id: movieId };
+                } catch (tvError) {
+                    console.error(`Error loading watchlist item ${movieId}:`, error, tvError);
+                    return null;
+                }
+            }
+        });
+        
+        const movies = (await Promise.allSettled(moviePromises))
+            .filter(result => result.status === 'fulfilled' && result.value !== null)
+            .map(result => result.value);
+        
+        if (movies.length === 0) {
+            watchlistContainer.innerHTML = '<p class="no-data">Үзэх жагсаалт хоосон байна</p>';
+            return;
+        }
+        
+        // Clear container and render movies
+        watchlistContainer.innerHTML = '';
+        movies.forEach((movie) => {
+            const movieCard = document.createElement('movie-card');
+            
+            movieCard.setAttribute('name', movie.name || movie.title || 'Unknown');
+            movieCard.setAttribute('category', movie.category || 'movies');
+            movieCard.setAttribute('image', movie.image || movie.poster_path || '');
+            movieCard.setAttribute('data-tmdb-id', movie.id || movie.tmdb_id || '');
+            movieCard.setAttribute('data-media-type', movie.category === 'tv' ? 'tv' : 'movie');
+            
+            if (movie.year || movie.release_date) {
+                const year = movie.year || (movie.release_date ? movie.release_date.split('-')[0] : '');
+                movieCard.setAttribute('year-or-season', year || 'N/A');
+            }
+            
+            if (movie.rating || movie.vote_average) {
+                movieCard.setAttribute('rating', (movie.rating || movie.vote_average || 0).toFixed(1));
+            }
+            
+            if (movie.description || movie.overview) {
+                movieCard.setAttribute('description', movie.description || movie.overview || '');
+            }
+            
+            watchlistContainer.appendChild(movieCard);
+        });
+        
+        console.log(`✅ Loaded ${movies.length} watchlist items`);
+    } catch (error) {
+        console.error('❌ Error loading watchlist:', error);
+        const watchlistContainer = document.getElementById('watchlist-container');
+        if (watchlistContainer) {
+            watchlistContainer.innerHTML = '<p class="no-data">Үзэх жагсаалт ачаалахад алдаа гарлаа</p>';
+        }
+    }
+}
+
+function setupTabs(authService) {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -405,6 +611,11 @@ function setupTabs() {
                 content.classList.remove('active');
             });
             document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            // Load watchlist when tab is clicked
+            if (tabId === 'watchlist' && authService) {
+                loadWatchlist(authService);
+            }
         });
     });
 }
