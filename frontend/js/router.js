@@ -1,13 +1,10 @@
-// router.js - Simple SPA Router with Hash-Based Routing
 class Router {
   constructor() {
     this.routes = {};
     this.currentRoute = null;
     
-    // Listen for hash changes
     window.addEventListener('hashchange', () => this.handleRoute());
     
-    // Intercept all link clicks
     document.addEventListener('click', (e) => {
       if (e.target.matches('a[data-link]')) {
         e.preventDefault();
@@ -16,39 +13,30 @@ class Router {
     });
   }
 
-  // Register a route
   addRoute(path, handler) {
     this.routes[path] = handler;
   }
 
-  // Navigate to a new route
   navigateTo(path) {
     window.location.hash = path;
   }
 
-  // Handle current route
   async handleRoute() {
-    // Get path from hash, default to '/'
     let fullPath = window.location.hash.slice(1) || '/';
     
-    // Separate path from query parameters
     const pathParts = fullPath.split('?');
     let path = pathParts[0];
     
-    // Remove trailing slash except for root
     if (path !== '/' && path.endsWith('/')) {
       path = path.slice(0, -1);
     }
     
     this.currentRoute = path;
 
-    // Find matching route
     let handler = this.routes[path];
     
-    // If no exact match, try to find a pattern match
     if (!handler) {
       for (let route in this.routes) {
-        // Convert route pattern to regex (e.g., /movie-details/:category/:id -> /movie-details/([^/]+)/([^/]+))
         const pattern = new RegExp('^' + route.replace(/:\w+/g, '([^/]+)') + '$');
         const match = path.match(pattern);
         if (match) {
@@ -58,7 +46,6 @@ class Router {
       }
     }
 
-    // Special handling for movie-details route
     if (!handler && path.startsWith('/movie-details/')) {
       const movieDetailsMatch = path.match(/^\/movie-details\/(movies|tv)\/(\d+)$/);
       if (movieDetailsMatch && this.routes['/movie-details/:category/:id']) {
@@ -66,7 +53,6 @@ class Router {
       }
     }
 
-    // Special handling for movie-reviews route
     if (!handler && path.startsWith('/movie-reviews/')) {
       const movieReviewsMatch = path.match(/^\/movie-reviews\/(movies|tv)\/(\d+)$/);
       if (movieReviewsMatch && this.routes['/movie-reviews/:category/:id']) {
@@ -74,17 +60,14 @@ class Router {
       }
     }
 
-    // Execute handler or show 404
     if (handler) {
       await handler();
     } else {
       this.routes['/404']?.() || this.show404();
     }
 
-    // Ensure body overflow is reset (in case modal was left open)
     document.body.style.overflow = 'auto';
     
-    // Scroll to top on route change
     window.scrollTo(0, 0);
   }
 
@@ -101,12 +84,10 @@ class Router {
     `;
   }
 
-  // Start the router
   start() {
     this.handleRoute();
   }
 }
 
-// Export router instance
 const router = new Router();
 export default router;

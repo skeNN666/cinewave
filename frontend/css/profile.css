@@ -1,5 +1,3 @@
-/* profile.css - User Profile Page Styles */
-
 .profile-page {
     min-height: 100vh;
     background: #000;
@@ -165,7 +163,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -204,7 +201,6 @@
     margin: 5px 0 0 0;
 }
 
-/* Recent Activity */
 .recent-activity {
     background: #1e1e1e;
     padding: 30px;
@@ -227,21 +223,18 @@
     font-style: italic;
 }
 
-/* Movies Grid */
 .movies-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
 
-/* Ratings List */
 .ratings-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* Settings Forms */
 .settings-section {
     background: #1e1e1e;
     padding: 30px;
@@ -321,7 +314,6 @@
     cursor: not-allowed;
 }
 
-/* Danger Zone */
 .danger-zone {
     border: 2px solid #ff4757;
 }
@@ -374,7 +366,6 @@
     border-color: #666;
 }
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -401,8 +392,6 @@
     position: relative;
     animation: modalSlideIn 0.3s ease;
 }
-
-/* Add these to profile.css */
 
 .rating-card {
     background: #1e1e1e;
@@ -463,7 +452,6 @@
     margin-bottom: 20px;
 }
 
-/* Notification */
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
@@ -474,7 +462,6 @@
     to { transform: translateX(100%); opacity: 0; }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .profile-info-section {
         flex-direction: column;

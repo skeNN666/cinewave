@@ -1,11 +1,9 @@
-// app.js - Integrated SPA Application with existing functionality
 import router from './router.js';
 import { movieDatabase, loadMovieDatabase, isUsingTMDB } from './database.js';
 import { tmdbService } from './tmdb-service.js';
 import { authService } from './auth-service.js';
 import { renderProfilePage, initProfilePage } from './profile-page.js';
 
-// Data containers
 let database = [];
 let selectedCategory = "all";
 let filteredData = [];
@@ -23,24 +21,22 @@ let sectionData = {
     "upcoming-movies": []
 };
 
-// Initialize app
 async function initializeApp() {
-    console.log('🚀 Starting application...');
+    console.log('App ajillaj ehelj baina.');
     
     try {
-        console.log('📦 Loading database...');
+        console.log('DB ee unshij bn');
         await loadMovieDatabase();
         database = Array.isArray(movieDatabase) ? [...movieDatabase] : [];
-        console.log(`✅ Database loaded: ${database.length} items`);
-        console.log(`🌐 Using TMDB: ${isUsingTMDB}`);
+        console.log(`DB unshsan: ${database.length} kino, tsuvral bna.`);
+        console.log(`TMDB ashiglaj: ${isUsingTMDB}`);
         
     } catch (err) {
-        console.error('❌ Error during loadMovieDatabase():', err);
+        console.error('LoadMovieDatabase error garlaa', err);
         database = [];
     }
 }
 
-// Page Views
 const views = {
     home: async () => {
         const main = document.querySelector('main');
@@ -353,8 +349,6 @@ const views = {
 
     'movie-details': async () => {
         const main = document.querySelector('main');
-        
-        // Extract category and ID from hash
         const hash = window.location.hash;
         const match = hash.match(/#\/movie-details\/(movies|tv)\/(\d+)/);
         
@@ -381,8 +375,6 @@ const views = {
 
     'movie-reviews': async () => {
         const main = document.querySelector('main');
-        
-        // Extract category and ID from hash
         const hash = window.location.hash;
         const match = hash.match(/#\/movie-reviews\/(movies|tv)\/(\d+)/);
         
@@ -418,15 +410,11 @@ async function initializeHomePage() {
 }
 
 async function setupSections() {
-    console.log('📋 Setting up sections...');
     
     try {
         if (isUsingTMDB && database.length === 0) {
-            console.log('🔄 Fetching sections from TMDB...');
             await loadTMDBDataForSections();
         } else {
-            console.log('📂 Using existing database data...');
-            
             const hasMovies = database.some(m => m.category === "movies");
             const hasTV = database.some(m => m.category === "tv");
             
@@ -444,7 +432,6 @@ async function setupSections() {
                 
                 renderPaginatedSection("latest-movies", latestMovies, 1);
                 renderPaginatedSection("latest-tv", latestTV, 1);
-                // Always show first grid of upcoming items
                 if (upcoming.length > 0) {
                     sectionState["upcoming-movies"] = 1;
                     renderPaginatedSection("upcoming-movies", upcoming, 1);
@@ -456,7 +443,6 @@ async function setupSections() {
         }
         
     } catch (error) {
-        console.error('❌ Error in setupSections:', error);
         renderFallbackSections();
     }
     
@@ -464,7 +450,7 @@ async function setupSections() {
 }
 
 async function loadTMDBDataForSections() {
-    console.log('🌐 Loading TMDB data...');
+    console.log('TMDB-aas data load hiine...');
     
     try {
         document.getElementById('latest-movies').innerHTML = '<div class="loading">Loading movies...</div>';
@@ -486,21 +472,17 @@ async function loadTMDBDataForSections() {
         renderPaginatedSection("latest-movies", movies, 1);
         renderPaginatedSection("latest-tv", tvShows, 1);
         
-        // Always render upcoming section - show first grid immediately if items exist
         if (upcoming.length === 0) {
             document.getElementById('upcoming-movies').innerHTML = 
                 '<div class="no-results">Тун удахгүй гарах кино одоогоор байхгүй байна</div>';
             const upcomingBtn = document.getElementById('show-more-upcoming');
             if (upcomingBtn) upcomingBtn.style.display = 'none';
         } else {
-            // Always show at least one grid (first page = 6 items) of upcoming items immediately
-            // Reset section state to ensure first page is shown
             sectionState["upcoming-movies"] = 1;
             renderPaginatedSection("upcoming-movies", upcoming, 1);
         }
         
     } catch (error) {
-        console.error('❌ Error loading TMDB data:', error);
         renderFallbackSections();
     }
 }
@@ -556,7 +538,6 @@ async function loadMoreForSection(sectionId) {
         await loadMoreTMDBData(sectionId, sectionState[sectionId]);
     } else {
         const movies = sectionData[sectionId] || getMoviesBySection(sectionId);
-        // Ensure we always render at least the first page if items exist
         const pageToRender = Math.max(sectionState[sectionId], 1);
         renderPaginatedSection(sectionId, movies, pageToRender);
     }
@@ -574,12 +555,9 @@ async function loadMoreTMDBData(sectionId, page) {
             newData = await tmdbService.getUpcomingMovies(page);
         }
         
-        // Append new data to existing section data
         sectionData[sectionId] = [...sectionData[sectionId], ...newData];
         database = [...database, ...newData];
         
-        // Render all items up to the current page
-        // For upcoming section, ensure we always show at least first page
         const pageToRender = Math.max(page, 1);
         renderPaginatedSection(sectionId, sectionData[sectionId], pageToRender);
         
@@ -746,10 +724,8 @@ function initializeCarousel() {
         }
 
         function startAutoSlide() {
-            // Clear any existing interval
             if (autoSlideInterval) clearInterval(autoSlideInterval);
             
-            // Set up new interval for auto-sliding every 3 seconds
             autoSlideInterval = setInterval(() => {
                 if (!carouselAnimating) {
                     updateCarousel(carouselIndex + 1);
@@ -764,10 +740,8 @@ function initializeCarousel() {
             }
         }
 
-        // Start auto-sliding on initialization
         startAutoSlide();
 
-        // Pause auto-sliding when hovering over the carousel
         const carouselContainer = document.querySelector('.carousel-container');
         if (carouselContainer) {
             carouselContainer.addEventListener('mouseenter', () => {
@@ -779,7 +753,6 @@ function initializeCarousel() {
             });
         }
 
-        // Pause auto-sliding when hovering over individual cards
         document.querySelectorAll(".card").forEach(card => {
             card.addEventListener("mouseenter", () => {
                 stopAutoSlide();
@@ -799,7 +772,6 @@ function initializeCarousel() {
             leftArrow.onclick = () => {
                 stopAutoSlide();
                 updateCarousel(carouselIndex - 1);
-                // Restart auto-slide after manual interaction
                 setTimeout(() => startAutoSlide(), 5000);
             };
         }
@@ -808,7 +780,6 @@ function initializeCarousel() {
             rightArrow.onclick = () => {
                 stopAutoSlide();
                 updateCarousel(carouselIndex + 1);
-                // Restart auto-slide after manual interaction
                 setTimeout(() => startAutoSlide(), 5000);
             };
         }
@@ -817,7 +788,6 @@ function initializeCarousel() {
             dot.onclick = () => {
                 stopAutoSlide();
                 updateCarousel(Number(dot.dataset.index));
-                // Restart auto-slide after manual interaction
                 setTimeout(() => startAutoSlide(), 5000);
             };
         });
@@ -842,14 +812,10 @@ function applyFilters() {
     initializeCarousel();
 }
 
-// ============================================
-// MOVIES PAGE FUNCTIONALITY (Complete Implementation)
-// ============================================
-
 class MoviesPageController {
     constructor() {
         this.currentCategory = 'all';
-        this.selectedGenres = []; // Changed to support multiple genres
+        this.selectedGenres = []; 
         this.currentPage = 1;
         this.totalPages = 1;
         this.isLoading = false;
@@ -858,52 +824,49 @@ class MoviesPageController {
             movies: [],
             tv: []
         };
-        this.tempSelectedGenres = []; // For dropdown selection
+        this.tempSelectedGenres = []; 
     }
 
     async init() {
-        console.log('🎬 Movies page initializing...');
-        console.log('Step 1: Fetching genres...');
+        console.log('Movies page ajillaj baina');
+        console.log('1. Genre uudaa fetch hij bn');
         
         try {
             await this.fetchGenres();
-            console.log('Step 2: Genres fetched, rendering filters...');
+            console.log('2. Genre uudaa amjilttai fetch hiilee. renderlene.');
             
             this.renderGenreFilters();
             this.renderActiveFilters();
-            console.log('Step 3: Filters rendered, loading movies...');
+            console.log('3. renderlelee. Odoo movies uuudaa fetch hiine.');
             
             await this.loadMovies();
-            console.log('Step 4: Movies loaded');
+            console.log('4.movies uuudaa amjilttai fetch hiilee.');
         } catch (error) {
-            console.error('❌ Error in init steps:', error);
+            console.error('ehlehed aldaa garlaa', error);
         }
         
-        // Always set up event listeners, even if previous steps failed
-        console.log('Step 5: Setting up listeners...');
+        console.log('5. event listeneruudaa setup hiine.');
         try {
             this.setupEventListeners();
-            console.log('✅ Listeners set up');
+            console.log('Listeners amjilttai setup hiilee');
         } catch (error) {
-            console.error('❌ Error setting up event listeners:', error);
+            console.error('event listener setup-d aldaa garlаа:', error);
         }
         
-        console.log('Step 6: Setting up scroll...');
+        console.log('6. Scroll setup hiine.');
         try {
             this.setupInfiniteScroll();
-            console.log('✅ Scroll set up');
+            console.log('Scroll set up');
         } catch (error) {
-            console.error('❌ Error setting up scroll:', error);
+            console.error('Scroll setup-d aldaa garlaa:', error);
         }
         
-        console.log('✅ Movies page initialized successfully!');
+        console.log('Movies page amjilttai!');
     }
 
     async fetchGenres() {
         try {
-            console.log('📚 Fetching genres...');
             
-            // Check if tmdbService exists
             if (typeof tmdbService === 'undefined') {
                 throw new Error('TMDB Service not available');
             }
@@ -914,11 +877,9 @@ class MoviesPageController {
             const tvGenres = await tmdbService.fetchFromTMDB('/genre/tv/list');
             this.genres.tv = tvGenres.genres || [];
             
-            console.log(`✅ Loaded ${this.genres.movies.length} movie genres and ${this.genres.tv.length} TV genres`);
+            console.log(`${this.genres.movies.length} kinoni genre bolon ${this.genres.tv.length} tsuvralin genre tatlaa`);
             
         } catch (error) {
-            console.error('❌ Error fetching genres:', error);
-            // Fallback genres
             this.genres.movies = [
                 { id: 28, name: 'Action' },
                 { id: 12, name: 'Adventure' },
@@ -943,7 +904,7 @@ class MoviesPageController {
                 { id: 10765, name: 'Sci-Fi & Fantasy' }
             ];
             
-            console.log('⚠️ Using fallback genres');
+            console.log('fallback genre ashiglaj baina');
         }
     }
 
@@ -956,10 +917,8 @@ class MoviesPageController {
         let currentGenres = [];
         
         if (this.currentCategory === 'all') {
-            // For 'all', show both movie and TV genres, but merge common ones
             const allGenresMap = new Map();
             
-            // Add movie genres
             this.genres.movies.forEach(genre => {
                 allGenresMap.set(genre.id, {
                     id: genre.id,
@@ -969,7 +928,6 @@ class MoviesPageController {
                 });
             });
             
-            // Add TV genres (may have different IDs)
             this.genres.tv.forEach(genre => {
                 if (!allGenresMap.has(genre.id)) {
                     allGenresMap.set(genre.id, {
@@ -1008,7 +966,6 @@ class MoviesPageController {
             genreOption.dataset.genreName = genre.displayName;
             genreOption.dataset.genreType = genre.type;
             
-            // Check if this genre is already selected
             if (this.tempSelectedGenres.includes(genre.id.toString())) {
                 genreOption.classList.add('selected');
             }
@@ -1018,16 +975,16 @@ class MoviesPageController {
                 const genreId = genreOption.dataset.genreId;
                 const genreType = genreOption.dataset.genreType || this.currentCategory;
                 
-                console.log('🎯 Genre clicked:', { genreId, genreType, isSelected: genreOption.classList.contains('selected') });
+                console.log('Songoson genre:', { genreId, genreType, isSelected: genreOption.classList.contains('selected') });
                 
                 if (genreOption.classList.contains('selected')) {
                     if (!this.tempSelectedGenres.includes(genreId)) {
                         this.tempSelectedGenres.push(genreId);
-                        console.log('✅ Added genre to selection:', genreId, 'Total:', this.tempSelectedGenres.length);
+                        console.log('Daraah genre iig songoltod nemlee:', genreId, 'Niit:', this.tempSelectedGenres.length);
                     }
                 } else {
                     this.tempSelectedGenres = this.tempSelectedGenres.filter(id => id !== genreId);
-                    console.log('❌ Removed genre from selection:', genreId, 'Total:', this.tempSelectedGenres.length);
+                    console.log('Daraah genre iig songoltoos haslaa:', genreId, 'Niit:', this.tempSelectedGenres.length);
                 }
                 this.updateSelectedCount();
             });
@@ -1068,85 +1025,67 @@ class MoviesPageController {
     this.isLoading = true;
     this.showLoading();
     
-    console.log(`🎬 Loading ${this.currentCategory} page ${this.currentPage}...`);
-    console.log(`🎯 Selected genres:`, this.selectedGenres);
+    console.log(`Loading ${this.currentCategory} page ${this.currentPage}...`);
+    console.log('Songoson genre:', this.selectedGenres);
     
     try {
-        // Check if tmdbService exists
         if (typeof tmdbService === 'undefined') {
             throw new Error('TMDB Service not available');
         }
         
         let data = [];
         
-        // If genres are selected, use genre-based discovery
         if (this.selectedGenres.length > 0) {
-            console.log(`🎭 Loading by genres:`, this.selectedGenres);
-            console.log(`📋 Current category: ${this.currentCategory}`);
+            console.log(`Genre aar ni load hiij baina.:`, this.selectedGenres);
+            console.log(`Odoogiin category: ${this.currentCategory}`);
             
-            // Convert genre IDs to integers for API call
             const genreIds = this.selectedGenres.map(id => parseInt(id)).filter(id => !isNaN(id));
-            console.log(`🔢 Converted genre IDs:`, genreIds);
+            console.log(`Shiljuulegdsen genre IDs:`, genreIds);
             
             if (genreIds.length === 0) {
-                console.warn('⚠️ No valid genre IDs after conversion');
                 data = [];
             } else if (this.currentCategory === 'all') {
-                // For 'all', discover both movies and TV for each genre AND page
                 const promises = [];
                 genreIds.forEach(genreId => {
-                    console.log(`🔍 Discovering movies for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    console.log(`Daraah genre iin kinog haij bn: ${genreId}, page: ${this.currentPage}`);
                     promises.push(
                         tmdbService.discoverMoviesByGenre(genreId, this.currentPage)
                             .catch(err => {
-                                console.log(`Genre ${genreId} not found for movies, skipping:`, err);
+                                console.log(`Genre ${genreId} oldsongui, skip:`, err);
                                 return [];
                             })
                     );
-                    console.log(`🔍 Discovering TV shows for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    console.log(`Daraah genre iin tsuvral haij bn.: ${genreId}, page: ${this.currentPage}`);
                     promises.push(
                         tmdbService.discoverTVByGenre(genreId, this.currentPage)
                             .catch(err => {
-                                console.log(`Genre ${genreId} not found for TV, skipping:`, err);
+                                console.log(`Genre ${genreId} oldsongui, skip:`, err);
                                 return [];
                             })
                     );
                 });
                 const results = await Promise.all(promises);
-                console.log(`📊 Results from all promises (page ${this.currentPage}):`, results.map(r => r.length));
                 data = results.flat();
-                console.log(`✅ Total items from page ${this.currentPage}: ${data.length}`);
             } else if (this.currentCategory === 'movies') {
-                // Get movies for all selected genres for current page
                 const promises = genreIds.map(genreId => {
-                    console.log(`🔍 Discovering movies for genre ID: ${genreId}, page: ${this.currentPage}`);
                     return tmdbService.discoverMoviesByGenre(genreId, this.currentPage)
                         .catch(err => {
-                            console.error(`Error discovering movies for genre ${genreId}:`, err);
                             return [];
                         });
                 });
                 const results = await Promise.all(promises);
-                console.log(`📊 Results from movie promises (page ${this.currentPage}):`, results.map(r => r.length));
                 data = results.flat();
-                console.log(`✅ Total movies from page ${this.currentPage}: ${data.length}`);
             } else if (this.currentCategory === 'tv') {
-                // Get TV shows for all selected genres for current page
-                const promises = genreIds.map(genreId => {
-                    console.log(`🔍 Discovering TV shows for genre ID: ${genreId}, page: ${this.currentPage}`);
+                    const promises = genreIds.map(genreId => {
                     return tmdbService.discoverTVByGenre(genreId, this.currentPage)
                         .catch(err => {
-                            console.error(`Error discovering TV shows for genre ${genreId}:`, err);
                             return [];
                         });
                 });
                 const results = await Promise.all(promises);
-                console.log(`📊 Results from TV promises (page ${this.currentPage}):`, results.map(r => r.length));
                 data = results.flat();
-                console.log(`✅ Total TV shows from page ${this.currentPage}: ${data.length}`);
             }
         } else {
-            // No genre filter - load normally
             if (this.currentCategory === 'all') {
                 const [movies, tvShows] = await Promise.all([
                     tmdbService.getNowPlayingMovies(this.currentPage),
@@ -1167,19 +1106,14 @@ class MoviesPageController {
             }
         }
         
-        // Remove duplicates based on ID (important when fetching multiple genres)
         const uniqueIds = new Set();
-        // Also track existing IDs from previous pages
         this.allMovies.forEach(movie => uniqueIds.add(movie.id));
         
-        // Filter out duplicates from new data
         const newUniqueData = data.filter(item => {
             if (uniqueIds.has(item.id)) return false;
             uniqueIds.add(item.id);
             return true;
         });
-        
-        console.log(`🔄 New unique items from page ${this.currentPage}: ${newUniqueData.length} (filtered from ${data.length})`);
         
         if (this.currentPage === 1) {
             this.allMovies = newUniqueData;
@@ -1187,11 +1121,9 @@ class MoviesPageController {
             this.allMovies = [...this.allMovies, ...newUniqueData];
         }
         
-        console.log(`✅ Total accumulated movies: ${this.allMovies.length}`);
         this.renderMovies();
         
     } catch (error) {
-        console.error('❌ Error loading movies:', error);
         this.showError();
     } finally {
         this.isLoading = false;
@@ -1280,42 +1212,36 @@ class MoviesPageController {
             });
         });
         
-        // Filter toggle button
         const filterToggleBtn = document.getElementById('filter-toggle-btn');
         const filterDropdown = document.getElementById('filter-dropdown');
         const filterOverlay = document.getElementById('filter-overlay');
         
-        console.log('🔍 Setting up filter button:', {
+        console.log('Filter button setup:', {
             filterToggleBtn: !!filterToggleBtn,
             filterDropdown: !!filterDropdown,
             filterOverlay: !!filterOverlay
         });
         
         if (filterToggleBtn && filterDropdown) {
-            // Handle clicks on the button itself or any of its children
             filterToggleBtn.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🖱️ Filter button clicked!', e.target, e.currentTarget);
                 this.toggleFilterDropdown();
                 return false;
             };
             
-            // Close dropdown when clicking overlay
             if (filterOverlay) {
                 filterOverlay.addEventListener('click', () => {
-                    console.log('🖱️ Overlay clicked, closing dropdown');
                     this.closeFilterDropdown();
                 });
             }
         } else {
-            console.error('❌ Filter button or dropdown not found!', {
+            console.error('Filter button dropdown oldsongui!', {
                 filterToggleBtn,
                 filterDropdown
             });
         }
         
-        // Apply filter button
         const applyBtn = document.getElementById('apply-filter');
         if (applyBtn) {
             applyBtn.addEventListener('click', () => {
@@ -1323,7 +1249,6 @@ class MoviesPageController {
             });
         }
         
-        // Cancel filter button
         const cancelBtn = document.getElementById('cancel-filter');
         if (cancelBtn) {
             cancelBtn.addEventListener('click', () => {
@@ -1331,7 +1256,6 @@ class MoviesPageController {
             });
         }
         
-        // Clear all filters button
         const clearAllBtn = document.getElementById('clear-all-filters');
         if (clearAllBtn) {
             clearAllBtn.addEventListener('click', () => {
@@ -1339,7 +1263,6 @@ class MoviesPageController {
             });
         }
         
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (filterDropdown && !filterDropdown.contains(e.target) && 
                 filterToggleBtn && !filterToggleBtn.contains(e.target)) {
@@ -1354,7 +1277,7 @@ class MoviesPageController {
         const filterOverlay = document.getElementById('filter-overlay');
         const applyBtn = document.getElementById('apply-filter');
         
-        console.log('🔍 Dropdown elements check:', {
+        console.log('Dropdown elements check:', {
             filterDropdown: !!filterDropdown,
             filterOverlay: !!filterOverlay,
             applyBtn: !!applyBtn,
@@ -1362,17 +1285,14 @@ class MoviesPageController {
         });
         
         if (!filterDropdown || !filterOverlay) {
-            console.error('❌ Cannot toggle dropdown - elements not found');
             return;
         }
         
         const isActive = filterDropdown.classList.contains('active');
-        console.log('📋 Dropdown is currently:', isActive ? 'active' : 'inactive');
         
         if (isActive) {
             this.closeFilterDropdown();
         } else {
-            // Sync temp selection with current selection
             this.tempSelectedGenres = [...this.selectedGenres];
             
             this.renderGenreFilters();
@@ -1381,19 +1301,17 @@ class MoviesPageController {
             filterOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            // Check if apply button exists after rendering
             setTimeout(() => {
                 const applyBtnAfter = document.getElementById('apply-filter');
-                console.log('✅ Apply button after render:', !!applyBtnAfter);
+                console.log('Renderlesnii daraah apply button:', !!applyBtnAfter);
                 if (!applyBtnAfter) {
-                    console.error('❌ Apply button not found in DOM!');
+                    console.error('DOM oos apply button oldsongui!');
                 }
             }, 100);
             
-            console.log('✅ Dropdown opened');
+            console.log('Dropdown neegdsen');
         }
     } catch (error) {
-        console.error('❌ Error in toggleFilterDropdown:', error);
     }
 }
     closeFilterDropdown() {
@@ -1408,9 +1326,9 @@ class MoviesPageController {
     }
     
     applyFilters() {
-        console.log('🔧 Applying filters, tempSelectedGenres:', this.tempSelectedGenres);
+        console.log('filteree apply hiij bn, tempSelectedGenres:', this.tempSelectedGenres);
         this.selectedGenres = [...this.tempSelectedGenres];
-        console.log('✅ Selected genres set:', this.selectedGenres);
+        console.log('Songoson genre uud:', this.selectedGenres);
         this.closeFilterDropdown();
         this.currentPage = 1;
         this.allMovies = [];
@@ -1419,7 +1337,6 @@ class MoviesPageController {
     }
     
     cancelFilters() {
-        // Reset temp selection to current selection
         this.tempSelectedGenres = [...this.selectedGenres];
         this.renderGenreFilters();
         this.closeFilterDropdown();
@@ -1428,8 +1345,6 @@ class MoviesPageController {
     clearAllFilters() {
         this.tempSelectedGenres = [];
         this.renderGenreFilters();
-        
-        // Remove all selected states
         document.querySelectorAll('.genre-option.selected').forEach(el => {
             el.classList.remove('selected');
         });
@@ -1444,8 +1359,7 @@ class MoviesPageController {
         if (this.selectedGenres.length === 0) {
             return;
         }
-        
-        // Get all genres (movies and TV) for lookup
+    
         const allGenresMap = new Map();
         this.genres.movies.forEach(g => allGenresMap.set(g.id.toString(), g));
         this.genres.tv.forEach(g => allGenresMap.set(g.id.toString(), g));
@@ -1482,7 +1396,6 @@ class MoviesPageController {
         
         this.currentCategory = category;
         
-        // Clear selected genres when category changes
         this.selectedGenres = [];
         this.tempSelectedGenres = [];
         this.renderActiveFilters();
@@ -1558,10 +1471,6 @@ class MoviesPageController {
     }
 }
 
-// ============================================
-// SEARCH PAGE FUNCTIONALITY
-// ============================================
-
 class SearchPageController {
     constructor(query) {
         this.query = query;
@@ -1589,16 +1498,13 @@ class SearchPageController {
                 throw new Error('TMDB Service not available');
             }
             
-            console.log(`🔍 Searching TMDB for: "${this.query}"`);
             const results = await tmdbService.search(this.query, 1);
             
             this.searchResults = results;
-            console.log(`✅ Found ${results.length} results`);
             
             this.renderResults();
             
         } catch (error) {
-            console.error('❌ Error searching:', error);
             this.showError();
         } finally {
             this.isLoading = false;
@@ -1664,7 +1570,6 @@ class SearchPageController {
     }
 
     hideLoading() {
-        // Loading is hidden when results are rendered
     }
 
     showError() {
@@ -1702,14 +1607,12 @@ class SearchPageController {
 let searchPageInstance = null;
 
 async function initSearchPage(query) {
-    console.log('🔍 initSearchPage called with query:', query);
     
     if (searchPageInstance) {
         searchPageInstance = null;
     }
     
     if (typeof tmdbService === 'undefined') {
-        console.error('❌ TMDB Service not found!');
         const container = document.getElementById('search-results-container');
         if (container) {
             container.innerHTML = `
@@ -1726,7 +1629,6 @@ async function initSearchPage(query) {
         searchPageInstance = new SearchPageController(query);
         await searchPageInstance.init();
     } catch (error) {
-        console.error('❌ Error in initSearchPage:', error);
         const container = document.getElementById('search-results-container');
         if (container) {
             container.innerHTML = `
@@ -1739,23 +1641,18 @@ async function initSearchPage(query) {
     }
 }
 
-// Global instance
 let moviesPageInstance = null;
 
 async function initMoviesPage() {
-    console.log('🎬 initMoviesPage called');
-    console.log('Current URL:', window.location.href);
+    console.log('initMoviesPage duudlaa');
+    console.log('odoogiin URL:', window.location.href);
     console.log('Hash:', window.location.hash);
     
-    // Cleanup previous instance
     if (moviesPageInstance) {
-        console.log('♻️ Cleaning up previous movies page instance');
         moviesPageInstance = null;
     }
     
-    // Check if tmdbService is available
     if (typeof tmdbService === 'undefined') {
-        console.error('❌ TMDB Service not found!');
         const container = document.getElementById('movies-container');
         if (container) {
             container.innerHTML = `
@@ -1768,14 +1665,8 @@ async function initMoviesPage() {
         return;
     }
     
-    console.log('✅ TMDB Service available');
-    console.log('🔧 Creating MoviesPageController instance...');
-    
     try {
         moviesPageInstance = new MoviesPageController();
-        console.log('✅ Instance created, calling init()...');
-        
-        // Add timeout to catch hanging
         const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => reject(new Error('Init timeout after 30 seconds')), 30000);
         });
@@ -1785,9 +1676,7 @@ async function initMoviesPage() {
             timeoutPromise
         ]);
         
-        console.log('✅ Movies page fully initialized');
     } catch (error) {
-        console.error('❌ Error in initMoviesPage:', error);
         const container = document.getElementById('movies-container');
         if (container) {
             container.innerHTML = `
@@ -1801,12 +1690,7 @@ async function initMoviesPage() {
     }
 }
 
-// ============================================
-// LOGIN PAGE FUNCTIONALITY
-// ============================================
-
 function initLoginPage() {
-    console.log('🔐 Initializing login page...');
     
     createParticles();
     
@@ -1864,7 +1748,6 @@ function initLoginPage() {
     const loginFormEl = document.getElementById('login-form');
     const signupFormEl = document.getElementById('signup-form');
     
-    // In initLoginPage function, update form handlers:
         if (loginFormEl) {
             loginFormEl.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1879,13 +1762,11 @@ function initLoginPage() {
                     await authService.login(email, password);
                     showNotification('Амжилттай нэвтэрлээ!', 'success');
                     
-                    // Update navbar immediately
                     const navbar = document.querySelector('cinewave-navbar');
                     if (navbar) {
                         navbar.updateNavForAuth();
                     }
                     
-                    // Redirect to profile
                     setTimeout(() => {
                         window.location.hash = '#/profile';
                     }, 1000);
@@ -1923,13 +1804,11 @@ function initLoginPage() {
                     await authService.register(userData);
                     showNotification('Амжилттай бүртгэгдлээ!', 'success');
                     
-                    // Update navbar immediately
                     const navbar = document.querySelector('cinewave-navbar');
                     if (navbar) {
                         navbar.updateNavForAuth();
                     }
                     
-                    // Redirect to profile
                     setTimeout(() => {
                         window.location.hash = '#/profile';
                     }, 1000);
@@ -1942,7 +1821,6 @@ function initLoginPage() {
             });
         }
     
-    console.log('✅ Login page initialized');
 }
 
 function createParticles() {
@@ -2000,10 +1878,6 @@ function handleFormSubmit(form) {
     }, 1500);
 }
 
-// ============================================
-// ALL REVIEWS PAGE FUNCTIONALITY
-// ============================================
-
 function escapeHtmlAttribute(text) {
     return String(text || '')
         .replace(/&/g, '&amp;')
@@ -2014,7 +1888,6 @@ function escapeHtmlAttribute(text) {
 }
 
 async function initAllReviewsPage() {
-    console.log('📝 Initializing all reviews page...');
     
     const loading = document.getElementById('reviews-loading');
     const container = document.getElementById('reviews-container');
@@ -2024,16 +1897,12 @@ async function initAllReviewsPage() {
     const totalMoviesEl = document.getElementById('total-movies');
     
     try {
-        // Load all reviews from backend API
         const { authService } = await import('./auth-service.js');
         let allReviews = [];
         
         try {
             allReviews = await authService.getAllReviews();
-            console.log(`✅ Loaded ${allReviews.length} reviews from backend`);
         } catch (error) {
-            console.warn('⚠️ Could not load reviews from backend, trying localStorage:', error);
-            // Fallback to localStorage for backward compatibility
             const movieMap = new Map();
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -2054,20 +1923,17 @@ async function initAllReviewsPage() {
                             });
                         }
                     } catch (error) {
-                        console.error(`Error parsing reviews from key ${key}:`, error);
                     }
                 }
             }
         }
         
-        // Sort by date (latest first)
         allReviews.sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
-            return dateB - dateA; // Latest first
+            return dateB - dateA; 
         });
         
-        // Track unique movies
         const movieMap = new Map();
         allReviews.forEach(review => {
             const movieKey = `${review.category}_${review.movieId}`;
@@ -2077,7 +1943,6 @@ async function initAllReviewsPage() {
             movieMap.get(movieKey).reviewCount++;
         });
         
-        // Update stats
         if (totalReviewsEl) {
             totalReviewsEl.textContent = allReviews.length;
         }
@@ -2085,7 +1950,6 @@ async function initAllReviewsPage() {
             totalMoviesEl.textContent = movieMap.size;
         }
         
-        // Hide loading
         if (loading) {
             loading.style.display = 'none';
         }
@@ -2101,7 +1965,6 @@ async function initAllReviewsPage() {
         if (noReviews) noReviews.style.display = 'none';
         if (reviewsList) reviewsList.style.display = 'flex';
         
-        // Fetch movie info for all unique movies
         const movieInfoMap = new Map();
         const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
         
@@ -2122,7 +1985,6 @@ async function initAllReviewsPage() {
                         });
                     }
                 } catch (error) {
-                    console.error(`Error loading movie info for ${movieKey}:`, error);
                     movieInfoMap.set(movieKey, {
                         name: 'Unknown Movie',
                         image: '',
@@ -2131,11 +1993,9 @@ async function initAllReviewsPage() {
                 }
             });
             
-            // Wait for all movie info to load (with timeout)
             await Promise.allSettled(movieInfoPromises);
         }
         
-        // Render reviews
         if (reviewsList) {
             reviewsList.innerHTML = allReviews.map(review => {
                 const movieKey = `${review.category}_${review.movieId}`;
@@ -2185,10 +2045,8 @@ async function initAllReviewsPage() {
             }).join('');
         }
         
-        console.log(`✅ Loaded ${allReviews.length} reviews from ${movieMap.size} movies`);
         
     } catch (error) {
-        console.error('❌ Error loading all reviews:', error);
         
         if (loading) loading.style.display = 'none';
         if (container) container.style.display = 'block';
@@ -2234,11 +2092,6 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// ============================================
-// ROUTER SETUP
-// ============================================
-
-// Register all routes
 router.addRoute('/', views.home);
 router.addRoute('/movies', views.movies);
 router.addRoute('/profile', views.profile);
@@ -2249,21 +2102,17 @@ router.addRoute('/search', views.search);
 router.addRoute('/movie-details/:category/:id', views['movie-details']);
 router.addRoute('/movie-reviews/:category/:id', views['movie-reviews']);
 
-// Initialize app and start router
 initializeApp().then(() => {
     router.start();
 });
 
-// Handle search from navbar
 document.addEventListener('search', (e) => {
     const { query } = e.detail;
     if (query && query.trim()) {
-        // Navigate to search page with query parameter
         window.location.hash = `/search?q=${encodeURIComponent(query.trim())}`;
     }
 });
 
-// Add styles
 const style = document.createElement('style');
 style.textContent = `
     .loading {

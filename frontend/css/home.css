@@ -1,9 +1,7 @@
 :root {
-  /* Fonts */
   --font-family-primary: "Nunito", "BBH Sans Bogle", sans-serif;
   --font-family-secondary: "Nunito", sans-serif;
   
-  /* Colors */
   --color-background: black;
   --color-navbar-bg: #1e1e1e;
   --color-text-primary: white;
@@ -31,7 +29,6 @@
   --color-newsletter-button-bg: #4da3ff;
   --color-newsletter-button-hover: #2b85e0;
   
-  /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 10px;
@@ -46,7 +43,6 @@
   --spacing-xxl: 80px;
   --spacing-xxxl: 100px;
   
-  /* Font Sizes */
   --font-size-xs: 0.9rem;
   --font-size-sm: 0.95rem;
   --font-size-base: 15px;
@@ -58,20 +54,17 @@
   --font-size-4xl: 4.5rem;
   --font-size-logo: 30px;
   
-  /* Border Radius */
   --border-radius-sm: 4px;
   --border-radius-md: 5px;
   --border-radius-lg: 6px;
   --border-radius-xl: 8px;
   --border-radius-2xl: 20px;
   
-  /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.3s ease;
   --transition-slow: 0.5s ease-out;
   --transition-carousel: 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   
-  /* Sizes */
   --logo-letter-spacing: 1px;
   --search-max-width: 1000px;
   --search-height: 2.75rem;
@@ -96,18 +89,15 @@
   --carousel-height-tablet: 450px;
   --carousel-height-mobile: 350px;
   
-  /* Z-indices */
   --z-search: 1000;
   --z-card-center: 10;
   --z-card-middle: 5;
   --z-card-back: 1;
   --z-arrow: 20;
   
-  /* Grid */
   --grid-gap: 1rem;
   --grid-columns: repeat(6, 1fr);
   
-  /* Shadows */
   --focus-shadow: 0 0 0 .15rem rgba(201, 13, 48, .18);
 }
 
@@ -241,7 +231,6 @@ body {
   cursor: pointer;
 }
 
-/* ===== RESPONSIVE CAROUSEL ===== */
 .carousel-container {
   width: 100%;
   max-width: 2000px;
@@ -293,7 +282,6 @@ body {
   transition: all var(--transition-carousel);
 }
 
-/* FIXED: Reduced center card scaling */
 .card.center {
   z-index: var(--z-card-center);
   transform: scale(1.05) translateZ(0);
@@ -304,7 +292,6 @@ body {
   filter: none;
 }
 
-/* FIXED: Adjusted side card positions */
 .card.left-2 {
   z-index: var(--z-card-back);
   transform: translateX(-420px) scale(0.8) translateZ(-400px);
@@ -335,7 +322,6 @@ body {
   transform: translateX(0) scale(0.5) translateZ(-600px);
 }
 
-/* FIXED: Reduced hover scale */
 .card.center:hover {
   transform: scale(1.08) translateZ(0);
 }
@@ -602,9 +588,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-
-/* Ultra-wide screens (1920px and above) */
 @media (min-width: 1920px) {
   .carousel-container {
     height: 550px;
@@ -674,7 +657,6 @@ body {
   }
 }
 
-/* Large desktop (1440px - 1919px) */
 @media (min-width: 1440px) and (max-width: 1919px) {
   .carousel-container {
     height: 500px;
@@ -731,7 +713,6 @@ body {
   }
 }
 
-/* Standard desktop (1024px - 1439px) */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .carousel-container {
     height: var(--carousel-height-desktop);
@@ -782,14 +763,12 @@ body {
     padding-left: 3px;
   }
   
-  /* Enhanced hover effects for desktop */
   .card:hover:not(.center) {
     transform: scale(0.95) translateZ(-50px);
     opacity: 0.9;
   }
 }
 
-/* Tablet devices (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .carousel-container {
     height: var(--carousel-height-tablet);
@@ -886,7 +865,6 @@ body {
   }
 }
 
-/* Mobile landscape (480px - 767px) */
 @media (max-width: 767px) {
   .carousel-container {
     height: var(--carousel-height-mobile);
@@ -975,7 +953,6 @@ body {
   }
 }
 
-/* Mobile portrait (below 480px) */
 @media (max-width: 480px) {
   .carousel-container {
     height: 300px;
@@ -1031,7 +1008,6 @@ body {
   }
 }
 
-/* Extra small devices (below 375px) */
 @media (max-width: 375px) {
   .carousel-container {
     height: 280px;

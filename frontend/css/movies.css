@@ -20,24 +20,21 @@ main {
     min-height: 40px; 
 }
 
-/* 6 MOVIES PER ROW GRID */
 .movies-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* EXACTLY 6 COLUMNS */
+    grid-template-columns: repeat(6, 1fr); 
     gap: 1.5rem;
     margin-top: 2rem;
 }
 
-/* Movie card sizing for 6 columns */
 movie-card {
     width: 100%;
     display: block;
 }
 
-/* Ensure the movie card component fits properly */
 .movie-card {
     width: 100% !important;
-    height: 350px !important; /* Adjusted height for density */
+    height: 350px !important; 
 }
 
 .movie-card img {
@@ -155,7 +152,6 @@ movie-card {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Filter section styles */
 .filter-section {
     position: relative;
     margin: 1.5rem 0 2rem;
@@ -203,7 +199,6 @@ movie-card {
     font-weight: 700;
 }
 
-/* Add to your existing styles */
 .filter-actions {
     display: flex;
     gap: 10px;
@@ -422,7 +417,6 @@ movie-card {
     display: block;
 }
 
-/* Active filters pills */
 .active-filters {
     display: flex;
     flex-wrap: wrap;
@@ -479,7 +473,6 @@ movie-card {
     padding: 0.5rem;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     .filter-dropdown {
         width: 95%;
@@ -512,7 +505,6 @@ movie-card {
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .loader {
         padding: 40px 15px;
@@ -530,19 +522,19 @@ movie-card {
 
 @media (max-width: 1400px) {
     .movies-grid {
-        grid-template-columns: repeat(5, 1fr); /* 5 columns on medium-large screens */
+        grid-template-columns: repeat(5, 1fr); 
     }
 }
 
 @media (max-width: 1200px) {
     .movies-grid {
-        grid-template-columns: repeat(4, 1fr); /* 4 columns on laptops */
+        grid-template-columns: repeat(4, 1fr); 
     }
 }
 
 @media (max-width: 992px) {
     .movies-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablets */
+        grid-template-columns: repeat(3, 1fr); 
         gap: 1.25rem;
     }
     
@@ -553,7 +545,7 @@ movie-card {
 
 @media (max-width: 768px) {
     .movies-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
     

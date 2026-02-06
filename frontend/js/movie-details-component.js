@@ -1,4 +1,3 @@
-// Movie Details Component - Comprehensive movie/TV information display
 class MovieDetailsComponent extends HTMLElement {
     constructor() {
         super();
@@ -14,7 +13,6 @@ class MovieDetailsComponent extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            // Ensure render has been called first
             if (!this.shadowRoot.querySelector('.movie-details-container')) {
                 this.render();
             }
@@ -25,7 +23,6 @@ class MovieDetailsComponent extends HTMLElement {
                 this.category = newValue;
             }
             if (this.movieId && this.category) {
-                // Use setTimeout to ensure DOM is ready
                 setTimeout(() => {
                     this.loadMovieDetails();
                 }, 0);
@@ -43,7 +40,6 @@ class MovieDetailsComponent extends HTMLElement {
             this.category = category;
             this.loadMovieDetails();
         } else {
-            // Try to get from URL hash
             const hash = window.location.hash;
             const match = hash.match(/#\/movie-details\/(movies|tv)\/(\d+)/);
             if (match) {
@@ -53,19 +49,16 @@ class MovieDetailsComponent extends HTMLElement {
             }
         }
         
-        // Listen for auth state changes
         window.addEventListener('storage', () => {
             this.updateAuthUI();
         });
         
-        // Also check auth state on hash change (in case user just logged in)
         window.addEventListener('hashchange', () => {
             setTimeout(() => this.updateAuthUI(), 500);
         });
     }
 
     render() {
-        // Only render if not already rendered
         if (this.shadowRoot.querySelector('.movie-details-container')) {
             return;
         }
@@ -81,7 +74,6 @@ class MovieDetailsComponent extends HTMLElement {
                     box-sizing: border-box;
                 }
                 
-                /* Ensure Font Awesome icons render */
                 .fas::before, .far::before, .fab::before {
                     font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
                     display: inline-block;
@@ -1464,7 +1456,6 @@ class MovieDetailsComponent extends HTMLElement {
     }
 
     async loadMovieDetails() {
-        // Ensure render has been called first
         if (!this.shadowRoot.querySelector('.movie-details-container')) {
             this.render();
         }
@@ -1474,7 +1465,6 @@ class MovieDetailsComponent extends HTMLElement {
         const contentEl = this.shadowRoot.querySelector('#content');
         const errorMsgEl = this.shadowRoot.querySelector('#error-message');
 
-        // Check if elements exist before accessing
         if (!loadingEl || !errorEl || !contentEl || !errorMsgEl) {
             console.error('Required elements not found in shadow DOM');
             return;
@@ -1491,19 +1481,16 @@ class MovieDetailsComponent extends HTMLElement {
                 throw new Error('TMDB Service is not available');
             }
 
-            // Fetch details first, then images (images might fail, but we don't want to block)
             const details = this.category === 'movies' 
                 ? await service.getMovieDetails(this.movieId)
                 : await service.getTVDetails(this.movieId);
             
-            // Fetch images separately (don't block if it fails)
             let images = { backdrops: [], posters: [], logos: [] };
             try {
                 images = this.category === 'movies'
                     ? await service.getMovieImages(this.movieId)
                     : await service.getTVImages(this.movieId);
             } catch (imgError) {
-                console.warn('⚠️ Could not load images, continuing without them:', imgError);
             }
 
             if (!details) {
@@ -1512,8 +1499,6 @@ class MovieDetailsComponent extends HTMLElement {
 
             this.movieData = details;
             
-            // Prioritize recommendations (more accurate, based on user ratings)
-            // Only use similar movies if recommendations are insufficient
             console.log('📊 Similar data check:', {
                 hasSimilar: !!details.similar,
                 similarLength: details.similar?.length || 0,

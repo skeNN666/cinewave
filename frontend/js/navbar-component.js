@@ -1,4 +1,3 @@
-// navbar-component.js - Fully Responsive for all devices
 class CineWaveNavbar extends HTMLElement {
   constructor() {
     super();
@@ -522,7 +521,6 @@ class CineWaveNavbar extends HTMLElement {
 
     this.shadowRoot.append(style, html);
 
-    // Elements
     this.hamburger = this.shadowRoot.querySelector('.hamburger');
     this.navLinks = this.shadowRoot.querySelector('.nav-links');
     this.signInBtn = this.shadowRoot.querySelector('.sign-in');
@@ -538,13 +536,11 @@ class CineWaveNavbar extends HTMLElement {
   }
 
   connectedCallback() {
-    // Handle logo click
     this.logo.addEventListener('click', (e) => {
       e.preventDefault();
       this.navigate('/');
     });
 
-    // Handle desktop navigation clicks
     this.links.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -553,7 +549,6 @@ class CineWaveNavbar extends HTMLElement {
       });
     });
 
-    // Handle mobile navigation clicks
     this.mobileLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -563,12 +558,10 @@ class CineWaveNavbar extends HTMLElement {
       });
     });
 
-    // Sign in button
     this.signInBtn.addEventListener('click', () => {
       this.navigate('/login');
     });
 
-    // Mobile search toggle
     this.mobileSearchBtn.addEventListener('click', (e) => {
       e.preventDefault();
       this.mobileSearchWrapper.classList.toggle('show');
@@ -577,7 +570,6 @@ class CineWaveNavbar extends HTMLElement {
       }
     });
 
-    // Desktop search functionality
     this.searchInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const query = this.searchInput.value.trim();
@@ -592,7 +584,6 @@ class CineWaveNavbar extends HTMLElement {
       }
     });
 
-    // Mobile search functionality
     this.mobileSearchInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         const query = this.mobileSearchInput.value.trim();
@@ -608,27 +599,22 @@ class CineWaveNavbar extends HTMLElement {
       }
     });
 
-    // Update active link on route change
     this.updateActiveLink();
     window.addEventListener('hashchange', () => {
       this.updateActiveLink();
-      // Update auth state when route changes (in case user just logged in)
       this.updateNavForAuth();
     });
 
-    // Listen for auth state changes
     window.addEventListener('storage', (e) => {
       if (e.key === 'cinewave_user' || e.key === 'cinewave_token') {
         this.updateNavForAuth();
       }
     });
 
-    // Also check auth state periodically (for same-tab updates)
     setInterval(() => {
       this.updateNavForAuth();
     }, 1000);
 
-    // Close mobile search when clicking outside
     document.addEventListener('click', (e) => {
       if (!this.shadowRoot.contains(e.target)) {
         this.mobileSearchWrapper.classList.remove('show');
@@ -643,7 +629,6 @@ class CineWaveNavbar extends HTMLElement {
   updateActiveLink() {
     const currentPath = window.location.hash.slice(1) || '/';
     
-    // Update desktop links
     this.links.forEach(link => {
       if (link.getAttribute('href') === currentPath) {
         link.classList.add('active');
@@ -652,7 +637,6 @@ class CineWaveNavbar extends HTMLElement {
       }
     });
 
-    // Update mobile links
     this.mobileLinks.forEach(link => {
       if (link.getAttribute('href') === currentPath) {
         link.classList.add('active');
@@ -669,10 +653,8 @@ class CineWaveNavbar extends HTMLElement {
       if (authService.isAuthenticated()) {
         const user = authService.getCurrentUser();
         
-        // Create avatar with fallback
         const avatarUrl = user.avatar || this.getDefaultAvatar(user);
         
-        // Replace sign-in button with user avatar
         signInBtn.innerHTML = `
           <img src="${avatarUrl}" 
                alt="Profile" 
@@ -686,7 +668,6 @@ class CineWaveNavbar extends HTMLElement {
           window.location.hash = '#/profile';
         };
       } else {
-        // Reset to login button
         signInBtn.innerHTML = 'Нэвтрэх';
         signInBtn.style.padding = '10px 20px';
         signInBtn.style.background = '#00ffff';
@@ -697,12 +678,10 @@ class CineWaveNavbar extends HTMLElement {
         };
       }
     }).catch(() => {
-      // Auth service not available yet
     });
   }
 
   getDefaultAvatar(user) {
-    // Generate SVG avatar with user's initial
     const initial = (user.firstName?.[0] || user.email?.[0] || 'U').toUpperCase();
     return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23007bff"/%3E%3Ctext x="50" y="65" font-size="50" text-anchor="middle" fill="white" font-weight="bold"%3E${initial}%3C/text%3E%3C/svg%3E`;
   }

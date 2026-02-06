@@ -1,4 +1,3 @@
-// Simplified Movie Card with Quick Preview Modal
 class MovieCard extends HTMLElement {
     constructor() {
         super();
@@ -746,10 +745,8 @@ class MovieCard extends HTMLElement {
         this.setupModal();
         this.checkAuthStatus();
         
-        // Ensure body overflow is reset when navigating away
         window.addEventListener('hashchange', () => {
             document.body.style.overflow = 'auto';
-            // Close modal if open when navigating
             const modal = this.shadowRoot.querySelector('.movie-modal');
             if (modal && modal.style.display === 'flex') {
                 this.closeModal(modal);
@@ -889,10 +886,8 @@ class MovieCard extends HTMLElement {
             this.loadLocalData();
         }
         
-        // Update auth UI when modal opens
         this.updateAuthUI();
         
-        // Also listen for auth changes while modal is open
         const checkAuthInterval = setInterval(() => {
             if (modal.style.display === 'flex') {
                 this.updateAuthUI();
@@ -906,7 +901,6 @@ class MovieCard extends HTMLElement {
         const shadow = this.shadowRoot;
         
         try {
-            // Access tmdbService from window (for non-module scripts) or use imported version
             const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
             
             if (!service) {
@@ -919,8 +913,6 @@ class MovieCard extends HTMLElement {
             
             if (!details) throw new Error('TMDB-аас мэдээлэл ирээгүй');
             
-            // Debug: Log cast data
-            console.log('📋 Cast data received:', details.cast?.length || 0, 'actors');
             if (details.cast && details.cast.length > 0) {
                 console.log('Sample cast:', details.cast.slice(0, 3).map(a => ({ name: a.name, character: a.character, hasImage: !!a.profile_path })));
             }
@@ -928,7 +920,6 @@ class MovieCard extends HTMLElement {
             this.populateQuickPreview(details);
             
         } catch (error) {
-            console.error('TMDB мэдээлэл авахад алдаа:', error);
             this.loadLocalData();
         }
     }
@@ -936,25 +927,20 @@ class MovieCard extends HTMLElement {
     populateQuickPreview(details) {
         const shadow = this.shadowRoot;
         
-        // Header
         shadow.querySelector('.modal-title').textContent = details.name;
-        // Use backdrop image if available, otherwise fall back to poster
         const backdropImage = details.backdrop || details.image;
         shadow.querySelector('.modal-backdrop').src = backdropImage;
         shadow.querySelector('.modal-backdrop').alt = details.name;
         
-        // Meta info - dynamically build badges
         const modalMeta = shadow.querySelector('.modal-meta');
         const isMovie = details.category === 'movies';
         
-        // Clear existing badges (except rating badge which should stay first)
         const ratingBadge = modalMeta.querySelector('.rating-badge');
         modalMeta.innerHTML = '';
         if (ratingBadge) {
             modalMeta.appendChild(ratingBadge);
         }
         
-        // Rating badge
         if (!ratingBadge) {
             const ratingBadgeEl = document.createElement('div');
             ratingBadgeEl.className = 'rating-badge';
@@ -967,7 +953,6 @@ class MovieCard extends HTMLElement {
             shadow.querySelector('#modal-rating').textContent = details.rating ? parseFloat(details.rating).toFixed(1) : '0.0';
         }
         
-        // Year badge
         const yearBadge = document.createElement('div');
         yearBadge.className = 'meta-badge badge-year';
         yearBadge.innerHTML = `
@@ -976,7 +961,6 @@ class MovieCard extends HTMLElement {
         `;
         modalMeta.appendChild(yearBadge);
         
-        // Duration badge (for movies)
         if (isMovie && details.duration && details.duration !== 'Тодорхойгүй') {
             const durationBadge = document.createElement('div');
             durationBadge.className = 'meta-badge badge-duration';
@@ -998,7 +982,6 @@ class MovieCard extends HTMLElement {
             modalMeta.appendChild(durationBadge);
         }
         
-        // Certification badge (for movies)
         if (isMovie && details.certification && details.certification !== 'Тодорхойгүй') {
             const certBadge = document.createElement('div');
             certBadge.className = 'meta-badge badge-certification';
@@ -1009,7 +992,6 @@ class MovieCard extends HTMLElement {
             modalMeta.appendChild(certBadge);
         }
         
-        // Seasons badge (for TV)
         if (!isMovie && details.seasons) {
             const seasonsBadge = document.createElement('div');
             seasonsBadge.className = 'meta-badge badge-seasons';
@@ -1020,7 +1002,6 @@ class MovieCard extends HTMLElement {
             modalMeta.appendChild(seasonsBadge);
         }
         
-        // Episodes badge (for TV)
         if (!isMovie && details.episodes) {
             const episodesBadge = document.createElement('div');
             episodesBadge.className = 'meta-badge badge-episodes';
@@ -1031,7 +1012,6 @@ class MovieCard extends HTMLElement {
             modalMeta.appendChild(episodesBadge);
         }
         
-        // Type badge
         const typeBadge = document.createElement('div');
         typeBadge.className = `meta-badge ${isMovie ? 'badge-type-movie' : 'badge-type-tv'}`;
         typeBadge.innerHTML = `
@@ -1040,13 +1020,11 @@ class MovieCard extends HTMLElement {
         `;
         modalMeta.appendChild(typeBadge);
         
-        // Rating
         if (details.rating) {
             const rating = parseFloat(details.rating);
             shadow.querySelector('#modal-rating').textContent = rating.toFixed(1);
         }
         
-        // Genres (max 4)
         const genreContainer = shadow.querySelector('#genre-tags');
         genreContainer.innerHTML = '';
         if (details.genres && details.genres.length > 0) {
@@ -1058,14 +1036,11 @@ class MovieCard extends HTMLElement {
             });
         }
         
-        // Description (truncated to 3 lines)
         shadow.querySelector('.movie-description').textContent = 
             details.description || 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
         
-        // All cast members
         this.displayTopCast(details.cast || []);
         
-        // Trailer
         const trailerBtn = shadow.querySelector('#trailer-btn');
         if (details.trailer) {
             const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
@@ -1095,7 +1070,6 @@ class MovieCard extends HTMLElement {
             return;
         }
         
-        // Show all cast members
         console.log(`🎭 Displaying ${cast.length} cast members`);
         
         cast.forEach((actor, index) => {
@@ -1104,7 +1078,6 @@ class MovieCard extends HTMLElement {
             
             let avatarHTML = '';
             if (actor.profile_path) {
-                // Ensure profile_path is a valid URL
                 const imageUrl = actor.profile_path.startsWith('http') 
                     ? actor.profile_path 
                     : `https://image.tmdb.org/t/p/w185${actor.profile_path}`;
@@ -1140,18 +1113,15 @@ class MovieCard extends HTMLElement {
         shadow.querySelector('.modal-title').textContent = movieName;
         shadow.querySelector('.modal-backdrop').src = shadow.querySelector('img').src;
         
-        // Meta info - dynamically build badges
         const modalMeta = shadow.querySelector('.modal-meta');
         const isMovie = category === 'movies';
         
-        // Clear existing badges (except rating badge which should stay first)
         const ratingBadge = modalMeta.querySelector('.rating-badge');
         modalMeta.innerHTML = '';
         if (ratingBadge) {
             modalMeta.appendChild(ratingBadge);
         }
         
-        // Rating badge
         if (!ratingBadge) {
             const ratingBadgeEl = document.createElement('div');
             ratingBadgeEl.className = 'rating-badge';
@@ -1165,7 +1135,6 @@ class MovieCard extends HTMLElement {
             shadow.querySelector('#modal-rating').textContent = rating ? parseFloat(rating).toFixed(1) : '0.0';
         }
         
-        // Year badge
         const yearMatch = yearOrSeason.match(/\d{4}/);
         const yearBadge = document.createElement('div');
         yearBadge.className = 'meta-badge badge-year';
@@ -1175,7 +1144,6 @@ class MovieCard extends HTMLElement {
         `;
         modalMeta.appendChild(yearBadge);
         
-        // Duration badge (for movies)
         if (isMovie) {
             const duration = this.getAttribute('duration');
             if (duration) {
@@ -1188,7 +1156,6 @@ class MovieCard extends HTMLElement {
                 modalMeta.appendChild(durationBadge);
             }
         } else {
-            // TV Series: Show seasons and episodes
             const seasons = this.getAttribute('seasons');
             const episodes = this.getAttribute('episodes');
             if (seasons) {
@@ -1211,7 +1178,6 @@ class MovieCard extends HTMLElement {
             }
         }
         
-        // Type badge
         const typeBadge = document.createElement('div');
         typeBadge.className = `meta-badge ${isMovie ? 'badge-type-movie' : 'badge-type-tv'}`;
         typeBadge.innerHTML = `
@@ -1220,7 +1186,6 @@ class MovieCard extends HTMLElement {
         `;
         modalMeta.appendChild(typeBadge);
         
-        // Genres
         const genreContainer = shadow.querySelector('#genre-tags');
         genreContainer.innerHTML = '';
         if (genreAttr) {
@@ -1239,10 +1204,8 @@ class MovieCard extends HTMLElement {
             }
         }
         
-        // Description
         shadow.querySelector('.movie-description').textContent = description || 'Энэ киноны тухай дэлгэрэнгүй тайлбар байхгүй байна.';
         
-        // Cast
         const castList = shadow.querySelector('#cast-list');
         castList.innerHTML = '';
         
@@ -1271,7 +1234,6 @@ class MovieCard extends HTMLElement {
             }
         }
         
-        // Trailer
         const trailerBtn = shadow.querySelector('#trailer-btn');
         const trailerUrl = this.getAttribute('trailer');
         if (trailerUrl) {
@@ -1319,19 +1281,16 @@ class MovieCard extends HTMLElement {
                     const { authService } = await import('./auth-service.js');
                     const watchlistBtn = shadow.querySelector('#watchlist-btn');
                     
-                    // Check if already in watchlist
                     const user = authService.getCurrentUser();
                     const isInWatchlist = user?.watchlist?.includes(movieId) || false;
                     
                     if (isInWatchlist) {
-                        // Remove from watchlist
                         await authService.removeFromWatchlist(movieId);
                         if (watchlistBtn) {
                             watchlistBtn.classList.remove('active');
                             watchlistBtn.innerHTML = '<i class="far fa-bookmark"></i> Watchlist';
                         }
                     } else {
-                        // Add to watchlist
                         await authService.addToWatchlist(movieId);
                         if (watchlistBtn) {
                             watchlistBtn.classList.add('active');
@@ -1367,7 +1326,6 @@ class MovieCard extends HTMLElement {
     }
 
     goToDetailsPage() {
-        // Close the modal first
         const modal = this.shadowRoot.querySelector('.movie-modal');
         if (modal) {
             this.closeModal(modal);
@@ -1376,14 +1334,12 @@ class MovieCard extends HTMLElement {
         const movieId = this.getAttribute('data-tmdb-id') || this.getAttribute('name');
         const category = this.getAttribute('category') || 'movies';
         
-        // Navigate to movie details page
         if (movieId) {
             window.location.hash = `#/movie-details/${category}/${movieId}`;
         }
     }
 
     goToLoginPage() {
-        // Use hash-based routing to navigate to login page
         window.location.hash = '#/login';
     }
 
@@ -1391,7 +1347,6 @@ class MovieCard extends HTMLElement {
         if (modal) {
             modal.style.display = 'none';
         }
-        // Always ensure body overflow is reset
         document.body.style.overflow = 'auto';
     }
 }
