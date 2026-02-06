@@ -329,7 +329,6 @@ export function renderProfilePage() {
 }
 
 export async function initProfilePage(authService) {
-    console.log('👤 Initializing profile page...');
 
     const user = authService.getCurrentUser();
     if (!user) {
@@ -337,7 +336,6 @@ export async function initProfilePage(authService) {
         return;
     }
 
-    // Try to refresh user data from server, but use cached data if it fails
     try {
         const freshUser = await authService.getProfile();
         loadUserData(freshUser);
@@ -346,10 +344,8 @@ export async function initProfilePage(authService) {
         loadUserData(user);
     }
 
-    // Load user reviews
     await loadUserReviews(authService);
     
-    // Load watchlist
     await loadWatchlist(authService);
 
     setupTabs(authService);
@@ -363,30 +359,23 @@ export async function initProfilePage(authService) {
 }
 
 function loadUserData(user) {
-    // Header info
     const avatarImg = document.getElementById('profile-avatar');
     if (user.avatar) {
         avatarImg.src = user.avatar;
     } else {
-        // Use a default avatar or placeholder
         avatarImg.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23007bff"/%3E%3Ctext x="50" y="60" font-size="40" text-anchor="middle" fill="white"%3E' + (user.firstName?.[0] || 'U') + '%3C/text%3E%3C/svg%3E';
     }
     document.getElementById('profile-name').textContent = `${user.firstName} ${user.lastName}`;
     document.getElementById('profile-email').textContent = user.email;
     
-    // Use createdAt from backend (MongoDB timestamps)
     const joinDate = user.createdAt ? new Date(user.createdAt) : new Date();
     document.getElementById('member-since').textContent = 
         `Нэгдсэн: ${joinDate.toLocaleDateString('mn-MN', { year: 'numeric', month: 'long', day: 'numeric' })}`;
 
-    // Stats
     document.getElementById('watchlist-count').textContent = user.watchlist?.length || 0;
     document.getElementById('favorites-count').textContent = user.favorites?.length || 0;
-    // Ratings is an array in backend, not an object
     document.getElementById('ratings-count').textContent = user.ratings?.length || 0;
-    // Reviews count will be updated by loadUserReviews
 
-    // Settings form
     document.getElementById('edit-firstName').value = user.firstName;
     document.getElementById('edit-lastName').value = user.lastName;
     document.getElementById('edit-email').value = user.email;
@@ -403,12 +392,10 @@ async function loadUserReviews(authService) {
             reviewsCountEl.textContent = reviews.length || 0;
         }
         
-        // Display reviews in the ratings container
         if (ratingsContainer) {
             if (reviews.length === 0) {
                 ratingsContainer.innerHTML = '<p class="no-data">Сэтгэгдэл бичээгүй байна</p>';
             } else {
-                // Fetch movie info for each review
                 const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
                 const movieInfoMap = new Map();
                 
@@ -441,7 +428,6 @@ async function loadUserReviews(authService) {
                     await Promise.allSettled(movieInfoPromises);
                 }
                 
-                // Render reviews
                 ratingsContainer.innerHTML = reviews.map(review => {
                     const movieKey = `${review.category}_${review.movieId}`;
                     const movieInfo = movieInfoMap.get(movieKey) || {
@@ -522,7 +508,6 @@ async function loadWatchlist(authService) {
             return;
         }
         
-        // Fetch movie details for each watchlist item
         const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
         if (!service) {
             watchlistContainer.innerHTML = '<p class="no-data">TMDB сервис ашиглах боломжгүй байна</p>';
@@ -533,11 +518,9 @@ async function loadWatchlist(authService) {
         
         const moviePromises = watchlistIds.map(async (movieId) => {
             try {
-                // Try as movie first (since backend stores as "movie ID")
                 const details = await service.getMovieDetails(movieId);
                 return { ...details, category: 'movies', id: movieId };
             } catch (error) {
-                // If movie fails, try as TV show
                 try {
                     const details = await service.getTVDetails(movieId);
                     return { ...details, category: 'tv', id: movieId };
@@ -557,7 +540,6 @@ async function loadWatchlist(authService) {
             return;
         }
         
-        // Clear container and render movies
         watchlistContainer.innerHTML = '';
         movies.forEach((movie) => {
             const movieCard = document.createElement('movie-card');
@@ -602,17 +584,14 @@ function setupTabs(authService) {
         btn.addEventListener('click', () => {
             const tabId = btn.dataset.tab;
 
-            // Update buttons
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // Update content
             tabContents.forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            // Load watchlist when tab is clicked
             if (tabId === 'watchlist' && authService) {
                 loadWatchlist(authService);
             }
@@ -639,7 +618,6 @@ function setupProfileForm(authService) {
 
             showNotification('Амжилттай хадгалагдлаа!', 'success');
             
-            // Reload page data
             const user = authService.getCurrentUser();
             loadUserData(user);
 
@@ -748,7 +726,6 @@ function setupAvatarUpload(authService) {
     
     let currentImageData = null;
 
-    // Open modal
     changeAvatarBtn.addEventListener('click', () => {
         modal.classList.add('show');
         avatarOptions.style.display = 'flex';
@@ -756,7 +733,6 @@ function setupAvatarUpload(authService) {
         currentImageData = null;
     });
 
-    // Close modal
     closeBtn.addEventListener('click', () => {
         modal.classList.remove('show');
         resetModal();
@@ -769,7 +745,6 @@ function setupAvatarUpload(authService) {
         }
     });
 
-    // Upload from device
     document.getElementById('upload-from-device').addEventListener('click', () => {
         fileInput.click();
     });
@@ -778,7 +753,6 @@ function setupAvatarUpload(authService) {
         handleFileSelect(e.target.files[0]);
     });
 
-    // Take photo with camera
     document.getElementById('take-photo').addEventListener('click', () => {
         cameraInput.click();
     });
@@ -787,7 +761,6 @@ function setupAvatarUpload(authService) {
         handleFileSelect(e.target.files[0]);
     });
 
-    // Enter URL
     document.getElementById('enter-url').addEventListener('click', () => {
         const avatarUrl = prompt('Зургийн URL оруулна уу:');
         if (avatarUrl) {
@@ -797,12 +770,10 @@ function setupAvatarUpload(authService) {
         }
     });
 
-    // Cancel preview
     document.getElementById('cancel-preview').addEventListener('click', () => {
         resetModal();
     });
 
-    // Save avatar
     document.getElementById('save-avatar').addEventListener('click', async () => {
         if (!currentImageData) return;
 
@@ -820,13 +791,11 @@ function setupAvatarUpload(authService) {
     function handleFileSelect(file) {
         if (!file) return;
 
-        // Validate file type
         if (!file.type.startsWith('image/')) {
             showNotification('Зөвхөн зураг файл оруулна уу', 'error');
             return;
         }
 
-        // Validate file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
             showNotification('Файлын хэмжээ 5MB-аас бага байх ёстой', 'error');
             return;

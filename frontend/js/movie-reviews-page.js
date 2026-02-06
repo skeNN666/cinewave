@@ -1,4 +1,3 @@
-// Movie Reviews Page Component - Displays all reviews for a specific movie
 class MovieReviewsPage extends HTMLElement {
     constructor() {
         super();
@@ -23,7 +22,7 @@ class MovieReviewsPage extends HTMLElement {
                 console.log('🔄 MovieReviewsPage attributes changed:', { movieId: this.movieId, category: this.category });
                 this.render();
                 setTimeout(() => {
-                    this.loadReviews(); // Async, will handle loading state
+                    this.loadReviews(); 
                     this.loadMovieInfo();
                 }, 100);
             }
@@ -40,13 +39,11 @@ class MovieReviewsPage extends HTMLElement {
         if (movieId && category) {
             this.movieId = movieId;
             this.category = category;
-            // Use setTimeout to ensure DOM is ready
             setTimeout(() => {
-                this.loadReviews(); // Async, will handle loading state
+                this.loadReviews(); 
                 this.loadMovieInfo();
             }, 100);
         } else {
-            console.warn('⚠️ MovieReviewsPage: Missing movieId or category', { movieId, category });
         }
     }
 
@@ -271,7 +268,6 @@ class MovieReviewsPage extends HTMLElement {
             </div>
         `;
 
-        // Setup back button
         const backBtn = this.shadowRoot.getElementById('back-btn');
         if (backBtn) {
             backBtn.addEventListener('click', () => {
@@ -344,7 +340,6 @@ class MovieReviewsPage extends HTMLElement {
         }
         
         try {
-            // Try to load from backend API first
             const { authService } = await import('./auth-service.js');
             let reviews = [];
             
@@ -354,8 +349,6 @@ class MovieReviewsPage extends HTMLElement {
                 reviews = await authService.getMovieReviews(movieId, category);
                 console.log(`✅ Loaded ${reviews.length} reviews from backend:`, reviews);
             } catch (error) {
-                console.warn('⚠️ Could not load reviews from backend, trying localStorage:', error);
-                // Fallback to localStorage for backward compatibility
                 const storageKey = `reviews_${category}_${movieId}`;
                 const storedReviews = localStorage.getItem(storageKey);
                 reviews = storedReviews ? JSON.parse(storedReviews) : [];
@@ -380,15 +373,12 @@ class MovieReviewsPage extends HTMLElement {
                 return;
             }
 
-            // Update reviews count
             if (reviewsCount) {
                 reviewsCount.textContent = `${reviews.length} сэтгэгдэл`;
             }
 
-            // Render all reviews using review-card component
             console.log('🎨 Rendering reviews:', reviews);
             reviewsList.innerHTML = reviews.map(review => {
-                // Check if current user owns this review
                 const userData = JSON.parse(localStorage.getItem('cinewave_user') || '{}');
                 const currentUserId = userData.id || userData._id || userData.email;
                 const reviewUserId = review.userId?.toString() || review.userId;

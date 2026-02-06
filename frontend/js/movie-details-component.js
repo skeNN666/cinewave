@@ -1507,20 +1507,15 @@ class MovieDetailsComponent extends HTMLElement {
                 movieGenres: details.genres
             });
 
-            // Get genre IDs and names from the movie for filtering
             const movieGenreNames = (details.genres || []).map(g => typeof g === 'string' ? g : g.name);
             const movieGenreIds = (details.genre_ids || []).filter(id => id != null);
 
-            // Fetch recommendations if not enough (recommendations are more accurate)
-            // Don't block if this fails - just use what we have
             if (!details.recommendations || details.recommendations.length < 8) {
-                console.log('🔄 Fetching recommendations (more accurate than similar)...');
                 try {
                     const fetchPromise = this.category === 'movies'
                         ? service.getRecommendedMovies(this.movieId)
                         : service.getRecommendedTVShows(this.movieId);
                     
-                    // Set timeout to not block too long
                     const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([]), 3000));
                     const fetchedRecs = await Promise.race([fetchPromise, timeoutPromise]);
                     
@@ -1529,33 +1524,25 @@ class MovieDetailsComponent extends HTMLElement {
                             .filter((item, index, self) => index === self.findIndex(t => t.id === item.id))
                             .slice(0, 20);
                     }
-                    console.log('✅ Updated recommendations count:', details.recommendations?.length || 0);
                 } catch (err) {
-                    console.error('Error fetching recommendations:', err);
-                    // Continue without recommendations
                     if (!details.recommendations) {
                         details.recommendations = [];
                     }
                 }
             }
 
-            // Filter similar movies to only include those sharing at least one genre
-            // Similar movies can be inaccurate, so we filter them by genre
             if (details.similar && details.similar.length > 0) {
                 console.log('🔍 Filtering similar movies by genre to ensure relevance...');
                 const originalSimilarCount = details.similar.length;
                 
-                // Get genre IDs from original movie (from details response, not mapped data)
                 const originalGenreIds = details.genre_ids || [];
                 
                 details.similar = details.similar.filter(item => {
-                    // First check genre_ids (more reliable)
                     if (originalGenreIds.length > 0 && item.genre_ids && item.genre_ids.length > 0) {
                         const hasMatchingGenreId = item.genre_ids.some(id => originalGenreIds.includes(id));
                         if (hasMatchingGenreId) return true;
                     }
-                    
-                    // Fallback: check genre names if genre_ids not available
+
                     if (movieGenreNames.length > 0) {
                         const itemGenres = item.genres || [];
                         const itemGenreNames = Array.isArray(itemGenres) 
@@ -1568,36 +1555,27 @@ class MovieDetailsComponent extends HTMLElement {
                         if (hasMatchingGenre) return true;
                     }
                     
-                    // If no genre match found, exclude this item
                     return false;
                 });
                 
-                console.log(`✅ Filtered similar movies: ${originalSimilarCount} → ${details.similar.length} (removed ${originalSimilarCount - details.similar.length} that don't share genres)`);
             }
 
-            // Only use similar movies if we don't have enough recommendations
             const recCount = details.recommendations?.length || 0;
             if (recCount < 8 && details.similar && details.similar.length > 0) {
-                console.log(`📊 Using ${recCount} recommendations + filtered similar movies as supplement`);
             } else if (recCount >= 8) {
-                // We have enough recommendations, so we can ignore similar movies
-                console.log(`✅ Using ${recCount} recommendations (sufficient, ignoring similar movies)`);
                 details.similar = [];
             }
 
-            // Add images to details
             details.images = images;
 
             if (loadingEl) loadingEl.style.display = 'none';
             this.renderContent(details);
             
-            // Update auth UI after content is rendered (with small delay to ensure DOM is ready)
             setTimeout(() => {
                 this.updateAuthUI();
             }, 100);
 
         } catch (error) {
-            console.error('Error loading movie details:', error);
             if (loadingEl) loadingEl.style.display = 'none';
             if (errorEl) errorEl.style.display = 'block';
             if (errorMsgEl) errorMsgEl.textContent = error.message || 'Мэдээлэл ачаалахад алдаа гарлаа';
@@ -1608,49 +1586,36 @@ class MovieDetailsComponent extends HTMLElement {
         const contentEl = this.shadowRoot.querySelector('#content');
         const isMovie = this.category === 'movies';
 
-        // Get service reference for trailer URL
         const service = window.tmdbService || (typeof tmdbService !== 'undefined' ? tmdbService : null);
         const getTrailerUrl = (trailerKey) => {
             if (!trailerKey) return null;
             if (service && service.getTrailerUrl) {
                 return service.getTrailerUrl(trailerKey);
             }
-            // Fallback: if it's already a full URL, return it, otherwise construct YouTube URL
             return trailerKey.startsWith('http') ? trailerKey : `https://www.youtube.com/watch?v=${trailerKey}`;
         };
 
-        // Get all directors
         const directors = details.crew?.filter(person => person.job === 'Director') || [];
         
-        // Get producers
         const producers = details.crew?.filter(person => 
             person.job === 'Producer' || person.job === 'Executive Producer'
         ) || [];
 
-        // Get writers
         const writers = details.crew?.filter(person => 
             person.job === 'Writer' || person.job === 'Screenplay' || person.job === 'Story'
         ) || [];
 
-        // Get cinematographers
         const cinematographers = details.crew?.filter(person => person.job === 'Director of Photography') || [];
 
-        // Get composers
         const composers = details.crew?.filter(person => person.job === 'Original Music Composer') || [];
 
-        // Prioritize recommendations (more accurate) over similar movies
-        // Combine them with recommendations first, then add filtered similar movies if needed
         let allSimilar = [];
         
-        // First, add recommendations (more accurate - based on user ratings)
         if (details.recommendations && details.recommendations.length > 0) {
             allSimilar = [...details.recommendations];
         }
         
-        // Then add filtered similar movies only if we need more content
-        // Similar movies are less accurate (based on keywords/genres only)
         if (allSimilar.length < 12 && details.similar && details.similar.length > 0) {
-            // Only add similar movies that aren't already in recommendations
             const existingIds = new Set(allSimilar.map(item => item.id || item.tmdb_id));
             const additionalSimilar = details.similar.filter(item => {
                 const itemId = item.id || item.tmdb_id;
@@ -1659,7 +1624,6 @@ class MovieDetailsComponent extends HTMLElement {
             allSimilar = [...allSimilar, ...additionalSimilar];
         }
         
-        // Filter out invalid items and deduplicate
         const similarContent = allSimilar
             .filter(item => item && (item.id || item.tmdb_id) && item.name)
             .map(item => ({
@@ -1684,7 +1648,6 @@ class MovieDetailsComponent extends HTMLElement {
             } : null
         });
 
-        // Prepare images data
         const backdrops = details.images?.backdrops?.slice(0, 12) || [];
         const posters = details.images?.posters?.slice(0, 12) || [];
         const hasImages = backdrops.length > 0 || posters.length > 0;
@@ -1802,9 +1765,6 @@ class MovieDetailsComponent extends HTMLElement {
                             </h2>
                             <div class="cast-grid" id="cast-grid" data-expanded="false" data-all-cast='${JSON.stringify(details.cast).replace(/'/g, "&apos;")}'>
                                 ${(() => {
-                                    // Show 12 cast members initially (approximately 2 rows on desktop: 6x2)
-                                    // On smaller screens this will be more than 2 rows, which is fine
-                                    // The grid will automatically adjust based on screen size
                                     const initialCount = Math.min(12, details.cast.length);
                                     const visibleCast = details.cast.slice(0, initialCount);
                                     const remainingCount = details.cast.length - initialCount;
@@ -1823,7 +1783,6 @@ class MovieDetailsComponent extends HTMLElement {
                                         `;
                                     });
                                     
-                                    // Add expand indicator if there are more cast members
                                     if (remainingCount > 0) {
                                         html += `
                                             <div class="cast-member expand-indicator" id="expand-cast-btn">
@@ -1921,7 +1880,7 @@ class MovieDetailsComponent extends HTMLElement {
                             ` : ''}
                             ${details.popularity ? `
                                 <div class="info-item">
-                                    <div class="info-label">Алдартай</div>
+                                    <div class="info-label">Тэмдэглэсэн тоо</div>
                                     <div class="info-value">${Math.round(details.popularity)}</div>
                                 </div>
                             ` : ''}
@@ -2085,7 +2044,6 @@ class MovieDetailsComponent extends HTMLElement {
 
         contentEl.style.display = 'block';
 
-        // Setup image modal close on background click
         setTimeout(() => {
             const modal = this.shadowRoot.getElementById('image-modal');
             if (modal) {
@@ -2101,7 +2059,6 @@ class MovieDetailsComponent extends HTMLElement {
                 });
             }
 
-            // Setup cast expand functionality
             const expandBtn = this.shadowRoot.getElementById('expand-cast-btn');
             const castGrid = this.shadowRoot.getElementById('cast-grid');
             
@@ -2116,21 +2073,18 @@ class MovieDetailsComponent extends HTMLElement {
                         const currentCount = currentMembers.length;
                         
                         if (currentCount < allCast.length) {
-                            // Calculate items per row based on screen width
-                            // Desktop: ~6-7 per row, Tablet: ~4-5, Mobile: ~3
-                            let itemsPerRow = 6; // default desktop
+                            let itemsPerRow = 6;
                             const width = window.innerWidth;
                             if (width <= 480) {
-                                itemsPerRow = 3; // mobile
+                                itemsPerRow = 3; 
                             } else if (width <= 768) {
-                                itemsPerRow = 4; // tablet
+                                itemsPerRow = 4; 
                             } else if (width <= 1024) {
-                                itemsPerRow = 5; // small desktop
+                                itemsPerRow = 5; 
                             } else {
-                                itemsPerRow = 6; // large desktop
+                                itemsPerRow = 6; 
                             }
                             
-                            // Show next row
                             const nextBatch = allCast.slice(currentCount, currentCount + itemsPerRow);
                             
                             nextBatch.forEach((actor, idx) => {
@@ -2165,16 +2119,13 @@ class MovieDetailsComponent extends HTMLElement {
                                 charDiv.textContent = actor.character || 'Тодорхойгүй';
                                 member.appendChild(charDiv);
                                 
-                                // Insert before expand button
                                 castGrid.insertBefore(member, expandBtn);
                             });
                             
-                            // Check if we've shown all cast members
                             const newCount = castGrid.querySelectorAll('.cast-member:not(.expand-indicator)').length;
                             if (newCount >= allCast.length) {
                                 expandBtn.remove();
                             } else {
-                                // Update remaining count
                                 const remaining = allCast.length - newCount;
                                 const countDiv = expandBtn.querySelector('.expand-count');
                                 if (countDiv) {
@@ -2188,14 +2139,11 @@ class MovieDetailsComponent extends HTMLElement {
                 });
             }
 
-            // Setup watchlist and watched buttons
             this.setupActionButtons();
-            // Update auth UI after buttons are set up
             setTimeout(() => {
                 this.updateAuthUI();
             }, 100);
             
-            // Setup reviews section
             this.setupReviewsSection();
         }, 100);
     }
@@ -2237,13 +2185,10 @@ class MovieDetailsComponent extends HTMLElement {
             ratingNumber.addEventListener('input', () => setRatingUI(ratingNumber.value));
         }
 
-        // Initialize UI
         setRatingUI(selectedRating);
 
-        // Load existing reviews
-        this.loadReviews(); // Async, no need to await here
+        this.loadReviews();
 
-        // Setup submit button
         if (submitBtn) {
             submitBtn.addEventListener('click', () => {
                 this.submitReview(selectedRating, reviewText?.value || '');
@@ -2264,15 +2209,12 @@ class MovieDetailsComponent extends HTMLElement {
         const histogramEl = shadow.getElementById('histogram');
         
         try {
-            // Try to load from backend API first
             const { authService } = await import('./auth-service.js');
             let reviews = [];
             
             try {
                 reviews = await authService.getMovieReviews(movieId, category);
             } catch (error) {
-                console.warn('Could not load reviews from backend, trying localStorage:', error);
-                // Fallback to localStorage for backward compatibility
                 const storageKey = `reviews_${category}_${movieId}`;
                 const storedReviews = localStorage.getItem(storageKey);
                 reviews = storedReviews ? JSON.parse(storedReviews) : [];
@@ -2284,14 +2226,11 @@ class MovieDetailsComponent extends HTMLElement {
                 return;
             }
     
-            // Movie/TV rating summary histogram (1-10) — show only on details page
             try {
                 const counts = Array.from({ length: 10 }, () => 0);
                 const ratings = reviews
                     .map(r => Number(r.rating))
                     .filter(v => !Number.isNaN(v) && v >= 1 && v <= 10);
-    
-                // Bucket by rounded integer (IMDb-like distribution)
                 ratings.forEach(v => {
                     const bucket = Math.min(10, Math.max(1, Math.round(v)));
                     counts[bucket - 1]++;
@@ -2307,10 +2246,9 @@ class MovieDetailsComponent extends HTMLElement {
     
                     const maxCount = Math.max(...counts, 1);
                     
-                    // Create vertical histogram bars for scores 1-10
                     histogramEl.innerHTML = counts
                         .map((c, idx) => {
-                            const score = idx + 1; // 1 to 10
+                            const score = idx + 1; 
                             const heightPct = total ? Math.round((c / maxCount) * 100) : 0;
                             const pct = total ? Math.round((c / total) * 100) : 0;
                             
@@ -2330,12 +2268,10 @@ class MovieDetailsComponent extends HTMLElement {
                 if (ratingsSummary) ratingsSummary.style.display = 'none';
             }
     
-            // Show only latest 3 reviews
             const latestReviews = reviews.slice(0, 3);
             
             let html = latestReviews.map(review => this.renderReviewCardHTML(review)).join('');
             
-            // Add "View All Reviews" button if there are more than 3 reviews
             if (reviews.length > 3) {
                 html += `
                     <div class="view-all-reviews-container">
@@ -2350,7 +2286,6 @@ class MovieDetailsComponent extends HTMLElement {
             
             reviewsList.innerHTML = html;
             
-            // Add event listener to "View All Reviews" button
             const viewAllBtn = shadow.getElementById('view-all-reviews-btn');
             if (viewAllBtn) {
                 viewAllBtn.addEventListener('click', () => {
@@ -2368,7 +2303,6 @@ class MovieDetailsComponent extends HTMLElement {
         const isCurrentUser = review.userId === (userData.id || userData._id || userData.email);
         const isAdmin = review.isAdmin || false;
         
-        // Format date
         const date = new Date(review.date);
         const formattedDate = date.toLocaleDateString('mn-MN', {
             year: 'numeric',
@@ -2378,7 +2312,6 @@ class MovieDetailsComponent extends HTMLElement {
             minute: '2-digit'
         });
 
-        // Get user initials for avatar
         const initials = review.username
             .split(' ')
             .map(n => n[0])
@@ -2386,7 +2319,6 @@ class MovieDetailsComponent extends HTMLElement {
             .substring(0, 2)
             .toUpperCase();
 
-        // Generate star rating display
         const fullStars = Math.floor(review.rating);
         const hasHalfStar = review.rating % 1 >= 0.5;
         const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -2446,7 +2378,6 @@ class MovieDetailsComponent extends HTMLElement {
         const originalText = submitBtn?.textContent;
 
         try {
-            // Check if user is logged in
             const isLoggedIn = await this.checkAuthStatus();
             if (!isLoggedIn) {
                 alert('Сэтгэгдэл үлдээхийн тулд нэвтрэх шаардлагатай');
@@ -2459,20 +2390,16 @@ class MovieDetailsComponent extends HTMLElement {
                 submitBtn.textContent = 'Хадгалж байна...';
             }
 
-            // Import auth service and submit review to backend
             const { authService } = await import('./auth-service.js');
             const movieId = this.movieId;
             const category = this.category;
 
             const result = await authService.submitReview(movieId, category, rating, text);
             
-            // Show success message
             alert('Сэтгэгдэл амжилттай үлдээгдлээ!');
             
-            // Reload reviews from backend
             await this.loadReviews();
             
-            // Reset form
             const reviewText = shadow.getElementById('review-text');
             const ratingDisplay = shadow.getElementById('rating-display');
             const ratingSlider = shadow.getElementById('rating-slider');
@@ -2483,7 +2410,6 @@ class MovieDetailsComponent extends HTMLElement {
             if (ratingNumber) ratingNumber.value = '7.0';
             if (ratingDisplay) ratingDisplay.textContent = '7.0/10';
             
-            // Scroll to new review
             setTimeout(() => {
                 const reviewsList = shadow.getElementById('reviews-list');
                 if (reviewsList) {
@@ -2503,7 +2429,6 @@ class MovieDetailsComponent extends HTMLElement {
     }
 
     async checkAuthStatus() {
-        // Try to use auth service first (more reliable)
         try {
             const { authService } = await import('./auth-service.js');
             if (authService && authService.isAuthenticated()) {
@@ -2511,10 +2436,8 @@ class MovieDetailsComponent extends HTMLElement {
                 return true;
             }
         } catch (e) {
-            // Fallback to localStorage check
         }
         
-        // Fallback: Use the same keys as auth-service.js (with underscores, not hyphens)
         const token = localStorage.getItem('cinewave_token');
         const userData = localStorage.getItem('cinewave_user');
         
@@ -2558,7 +2481,6 @@ class MovieDetailsComponent extends HTMLElement {
             });
         }
 
-        // Trailer button handler
         if (trailerBtn && !trailerBtn.disabled) {
             trailerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2593,7 +2515,6 @@ class MovieDetailsComponent extends HTMLElement {
         } else {
             loginPrompt.style.display = 'none';
             
-            // Check watchlist status
             if (watchlistBtn && this.movieId) {
                 try {
                     const { authService } = await import('./auth-service.js');
@@ -2624,7 +2545,6 @@ class MovieDetailsComponent extends HTMLElement {
             }
         }
         
-        // Also update periodically while component is visible
         if (!this.authCheckInterval) {
             this.authCheckInterval = setInterval(async () => {
                 const currentIsLoggedIn = await this.checkAuthStatus();
@@ -2654,12 +2574,10 @@ class MovieDetailsComponent extends HTMLElement {
                     const { authService } = await import('./auth-service.js');
                     const watchlistBtn = shadow.getElementById('watchlist-btn');
                     
-                    // Check if already in watchlist
                     const user = authService.getCurrentUser();
                     const isInWatchlist = user?.watchlist?.includes(movieId) || false;
                     
                     if (isInWatchlist) {
-                        // Remove from watchlist
                         await authService.removeFromWatchlist(movieId);
                         if (watchlistBtn) {
                             watchlistBtn.classList.remove('active');
@@ -2670,14 +2588,12 @@ class MovieDetailsComponent extends HTMLElement {
                                 span.textContent = 'Watchlist';
                             }
                         }
-                        // Show notification
                         const notification = document.createElement('div');
                         notification.textContent = `"${movieName}" watchlist-аас хаслаа`;
                         notification.style.cssText = 'position: fixed; top: 100px; right: 20px; background: #4da3ff; color: white; padding: 15px 25px; border-radius: 8px; z-index: 10000;';
                         document.body.appendChild(notification);
                         setTimeout(() => notification.remove(), 3000);
                     } else {
-                        // Add to watchlist
                         await authService.addToWatchlist(movieId);
                         if (watchlistBtn) {
                             watchlistBtn.classList.add('active');
@@ -2688,7 +2604,6 @@ class MovieDetailsComponent extends HTMLElement {
                                 span.textContent = 'Нэмсэн';
                             }
                         }
-                        // Show notification
                         const notification = document.createElement('div');
                         notification.textContent = `"${movieName}" watchlist-д нэмэгдлээ!`;
                         notification.style.cssText = 'position: fixed; top: 100px; right: 20px; background: #4da3ff; color: white; padding: 15px 25px; border-radius: 8px; z-index: 10000;';

@@ -1,4 +1,3 @@
-// Review Card Component - Reusable component for displaying individual reviews
 class ReviewCardComponent extends HTMLElement {
     constructor() {
         super();
@@ -28,7 +27,6 @@ class ReviewCardComponent extends HTMLElement {
         const isAdmin = this.getAttribute('is-admin') === 'true';
         const userId = this.getAttribute('user-id') || '';
 
-        // Get user initials for avatar
         const initials = username
             .split(' ')
             .map(n => n[0])
@@ -36,7 +34,6 @@ class ReviewCardComponent extends HTMLElement {
             .substring(0, 2)
             .toUpperCase();
 
-        // Format date
         const dateObj = new Date(date);
         const formattedDate = dateObj.toLocaleDateString('mn-MN', {
             year: 'numeric',
@@ -46,7 +43,6 @@ class ReviewCardComponent extends HTMLElement {
             minute: '2-digit'
         });
 
-        // Generate 1-10 rating display (IMDb style)
         const safeRating = Math.max(0, Math.min(10, Math.round(rating)));
         const boxesHTML = Array.from({ length: 10 }, (_, idx) => {
             const v = idx + 1;

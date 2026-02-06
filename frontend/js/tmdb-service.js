@@ -1,4 +1,3 @@
-// frontend/js/tmdb-service.js
 export class TMDBService {
     constructor() {
         this.API_KEY = '744f024b4bfcd231abca3a0a3e21c84e';
@@ -45,30 +44,24 @@ export class TMDBService {
         return data.results.map(movie => this.mapMovieData(movie));
     }
 
-    // Get popular movies (backup method)
     async getPopularMovies(page = 1) {
         const data = await this.fetchFromTMDB('/movie/popular', { page });
         return data.results.map(movie => this.mapMovieData(movie));
     }
 
-    // Get RECENT TV shows (currently airing and recently aired)
-    // Includes all TV shows (reality, scripted, etc.)
     async getAiringTodayTV(page = 1) {
-        // Use /tv/on_the_air endpoint which returns shows currently on the air (latest)
         const data = await this.fetchFromTMDB('/tv/on_the_air', { page });
         
         console.log(`📺 Found ${data.results.length} TV shows from /tv/on_the_air endpoint`);
         
-        // Sort by first_air_date descending to get newest first
         const sortedResults = [...data.results].sort((a, b) => {
             const dateA = a.first_air_date ? new Date(a.first_air_date) : new Date(0);
             const dateB = b.first_air_date ? new Date(b.first_air_date) : new Date(0);
-            return dateB - dateA; // Descending (newest first)
+            return dateB - dateA; 
         });
         
         console.log(`✅ Returning ${sortedResults.length} latest TV shows (all types included)`);
         
-        // Log sample results
         if (sortedResults.length > 0) {
             console.log('Sample latest TV shows:', sortedResults.slice(0, 5).map(tv => ({
                 name: tv.name,
@@ -87,8 +80,6 @@ export class TMDBService {
         return data.results.map(tv => this.mapTVData(tv));
     }
 
-    // Get popular TV shows (backup method)
-    // Includes all TV shows (reality, scripted, etc.)
     async getPopularTVShows(page = 1) {
         const data = await this.fetchFromTMDB('/tv/popular', { page });
         
@@ -129,10 +120,8 @@ export class TMDBService {
         }
     }
 
-    // Discover movies by genre
     async discoverMoviesByGenre(genreId, page = 1) {
         try {
-            // Ensure genreId is a number
             const genreIdNum = parseInt(genreId);
             if (isNaN(genreIdNum)) {
                 console.error(`❌ Invalid genre ID for movies: ${genreId}`);
@@ -160,10 +149,8 @@ export class TMDBService {
         }
     }
 
-    // Discover TV shows by genre
     async discoverTVByGenre(genreId, page = 1) {
         try {
-            // Ensure genreId is a number
             const genreIdNum = parseInt(genreId);
             if (isNaN(genreIdNum)) {
                 console.error(`❌ Invalid genre ID for TV: ${genreId}`);
@@ -191,7 +178,6 @@ export class TMDBService {
         }
     }
 
-    // Search for movies and TV shows
     async search(query, page = 1) {
         try {
             if (!query || !query.trim()) {
@@ -205,7 +191,6 @@ export class TMDBService {
 
             console.log(`🔍 Search results for "${query}": ${data.results.length} items`);
 
-            // Map results based on media_type
             return data.results
                 .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
                 .map(item => {
@@ -234,13 +219,11 @@ export class TMDBService {
         return this.mapTVDetails(data);
     }
 
-    // Get similar movies (less accurate - based on genres/keywords only)
     async getSimilarMovies(movieId, page = 1) {
         try {
             const data = await this.fetchFromTMDB(`/movie/${movieId}/similar`, { page });
             return data.results.map(movie => {
                 const mapped = this.mapMovieData(movie);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = movie.genre_ids || [];
                 return mapped;
             });
@@ -250,13 +233,11 @@ export class TMDBService {
         }
     }
 
-    // Get recommended movies (more accurate - based on user ratings/viewing patterns)
     async getRecommendedMovies(movieId, page = 1) {
         try {
             const data = await this.fetchFromTMDB(`/movie/${movieId}/recommendations`, { page });
             return data.results.map(movie => {
                 const mapped = this.mapMovieData(movie);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = movie.genre_ids || [];
                 return mapped;
             });
@@ -266,13 +247,11 @@ export class TMDBService {
         }
     }
 
-    // Get similar TV shows (less accurate - based on genres/keywords only)
     async getSimilarTVShows(tvId, page = 1) {
         try {
             const data = await this.fetchFromTMDB(`/tv/${tvId}/similar`, { page });
             return data.results.map(tv => {
                 const mapped = this.mapTVData(tv);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = tv.genre_ids || [];
                 return mapped;
             });
@@ -282,13 +261,11 @@ export class TMDBService {
         }
     }
 
-    // Get recommended TV shows (more accurate - based on user ratings/viewing patterns)
     async getRecommendedTVShows(tvId, page = 1) {
         try {
             const data = await this.fetchFromTMDB(`/tv/${tvId}/recommendations`, { page });
             return data.results.map(tv => {
                 const mapped = this.mapTVData(tv);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = tv.genre_ids || [];
                 return mapped;
             });
@@ -342,11 +319,9 @@ export class TMDBService {
         };
     }
 
-    // Map detailed movie data with rich information
     mapMovieDetails(details) {
         const baseData = this.mapMovieData(details);
         
-        // Format runtime
         let durationText = 'Тодорхойгүй';
         if (details.runtime) {
             const hours = Math.floor(details.runtime / 60);
@@ -392,13 +367,11 @@ export class TMDBService {
             imdb_id: details.imdb_id,
             similar: details.similar?.results?.map(movie => {
                 const mapped = this.mapMovieData(movie);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = movie.genre_ids || [];
                 return mapped;
             }) || [],
             recommendations: details.recommendations?.results?.map(movie => {
                 const mapped = this.mapMovieData(movie);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = movie.genre_ids || [];
                 return mapped;
             }) || []
@@ -444,13 +417,11 @@ export class TMDBService {
             next_episode_to_air: details.next_episode_to_air,
             similar: details.similar?.results?.map(tv => {
                 const mapped = this.mapTVData(tv);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = tv.genre_ids || [];
                 return mapped;
             }) || [],
             recommendations: details.recommendations?.results?.map(tv => {
                 const mapped = this.mapTVData(tv);
-                // Preserve genre_ids for filtering
                 mapped.genre_ids = tv.genre_ids || [];
                 return mapped;
             }) || []
@@ -471,12 +442,10 @@ export class TMDBService {
         return statusMap[status] || status;
     }
 
-    // Get YouTube trailer URL
     getTrailerUrl(trailerKey) {
         return trailerKey ? `https://www.youtube.com/watch?v=${trailerKey}` : null;
     }
 
-    // Get movie images (backdrops, posters, logos)
     async getMovieImages(movieId) {
         try {
             const data = await this.fetchFromTMDB(`/movie/${movieId}/images`);
@@ -507,7 +476,6 @@ export class TMDBService {
         }
     }
 
-    // Get TV images (backdrops, posters, logos)
     async getTVImages(tvId) {
         try {
             const data = await this.fetchFromTMDB(`/tv/${tvId}/images`);
@@ -539,10 +507,8 @@ export class TMDBService {
     }
 }
 
-// Create a singleton instance
 export const tmdbService = new TMDBService();
 
-// Also expose globally for non-module scripts
 if (typeof window !== 'undefined') {
     window.tmdbService = tmdbService;
 }

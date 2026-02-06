@@ -289,7 +289,6 @@ class CineWaveFooter extends HTMLElement {
             });
         });
 
-        // Setup navigation links
         const navLinks = this.shadowRoot.querySelectorAll('.footer-column a');
         navLinks.forEach(link => {
             if (!link.closest('.footer-socials')) {
@@ -308,7 +307,6 @@ class CineWaveFooter extends HTMLElement {
         const email = emailInput.value.trim();
         
         if (this.validateEmail(email)) {
-            // Dispatch custom event for newsletter subscription
             this.dispatchEvent(new CustomEvent('newsletter-subscribed', {
                 detail: { email },
                 bubbles: true,
@@ -328,14 +326,12 @@ class CineWaveFooter extends HTMLElement {
     }
 
     handleSocialClick(platform) {
-        // Dispatch custom event for social media clicks
         this.dispatchEvent(new CustomEvent('social-clicked', {
             detail: { platform },
             bubbles: true,
             composed: true
         }));
         
-        // You can add platform-specific URLs here
         const urls = {
             'facebook': 'https://facebook.com/cinewave',
             'instagram': 'https://instagram.com/cinewave',
@@ -351,17 +347,14 @@ class CineWaveFooter extends HTMLElement {
     }
 
     handleNavigationClick(linkText) {
-        // Dispatch custom event for navigation clicks
         this.dispatchEvent(new CustomEvent('nav-clicked', {
             detail: { linkText },
             bubbles: true,
             composed: true
         }));
         
-        // Add navigation logic here
         console.log(`Navigating to: ${linkText}`);
         
-        // Example: You could add routing logic based on linkText
         const routes = {
             'Хайх': '/search',
             'Эрэлтэд': '/trending',

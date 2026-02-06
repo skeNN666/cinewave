@@ -1,4 +1,3 @@
-// reviews.js - Simplified version
 class ReviewsManager {
     constructor() {
         this.reviewsContainer = document.getElementById('reviews-container');
